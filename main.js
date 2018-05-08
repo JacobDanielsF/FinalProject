@@ -1,8 +1,17 @@
 // Random dungeon generator for Phaser
 // main.js
 
-var game = new Phaser.Game(800, 600, Phaser.AUTO);
+var game;
 
+window.onload = function() {
+	game = new Phaser.Game(800, 600, Phaser.AUTO);
+	game.state.add('TitleScreen', TitleScreen);
+	game.state.add('DungeonFloor', DungeonFloor);
+	game.state.add('NextFloor', NextFloor);
+	game.state.add('GameOver', GameOver);
+
+	game.state.start('TitleScreen');
+}
 
 // GLOBAL VARIABLES
 var WALL_SIZE = 64; // map grid scale
@@ -24,36 +33,6 @@ var PLAYER_PROPERTIES = {
 	CURRENT_WEAPON: "default",
 };
 
-// enemy class
-function Enemy(posX, posY, type, roomtoggle){
-	console.log("create enemy at: " + posX + ", " + posY);
-	this.type = type;
-	this.room = roomtoggle;
-	
-	// check enemy type
-	if (type == "default"){
-		this.health = 3;
-		this.nextfire = 4;
-		this.firecooldown = 1;
-		this.walkspeed = 100;
-		this.seekrange = 400;
-		this.model = enemygroup.create(posX, posY, 'enemy_atlas', 'enemyidle1');
-	}
-}
-
-// player projectile class
-function PlayerProjectile(posX, posY, type){
-	this.type = type;
-	
-	if (type == "default"){
-		this.speed = 600;
-		this.damage = 1;
-		this.model = playerprojectiles.create(posX, posY, 'character_atlas', 'projectile1');
-		this.model.anchor.x = 0.5;
-		this.model.anchor.y = 0.5;
-		this.model.rotation = game.physics.arcade.angleToPointer(player) + (Math.PI/2);
-	}
-}
 		
 // player slash class
 function PlayerSlash(posX, posY, type){
@@ -76,7 +55,7 @@ function PlayerSlash(posX, posY, type){
 			game.physics.arcade.enable(newSlash);
 			newSlash.anchor.x = 0.5;
 			newSlash.anchor.y = 0.5;
-			hitboxes[hitboxes.length] = newSlash;
+			hitboxes.push(newSlash);
 		}
 		
 		this.duration = 5;
@@ -116,6 +95,7 @@ TitleScreen.prototype = {
 	
 	preload: function() {
 		console.log('TitleScreen: preload');
+		game.load.atlas('enemy_atlas', 'assets/img/enemy8_atlas.png', 'assets/img/enemy8_sprites.json');
 	},
 	
 	create: function() {
@@ -196,10 +176,10 @@ DungeonFloor.prototype = {
 		// anything that can be initialized in a certain type of room will check for roomtype and save
 		// -the coordinates for where that entity should spawn, which can be accessed later.
 		function MakeRoom(x, y, width, height, roomtype){
-			rooms[rooms.length] = [x, y, width, height];
+			rooms.push([x, y, width, height]);
 			
 			if (roomtype == "normal"){
-				mainrooms[mainrooms.length] = [x, y, width, height];
+				mainrooms.push([x, y, width, height]);
 				
 			}
 	
@@ -217,7 +197,7 @@ DungeonFloor.prototype = {
 			*/
 	
 			if (roomtype == "hall") { // chance of spawning an arbitrary enemy in a hallway segment.
-				enemies[enemies.length] = [x, y];
+				enemies.push([x, y]);
 				
 			}
 			
@@ -527,17 +507,23 @@ DungeonFloor.prototype = {
 		
 		// spawn enemies in hallways
 		for (var i = 0; i < enemies.length; i++){
-			enemytable[enemytable.length] = new Enemy(enemies[i][0], enemies[i][1], "default", false);
+			enemy = new Enemy(game, enemies[i][0], enemies[i][1], "default", false, 'enemy_atlas', 'enemyidle1');
+			game.add.existing(enemy);
 		}
 		
 		playerbullettable = [];
+		
+		//playerbulletgroup = game.add.group();
+		//playerbulletgroup.enableBody = true;
+		
 		playerslashtable = [];
 		enemybullettable = [];
 		
 		weaponswitch = 0;
 		
 		currentroom = null;
-		roomenemycount = 0;
+		roomenemies = game.add.group();
+		roomenemies.enableBody = true;
 		completedrooms = [];
 		
 		currentwalls = game.add.group();
@@ -661,7 +647,7 @@ DungeonFloor.prototype = {
 		if (bounds != -1 && currentroom == null) {
 			currentroom = bounds;
 			MakeBounds(bounds);
-			completedrooms[completedrooms.length] = bounds;
+			completedrooms.push(bounds);
 			
 			var temp = 0;
 			var enemyspawns = game.rnd.integerInRange(2, 3);
@@ -669,10 +655,12 @@ DungeonFloor.prototype = {
 				var roombounds = mainrooms[bounds];
 				var posX = roombounds[0] + game.rnd.integerInRange((-roombounds[2]/2)+1, (roombounds[2]/2)-1);
 				var posY = roombounds[1] + game.rnd.integerInRange((-roombounds[3]/2)+1, (roombounds[3]/2)-1);
-				enemytable[enemytable.length] = new Enemy(posX, posY, "default", true);
+				//enemytable[enemytable.length] = new Enemy(posX, posY, "default", true);
+				enemy = new Enemy(game, posX, posY, "default", false, 'enemy_atlas', 'enemyidle1');
+				game.add.existing(enemy);
+				roomenemies.add(enemy);
 				temp++;
 			}
-			roomenemycount = temp;
 			
 		} else if (PlayerInBoss(player.body.x, player.body.y) == true && currentroom == null) {
 			roomText.setText('In a boss room');
@@ -683,7 +671,7 @@ DungeonFloor.prototype = {
 		}
 		
 		if (currentroom != null){
-			if (roomenemycount == 0){
+			if (roomenemies.length == 0){
 				currentwalls.removeAll();
 				currentroom = null;
 			}
@@ -808,17 +796,18 @@ DungeonFloor.prototype = {
 		function MakePlayerSlash(posX, posY, time, type){
 			if (PLAYER_PROPERTIES.CURRENT_WEAPON == "melee"){
 				var slash = new PlayerSlash(posX, posY, "melee");
-				playerslashtable[playerslashtable.length] = slash;
+				playerslashtable.push(slash);
 				nextFire = time + 0.2; // this is the bullet rate of the weapon
 			}
 		}
 		
 		function MakePlayerBullet(posX, posY, time, type){
 			if (PLAYER_PROPERTIES.CURRENT_WEAPON == "default"){
-				var bullet = new PlayerProjectile(posX, posY, "default");
-				playerbullettable[playerbullettable.length] = bullet;
+				bullet = new PlayerProjectile(game, posX, posY, "default", 'character_atlas', 'projectile1');
+				game.add.existing(bullet);
+
+				playerbullettable.push(bullet);
 				nextFire = time + 0.2; // this is the bullet rate of the weapon
-				game.physics.arcade.moveToPointer(bullet.model, bullet.speed);
 			}
 		}
 		
@@ -843,148 +832,14 @@ DungeonFloor.prototype = {
 		
 		
 		
-		// move enemies
-		function EnemyMovement(){
-			var time = (game.time.now)/1000;
-			for (var i = 0; i < enemytable.length; i++) {
-				var enemy = enemytable[i];
-				
-				if (enemy != null){
-					
-					// check if player is in range of an enemy
-					if (InRange(player.body.x, player.body.y, enemy.model.body.x, enemy.model.body.y, enemy.seekrange) == true) {
-						
-						// damage player if they hit an enemy and give them invincibility frames (iframes)
-						// do not damage the player if they have invincibility frames
-						var enemyHitWall = game.physics.arcade.collide(enemy.model, walls);
-						var enemyHitCurrentWall = game.physics.arcade.collide(enemy.model, currentwalls);
-						
-						var playerHitEnemy = game.physics.arcade.collide(player, enemy.model);
-						if (playerHitEnemy == true && iframes <= 0){
-							PLAYER_PROPERTIES.HEALTH--;
-							iframes = 20;
-						}
-						
-						var dirX = game.math.clamp((player.body.x - enemy.model.body.x)/128, -1, 1);
-						var dirY = game.math.clamp((player.body.y - enemy.model.body.y)/128, -1, 1);
-						
-						// how does they enemy move? do they fire a projectile? if so, what kind?
-						// enemy type determines actions here.
-						if (enemy.type == "default"){
-							enemy.model.body.velocity.x = dirX * enemy.walkspeed;
-							enemy.model.body.velocity.y = dirY * enemy.walkspeed;
-							
-							if (time > enemy.nextfire){
-								var bullet = new EnemyProjectile(enemy.model.body.x + 8, enemy.model.body.y + 8, player.body.x, player.body.y, "default");
-								enemybullettable[enemybullettable.length] = bullet;
-								enemy.nextfire = time + enemy.firecooldown; // this is the bullet rate of the weapon
-
-								bullet.model.body.velocity.x = dirX*bullet.speed;
-								bullet.model.body.velocity.y = dirY*bullet.speed;
-							}
-						}
-						
-						if (enemy.type == "turret"){
-							// more types
-						}
-						
-					} else {
-						// enemy idle
-						enemy.model.body.velocity.x = 0;
-						enemy.model.body.velocity.y = 0;
-					}
-				}
-			}
-		}
-		
-		EnemyMovement();
-		
 		
 		
 		function ProjectileCheck(){
-			// check if any bullet has collided into something
-			for (var i = 0; i < playerbullettable.length; i++) {
-				var bullet = playerbullettable[i];
-				
-				if (bullet != null){
-					// check for bullet-wall collision
-					var bulletHitWall = game.physics.arcade.collide(bullet.model, walls);
-					var bulletHitCurrentWall = game.physics.arcade.collide(bullet.model, currentwalls);
-					// delete the bullet if it hits a wall
-					if (bulletHitWall == true || bulletHitCurrentWall == true){
-						bullet.model.kill();
-						bullet.model.destroy();
-						playerbullettable[i] = null;
-					}
-				
-					// check if any bullet has collided into any enemy
-					for (var j = 0; j < enemytable.length; j++) {
-						var enemy = enemytable[j];
-					
-						if (enemy != null){
-							// check for bullet-enemy collision
-							var bulletHitEnemy = game.physics.arcade.collide(bullet.model, enemy.model);
-							// delete the bullet if it hits an enemy and damage the enemy
-							if (bulletHitEnemy == true){
-								bullet.model.kill();
-								bullet.model.destroy();
-								playerbullettable[i] = null;
-							
-								// enemy is damaged, delete enemy if it dies
-								enemy.damage = function(dmg) {
-									this.health -= dmg;
-									if (this.health < 0) {
-										this.model.kill();
-										this.model.destroy();
-										enemytable[j] = null;
-										
-										if (roomenemycount > 0 && this.room == true){
-											roomenemycount--;
-										}
-									}
-								}
-								enemy.damage(bullet.damage);
-							}
-						}
-					}
-				}
-			}
 			
 			for (var i = 0; i < playerslashtable.length; i++) {
 				var slash = playerslashtable[i];
 				
 				if (slash != null){
-					for (var k = 0; k < slash.hitboxes.length; k++){
-						var box = slash.hitboxes[k];
-						
-						for (var j = 0; j < enemytable.length; j++) {
-							var enemy = enemytable[j];
-							
-							if (enemy != null){
-								// check for bullet-enemy collision
-								var boxHitEnemy = game.physics.arcade.collide(box, enemy.model);
-								// delete the bullet if it hits an enemy and damage the enemy
-								if (boxHitEnemy == true){
-									
-									// enemy is damaged, delete enemy if it dies
-									enemy.damage = function(dmg) {
-										this.health -= dmg;
-										if (this.health < 0) {
-											this.model.kill();
-											this.model.destroy();
-											enemytable[j] = null;
-											
-											if (roomenemycount > 0){
-												roomenemycount--;
-											}
-										}
-									}
-									enemy.damage(slash.damage);
-								}
-							}
-						}
-					}
-					
 					slash.duration = slash.duration - 1;
 					if (slash.duration < 1){
 						for (var k = 0; k < slash.hitboxes.length; k++){
@@ -994,7 +849,7 @@ DungeonFloor.prototype = {
 						}
 						slash.mainslash.kill();
 						slash.mainslash.destroy();
-						playerslashtable[i] = null;
+						playerslashtable.pop(i);
 					}
 				}
 			}
@@ -1010,7 +865,7 @@ DungeonFloor.prototype = {
 					if (bulletHitWall == true || bulletHitCurrentWall == true){
 						bullet.model.kill();
 						bullet.model.destroy();
-						enemybullettable[i] = null;
+						enemybullettable.pop(i);
 					}
 					
 					var bulletHitPlayer = game.physics.arcade.collide(bullet.model, player);
@@ -1018,7 +873,7 @@ DungeonFloor.prototype = {
 					if (bulletHitPlayer == true){
 						bullet.model.kill();
 						bullet.model.destroy();
-						enemybullettable[i] = null;
+						enemybullettable.pop(i);
 						
 						// player is damaged
 						if (bulletHitPlayer == true && iframes <= 0){	
@@ -1044,6 +899,27 @@ DungeonFloor.prototype = {
 		// base player physics
 		var playerHitWall = game.physics.arcade.collide(player, walls);
 		var playerHitCurrentWall = game.physics.arcade.collide(player, currentwalls);
+		
+		for (var i = 0; i < enemytable.length; i++) {
+			if (enemytable[i] == null){
+				enemytable.pop(i);
+			}
+		}
+		for (var i = 0; i < playerbullettable.length; i++) {
+			if (playerbullettable[i] == null){
+				playerbullettable.pop(i);
+			}
+		}
+		for (var i = 0; i < playerslashtable.length; i++) {
+			if (playerslashtable[i] == null){
+				playerslashtable.pop(i);
+			}
+		}
+		for (var i = 0; i < enemybullettable.length; i++) {
+			if (enemybullettable[i] == null){
+				enemybullettable.pop(i);
+			}
+		}
 		
 		//console.log(game.time.fps);
 	}
@@ -1108,10 +984,3 @@ GameOver.prototype = {
 
 // ... (define other states)
 
-game.state.add('TitleScreen', TitleScreen);
-game.state.add('DungeonFloor', DungeonFloor);
-game.state.add('NextFloor', NextFloor);
-game.state.add('GameOver', GameOver);
-// ... (add other states)
-
-game.state.start('TitleScreen');
