@@ -9,8 +9,13 @@ window.onload = function() {
 	game.state.add('DungeonFloor', DungeonFloor);
 	game.state.add('NextFloor', NextFloor);
 	game.state.add('GameOver', GameOver);
+	game.state.add('Tutorial', Tutorial);
+	game.state.add('Transition', Transition);
+	game.state.add('End', End);
+	game.state.add('Credits', Credits);
+	game.state.add('BeginMusic', BeginMusic);
 
-	game.state.start('TitleScreen');
+	game.state.start('BeginMusic');
 }
 
 // GLOBAL VARIABLES
@@ -30,53 +35,16 @@ var IFRAMES_MAX = 20; // invincibility frames
 var PLAYER_PROPERTIES = {
 	VELOCITY: 80, // unused
 	HEALTH: 10,
-	CURRENT_WEAPON: "default",
+	CURRENT_WEAPON: "Wooden Crossbow",
+	FIRE_RATE: 0.2,
+	POINTS: 0,
+	FLOOR: 0,
 };
 
 		
-// player slash class
-function PlayerSlash(posX, posY, type){
-	this.type = type;
-	var hitboxes = [];
-	
-	if (type == "melee"){
-		var angle = game.physics.arcade.angleToPointer(player);
 
-		var slash = game.add.sprite(player.body.x+(Math.cos(angle)*40)+16, player.body.y+(Math.sin(angle)*40)+16 , 'character_atlas', 'slash');
-		slash.anchor.x = 0.5;
-		slash.anchor.y = 0.5;
-		slash.rotation = game.physics.arcade.angleToPointer(player) + (Math.PI/2);
-		this.mainslash = slash
 
-		var hitboxDist = 50
-		var increment = 0.4
-		for (var i = 0; i < 5; i++){
-			var newSlash = game.add.sprite(player.body.x+(Math.cos(angle+increment*(i-2))*hitboxDist)+16, player.body.y+(Math.sin(angle+increment*(i-2))*hitboxDist)+16, 'character_atlas', 'projectile2');
-			game.physics.arcade.enable(newSlash);
-			newSlash.anchor.x = 0.5;
-			newSlash.anchor.y = 0.5;
-			hitboxes.push(newSlash);
-		}
-		
-		this.duration = 5;
-		this.damage = 1;
-	}
-	this.hitboxes = hitboxes;
-}
 
-// enemy projectile class
-function EnemyProjectile(posX, posY, playerX, playerY, type){
-	this.type = type;
-	
-	if (type == "default"){
-		this.speed = 200;
-		this.damage = 1;
-		this.model = enemyprojectiles.create(posX, posY, 'enemy_atlas', 'projectile1');
-		
-		var angle = game.math.angleBetween(posX, posY, playerX, playerY);
-		this.model.rotation = angle;
-	}
-}
 
 // helper function
 function InRange(x1, y1, x2, y2, range){
@@ -86,33 +54,203 @@ function InRange(x1, y1, x2, y2, range){
 	}
 	return false;
 }
-		
-		
 
+var BeginMusic = function(game) {};
+BeginMusic.prototype = {
+	
+	preload: function() {
+		console.log('BeginMusic: preload');
+		
+		game.load.audio('In Pursuit', 'assets/audio/In Pursuit.mp3');
+	},
+	
+	create: function() {
+		console.log('BeginMusic: create');
+
+		
+		music = game.add.audio('In Pursuit', 1, true);
+		music.play();
+		game.state.start('TitleScreen');
+	}
+	
+}
 
 var TitleScreen = function(game) {};
 TitleScreen.prototype = {
 	
 	preload: function() {
 		console.log('TitleScreen: preload');
-		game.load.atlas('enemy_atlas', 'assets/img/enemy8_atlas.png', 'assets/img/enemy8_sprites.json');
+		
+		game.load.audio('In Pursuit', 'assets/audio/In Pursuit.mp3');
 	},
 	
 	create: function() {
 		console.log('TitleScreen: create');
 		
 		// testing state text
-		stateText = game.add.text(20, 20, 'TitleScreen', { fontSize: '20px', fill: '#ffffff' });
+		//stateText = game.add.text(20, 20, 'TitleScreen', { fontSize: '20px', fill: '#ffffff' });
 		
-		// input prompt
-		promptText = game.add.text(400, 300, 'Press SPACE to begin.', { fontSize: '20px', fill: '#ffffff' });
+		promptText = game.add.text(400, 250, 'Tomb of the Ancients', { fontSize: '40px', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
+		
+		// input prompt
+		promptText = game.add.text(400, 350, 'Press SPACE to begin.', { fontSize: '20px', fill: '#ffffff' });
+		promptText.anchor.x = 0.5;
+		promptText.anchor.y = 0.5;
+		
+		promptText = game.add.text(400, 400, 'Press Q to view credits.', { fontSize: '20px', fill: '#ffffff' });
+		promptText.anchor.x = 0.5;
+		promptText.anchor.y = 0.5;
+		
+		PLAYER_PROPERTIES.POINTS = 0;
+		PLAYER_PROPERTIES.FLOOR = 0;
+		PLAYER_PROPERTIES.HEALTH = 10;
+		PLAYER_PROPERTIES.CURRENT_WEAPON = "Wooden Crossbow"; 
+		PLAYER_PROPERTIES.FIRE_RATE = 0.2;
 	},
 	
 	update: function() {
 		// shift to main game state
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){ // or isPressed
+			game.state.start('Tutorial');
+		}
+		if(game.input.keyboard.isDown(Phaser.Keyboard.Q)){
+			game.state.start('Credits');
+		}
+	}
+	
+}
+
+var Credits = function(game) {};
+Credits.prototype = {
+	
+	preload: function() {
+		console.log('Credits: preload');
+	},
+	
+	create: function() {
+		console.log('Credits: create');
+		
+		// testing state text
+		//stateText = game.add.text(20, 20, 'Credits', { fontSize: '20px', fill: '#ffffff' });
+		
+		newText = game.add.text(400, 100, 'CREDITS', { fontSize: '30px', fill: '#ffffff' });
+		newText.anchor.x = 0.5;
+		newText.anchor.y = 0.5;
+		
+		newText = game.add.text(400, 150, 'Developed by: Jacob Daniels-Flechtner, Kameron Fincher,', { fontSize: '20px', fill: '#ffffff' });
+		newText.anchor.x = 0.5;
+		newText.anchor.y = 0.5;
+		
+		newText = game.add.text(400, 175, 'Jeffrey Yao, Alexai Zachow and Eric Mitchell.', { fontSize: '20px', fill: '#ffffff' });
+		newText.anchor.x = 0.5;
+		newText.anchor.y = 0.5;
+		
+		newText = game.add.text(400, 250, 'Demo sprites (from opengameart.org) by: gtkampos,', { fontSize: '20px', fill: '#ffffff' });
+		newText.anchor.x = 0.5;
+		newText.anchor.y = 0.5;
+		
+		newText = game.add.text(400, 275, 'Andor Salga, SCay, AwesomePenguin and MetaShinryu.', { fontSize: '20px', fill: '#ffffff' });
+		newText.anchor.x = 0.5;
+		newText.anchor.y = 0.5;
+		
+		newText = game.add.text(400, 350, 'Music by: Purple Planet Music.', { fontSize: '20px', fill: '#ffffff' });
+		newText.anchor.x = 0.5;
+		newText.anchor.y = 0.5;
+		
+		// input prompt
+		promptText = game.add.text(400, 500, 'Press Q to go back.', { fontSize: '20px', fill: '#ffffff' });
+		promptText.anchor.x = 0.5;
+		promptText.anchor.y = 0.5;
+
+	},
+	
+	update: function() {
+		// shift to main game state
+		if(game.input.keyboard.isDown(Phaser.Keyboard.Q)){ // or isPressed
+			game.state.start('TitleScreen');
+		}
+	}
+	
+}
+
+var Tutorial = function(game) {};
+Tutorial.prototype = {
+	
+	preload: function() {
+		console.log('Tutorial: preload');
+	},
+	
+	create: function() {
+		console.log('Tutorial: create');
+		
+		// testing state text
+		//stateText = game.add.text(20, 20, 'Tutorial', { fontSize: '20px', fill: '#ffffff' });
+		
+		newText = game.add.text(400, 200, 'Press WASD to move, SHIFT to run.', { fontSize: '20px', fill: '#ffffff' });
+		newText.anchor.x = 0.5;
+		newText.anchor.y = 0.5;
+		
+		newText = game.add.text(400, 250, 'Left-click to use your weapon.', { fontSize: '20px', fill: '#ffffff' });
+		newText.anchor.x = 0.5;
+		newText.anchor.y = 0.5;
+		
+		newText = game.add.text(400, 300, 'Press Q to switch weapons.', { fontSize: '20px', fill: '#ffffff' });
+		newText.anchor.x = 0.5;
+		newText.anchor.y = 0.5;
+		
+		newText = game.add.text(400, 350, 'Rack up points by defeating enemies and clearing rooms.', { fontSize: '20px', fill: '#ffffff' });
+		newText.anchor.x = 0.5;
+		newText.anchor.y = 0.5;
+		
+		newText = game.add.text(400, 400, 'Attempt to progress through 4 floors of the temple.', { fontSize: '20px', fill: '#ffffff' });
+		newText.anchor.x = 0.5;
+		newText.anchor.y = 0.5;
+		
+		// input prompt
+		promptText = game.add.text(400, 450, 'Press SPACE to continue.', { fontSize: '20px', fill: '#ffffff' });
+		promptText.anchor.x = 0.5;
+		promptText.anchor.y = 0.5;
+
+	},
+	
+	update: function() {
+		// shift to main game state
+		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){ // or isPressed
+			music.stop();
+			game.state.start('Transition');
+		}
+	}
+	
+}
+
+var Transition = function(game) {};
+Transition.prototype = {
+	
+	preload: function() {
+		console.log('Transition: preload');
+	},
+	
+	create: function() {
+		console.log('Transition: create');
+		
+		// testing state text
+		//stateText = game.add.text(20, 20, 'Transition', { fontSize: '20px', fill: '#ffffff' });
+		
+		promptText = game.add.text(400, 300, 'Floor ' + (PLAYER_PROPERTIES.FLOOR + 1), { fontSize: '30px', fill: '#ffffff' });
+		promptText.anchor.x = 0.5;
+		promptText.anchor.y = 0.5;
+		
+		PLAYER_PROPERTIES.CURRENT_WEAPON = "Wooden Crossbow"; 
+		
+		tick = 0;
+	},
+	
+	update: function() {
+		// shift to main game state
+		tick++;
+		if(tick > 100){
 			game.state.start('DungeonFloor');
 		}
 	}
@@ -134,7 +272,14 @@ DungeonFloor.prototype = {
 		game.load.atlas('enemy_atlas', 'assets/img/enemy8_atlas.png', 'assets/img/enemy8_sprites.json');
 		game.load.atlas('tile_atlas', 'assets/img/tile_atlas.png', 'assets/img/tile_sprites.json');
 		game.load.atlas('tile_overlay', 'assets/img/tile_overlay.png', 'assets/img/overlay_glyphs.json');
-		//game.load.spritesheet('dude', 'assets/img/dude.png', 32, 48);
+		game.load.image('blank', 'assets/img/blank.png');
+		game.load.image('wooden_crossbow', 'assets/img/wooden_crossbow.png');
+		game.load.image('iron_dagger', 'assets/img/iron_dagger.png');
+		
+		game.load.audio('Immuration', 'assets/audio/Immuration.mp3');
+		game.load.audio('In Pursuit', 'assets/audio/In Pursuit.mp3');
+		
+		//game.time.advancedTiming = true;
 	},
 	
 	// generate the dungeon floor and spawn entities
@@ -160,277 +305,7 @@ DungeonFloor.prototype = {
 		playercoords = [];
 		treasure = [];
 		
-		
-		// DUNGEON GENERATION
-		// Dungeon generation methods, in the order that they are accessed: SpawnDungeon(), Shuffle(), MakeRoom(), MakePath(), MakeWalls(), InBounds()
-		// SpawnDungeon() determines the general layout of a dungeon while applying significant randomization.
-		// Shuffle() is a helper function that simply shuffles an array.
-		// MakeRoom() stores room values generated by SpawnDungeon().
-		// MakePath() calls MakeRoom() but shapes rooms in a hallway formation.
-		// MakeWalls() actually builds the walls by placing sprites in the way we ask it to.
-		// InBounds() is an important helper function that determines what kind of tile should be drawn.
-		
-		
-		// MakeRoom()
-		// stores all room values as subarrays in rooms[]. InBounds() will later check for these values.
-		// anything that can be initialized in a certain type of room will check for roomtype and save
-		// -the coordinates for where that entity should spawn, which can be accessed later.
-		function MakeRoom(x, y, width, height, roomtype){
-			rooms.push([x, y, width, height]);
-			
-			if (roomtype == "normal"){
-				mainrooms.push([x, y, width, height]);
-				
-			}
-	
-			if (roomtype == "start") { // save player coordinates.
-				playercoords = [x, y];
-			}
-			
-			/*
-			if (roomtype == "normal") { // chance of spawning an arbitrary enemy in the middle of a room.
-				var temp = game.rnd.integerInRange(0, 1);
-				if (temp == 0) {
-					enemies[enemies.length] = [x, y];
-				}
-			}
-			*/
-	
-			if (roomtype == "hall") { // chance of spawning an arbitrary enemy in a hallway segment.
-				enemies.push([x, y]);
-				
-			}
-			
-			
-	
-			if (roomtype == "boss") { // save boss coordinates.
-				bosscoords = [x, y];
-				bossroom = [x, y, width, height];
-			}
-			
-			/*
-			if (roomtype == "normal") { // chance of spawning teasure slightly off from the center of a room.
-				var temp = game.rnd.integerInRange(0, 4);
-				if (temp < 2) {
-					var randomX = game.rnd.integerInRange(0, 1);
-					var randomY = game.rnd.integerInRange(0, 1);
-					treasure[treasure.length] = [x + (randomX-0.5)*(WALL_SIZE*2), y + (randomY-0.5)*(WALL_SIZE*2)];
-				}
-			}
-			*/
-		}
-		
-		// MakePath()
-		// creates 2 narrow rooms that connect (x1,y1) and (x2,y), resembling hallways.
-		// pathtype determines which side the path will appear on, spawnenemy determines if an enemy can spawn inside it.
-		function MakePath(x1, y1, x2, y2, pathtype, spawnenemy){
-			var halltype = "hall";
-			
-			// bypass enemy spawning in hallway directly adjacent from spawn
-			
-			var avgX = (x1+x2)/2;
-			var diffX = game.math.difference(x1, x2);
-			
-			// spawn first hallway segment (in one of two directions)
-			if (pathtype == "in") {
-				if (spawnenemy == false) {
-					halltype = "cleanhall";
-				}
-				MakeRoom(avgX, y1, (diffX) + PATH_WIDTH, PATH_WIDTH, halltype);
-			} else if (pathtype == "out") {
-				MakeRoom(avgX, y2, (diffX) + PATH_WIDTH, PATH_WIDTH, halltype)
-			}
-			
-			var halltype = "hall";
-	
-			var avgY = (y1+y2)/2;
-			var diffY = game.math.difference(y1, y2);
-			
-			// spawn second hallway segment (in one of two directions)
-			if (pathtype == "in") {
-				MakeRoom(x2, avgY, PATH_WIDTH, (diffY) + PATH_WIDTH, halltype);
-			} else if (pathtype == "out") {
-				if (spawnenemy == false) {
-					halltype = "cleanhall";
-				}
-				MakeRoom(x1, avgY, PATH_WIDTH, (diffY) + PATH_WIDTH, halltype);
-			}
-		}
-		
-		// InBounds()
-		// checks if the (x,y) pair exists in a room, a wall, or a ledge and returns a status.
-		function InBounds(x,y){
-			var tilestatus = "wall";
-			var OOBcount = 0;
-			for (var i = 0; i < rooms.length; i++) { // check the bounds of all rooms
-				var boundX1 = rooms[i][0] - (rooms[i][2]/2);
-				var boundX2 = rooms[i][0] + (rooms[i][2]/2);
-				var boundY1 = rooms[i][1] - (rooms[i][3]/2);
-				var boundY2 = rooms[i][1] + (rooms[i][3]/2);
-				var extrabound = boundY1 - WALL_SIZE; // designate a small space above a room where a ledge can be placed
-				
-				if ((x <= boundX1 - (WALL_SIZE)) || (x > boundX2 + (WALL_SIZE)) || (y <= boundY1 - (WALL_SIZE)) || (y > boundY2 + (WALL_SIZE))){
-					OOBcount++;
-				}
-				
-				if (x > boundX1 && x <= boundX2) {
-					if (y > extrabound && y <= boundY1 && tilestatus != "air") {
-						tilestatus = "ledge";
-					}
-					if (y > boundY1 && y <= boundY2) {
-						tilestatus = "air";
-					}
-				}
-			}
-			
-			// out of bounds
-			if (OOBcount == rooms.length){
-				tilestatus = "OOB";
-			}
-			
-			return tilestatus;
-		}
-		
-		// MakeWalls()
-		// places tiles across the map space. essentially a grid full of squares carved out by checking InBounds().
-		// the status returned by InBounds() indicates what kind of sprite should be placed.
-		function MakeWalls(){
-			for (var i = WALL_SIZE/2; i <= FLOOR_SIZE-(WALL_SIZE/2); i += WALL_SIZE) {
-				for (var j = WALL_SIZE/2; j <= FLOOR_SIZE-(WALL_SIZE/2); j += WALL_SIZE) {
-					var tilestatus = InBounds(i,j);
-					
-					// tile sprites by: asalga (Andor Salga) and gtkampos from opengameart.org
-					
-					if (tilestatus == "wall") {
-						var tile = walls.create(i, j, 'tile_atlas', 'wall'); // spawn a wall
-						tile.body.immovable = true;
-						tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
-						tile.anchor.x = 0.5;
-						tile.anchor.y = 0.5;
-					} else if (tilestatus == "ledge") {
-						var tile = walls.create(i, j, 'tile_atlas', 'ledge'); // spawn a ledge
-						tile.body.immovable = true;
-						tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
-						tile.anchor.x = 0.5;
-						tile.anchor.y = 0.5;
-					} else if (tilestatus == "air")  { // if status == "air"
-						var tile = game.add.sprite(i, j, 'tile_atlas', 'floor1'); // spawn a floor tile
-						tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
-						tile.anchor.x = 0.5;
-						tile.anchor.y = 0.5;
-						
-						var rand = game.rnd.integerInRange(0, 12);
-						if (rand == 0) {
-							var overlay = game.add.sprite(i, j, 'tile_overlay', 'glyph1'); // spawn glyph
-							overlay.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
-							overlay.anchor.x = 0.5;
-							overlay.anchor.y = 0.5;
-						} else if (rand == 1) {
-							var overlay = game.add.sprite(i, j, 'tile_overlay', 'glyph2'); // spawn glyph
-							overlay.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
-							overlay.anchor.x = 0.5;
-							overlay.anchor.y = 0.5;
-						} else if (rand == 2) {
-							var overlay = game.add.sprite(i, j, 'tile_overlay', 'glyph3'); // spawn glyph
-							overlay.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
-							overlay.anchor.x = 0.5;
-							overlay.anchor.y = 0.5;
-						} else if (rand == 3) {
-							var overlay = game.add.sprite(i, j, 'tile_overlay', 'glyph4'); // spawn glyph
-							overlay.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
-							overlay.anchor.x = 0.5;
-							overlay.anchor.y = 0.5;
-						}
-						
-						
-					} else if (tilestatus == "OOB") {
-						var tile = game.add.sprite(i, j, 'tile_atlas', 'wall'); // spawn a wall
-						tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
-						tile.anchor.x = 0.5;
-						tile.anchor.y = 0.5;
-					}
-					
-				}
-			}
-		}
-		
-		// Shuffle()
-		// shuffles elements of an array.
-		function Shuffle(t){
-			var n = t.length-1;
-			while (n >= 0) {
-				var k = game.rnd.integerInRange(0, n);
-				var temp = t[n];
-				t[n] = t[k];
-				t[k] = temp;
-				n--;
-			}
-			return t;
-		}
-		
-		// SpawnDungeon()
-		// determines the general layout of the dungeon and spawns rooms and paths with SpawnRoom() and SpawnPath().
-		// room positions are determined by shuffling arrays of X and Y vertices using Shuffle()
-		// room information is stored in points[i], which can be referred to as the centerpoints of rooms or the
-		// -endpoints of paths. both are drawn out using the same set of points, with a bit of randomness varience.
-		function SpawnDungeon(){
-			var pointnum = game.rnd.integerInRange(6, 8);
-			var groupx = [];
-			var groupy = [];
-			
-			// initialize default point values
-			for (var i = 0; i < pointnum; i++) {
-				groupx[i] = i;
-				groupy[i] = i;
-			}
-			
-			// shuffle point values
-			groupx = Shuffle(groupx);
-			groupy = Shuffle(groupy);
-
-			// store room values in points[]
-			for (var i = 0; i < pointnum; i++) {
-				var pointX = (FLOOR_SIZE*((groupx[i]+1)/(pointnum+1))) + game.rnd.integerInRange(-WALL_SIZE/4, WALL_SIZE/4);
-				var pointY = (FLOOR_SIZE*((groupy[i]+1)/(pointnum+1))) + game.rnd.integerInRange(-WALL_SIZE/4, WALL_SIZE/4);
-				points[i] = [pointX, pointY];
-			}
-			
-			// spawn rooms 1 to i-1. the last room is special, so it is added outside of the loop.
-			for (var i = 0; i < pointnum-1; i++) {
-				// spawn room.
-				if (i == 0) {
-					MakeRoom(points[i][0], points[i][1], START_ROOM*WALL_SIZE, START_ROOM*WALL_SIZE, "start");
-				} else {
-					MakeRoom(points[i][0], points[i][1], game.rnd.integerInRange(ROOM_MIN*WALL_SIZE, ROOM_MAX*WALL_SIZE), game.rnd.integerInRange(ROOM_MIN*WALL_SIZE, ROOM_MAX*WALL_SIZE), "normal");
-				}
-				
-				// prevent enemy spawning in the first path that is always adjacent to the spawn.
-				var makeenemy = true;
-				if (i == 0) {
-					makeenemy = false;
-				}
-				
-				// spawn a path that goes from the current room to the next one.
-				var temp = game.rnd.integerInRange(0, 1);
-				if (temp == 0) {
-					MakePath(points[i][0], points[i][1], points[i+1][0], points[i+1][1], "in", makeenemy);
-				} else {
-					MakePath(points[i][0], points[i][1], points[i+1][0], points[i+1][1], "out", makeenemy);
-				}
-			}
-			
-			// spawn the boss room (this is special because no path needs to continue from it, and it spawns a boss.)
-			MakeRoom(points[pointnum-1][0], points[pointnum-1][1], BOSS_ROOM*WALL_SIZE, BOSS_ROOM*WALL_SIZE, "boss");
-			
-			// draw the physical wall sprites.
-			MakeWalls();
-		}
-		
 		SpawnDungeon(); // this all the work of dungeon generation.
-		
-		
-		
-		
 		
 		// spawn the player, who has been given a spawn location by SpawnDungeon().
 		var posX = playercoords[0];
@@ -438,54 +313,35 @@ DungeonFloor.prototype = {
 		posX = posX - (posX % WALL_SIZE) + (WALL_SIZE/2);
 		posY = posY - (posY % WALL_SIZE) + (WALL_SIZE/2);
 		
-		player = game.add.sprite(posX, posY, 'character_atlas');
-		
-		// NOTE: phaser does not warn you if you try to use an animation that doesn't exist (such as having a typo in the name)
-		player.animations.add('idle', Phaser.Animation.generateFrameNames('playeridle', 1, 2), 5, true);
-		player.animations.add('walkup', Phaser.Animation.generateFrameNames('playerup', 1, 2), 5, true);
-		player.animations.add('walkright', Phaser.Animation.generateFrameNames('playerright', 1, 2), 5, true);
-		player.animations.add('walkleft', Phaser.Animation.generateFrameNames('playerleft', 1, 2), 5, true);
-		player.animations.add('walkdown', Phaser.Animation.generateFrameNames('playerdown', 1, 2), 5, true);
-		player.animations.add('walkupleft', Phaser.Animation.generateFrameNames('playerupleft', 1, 2), 5, true);
-		player.animations.add('walkupright', Phaser.Animation.generateFrameNames('playerupright', 1, 2), 5, true);
-		player.animations.add('walkdownleft', Phaser.Animation.generateFrameNames('playerdownleft', 1, 2), 5, true);
-		player.animations.add('walkdownright', Phaser.Animation.generateFrameNames('playerdownright', 1, 2), 5, true);
-		
-		direction = "";
-		
-		game.physics.arcade.enable(player);
-		player.body.setSize(32, 32, 0, 0);
-		//player.scale.setTo(0.5, 0.5);
-		player.anchor.x = 0.5;
-		player.anchor.y = 0.5;
-		
-		// lock the camera to the player
-		game.camera.follow(player);
+		player = new Player(game, posX, posY, 'character_atlas', 'playeridle1');
 		
 		// invincibility frames
 		iframes = 0;
 		
 		
-		
 		// testing state text
-		stateText = game.add.text(20, 20, 'DungeonFloor', { fontSize: '20px', fill: '#ffffff' });
-		stateText.fixedToCamera = true;
+		//stateText = game.add.text(20, 20, 'DungeonFloor', { fontSize: '20px', fill: '#ffffff' });
+		//stateText.fixedToCamera = true;
 		
-		healthText = game.add.text(400, 550, 'Health: ' + PLAYER_PROPERTIES.HEALTH, { fontSize: '20px', fill: '#ffffff' });
+		healthText = game.add.text(300, 550, 'Health: ' + PLAYER_PROPERTIES.HEALTH, { fontSize: '20px', fill: '#ffffff' });
 		healthText.anchor.x = 0.5;
 		healthText.anchor.y = 0.5;
 		healthText.fixedToCamera = true;
 		
-		weaponText = game.add.text(650, 550, 'Weapon: ' + PLAYER_PROPERTIES.CURRENT_WEAPON, { fontSize: '20px', fill: '#ffffff' });
+		weaponText = game.add.text(600, 550, 'Weapon: ' + PLAYER_PROPERTIES.CURRENT_WEAPON, { fontSize: '20px', fill: '#ffffff' });
 		weaponText.anchor.x = 0.5;
 		weaponText.anchor.y = 0.5;
 		weaponText.fixedToCamera = true;
 		
-		roomText = game.add.text(150, 550, '', { fontSize: '20px', fill: '#ffffff' });
+		roomText = game.add.text(400, 500, '', { fontSize: '20px', fill: '#ffffff' });
 		roomText.anchor.x = 0.5;
 		roomText.anchor.y = 0.5;
 		roomText.fixedToCamera = true;
 		
+		scoreText = game.add.text(100, 550, 'Score: ' + PLAYER_PROPERTIES.POINTS, { fontSize: '20px', fill: '#ffffff' });
+		scoreText.anchor.x = 0.5;
+		scoreText.anchor.y = 0.5;
+		scoreText.fixedToCamera = true;
 		
 		
 		// create projectile groups
@@ -508,7 +364,8 @@ DungeonFloor.prototype = {
 		// spawn enemies in hallways
 		for (var i = 0; i < enemies.length; i++){
 			enemy = new Enemy(game, enemies[i][0], enemies[i][1], "default", false, 'enemy_atlas', 'enemyidle1');
-			game.add.existing(enemy);
+			enemytable.push(enemy);
+			//game.add.existing(enemy);
 		}
 		
 		playerbullettable = [];
@@ -528,6 +385,16 @@ DungeonFloor.prototype = {
 		
 		currentwalls = game.add.group();
 		currentwalls.enableBody = true;
+		
+		weapon = game.add.sprite(posX, posY, 'wooden_crossbow');
+		weapon.anchor.set(0.5);
+		game.physics.arcade.enable(weapon);
+		
+		isslashing = false;
+		slashframe = 0;
+		
+		music = game.add.audio('Immuration', 1, true);
+		music.play();
 	},
 	
 	
@@ -551,97 +418,10 @@ DungeonFloor.prototype = {
 		
 		
 		
+		// base player physics
+		var playerHitWall = game.physics.arcade.collide(player, walls);
+		var playerHitCurrentWall = game.physics.arcade.collide(player, currentwalls);
 		
-		function PlayerInBounds(x,y){
-			for (var i = 0; i < mainrooms.length; i++) { // check the bounds of all rooms
-				var skip = false;
-				for (var j = 0; j < completedrooms.length; j++){
-					if (i == completedrooms[j]) {
-						skip = true;
-					}
-				}
-				if (skip == false){
-					var boundX1 = mainrooms[i][0] - (mainrooms[i][2]/2);
-					var boundX2 = mainrooms[i][0] + (mainrooms[i][2]/2);
-					var boundY1 = mainrooms[i][1] - (mainrooms[i][3]/2);
-					var boundY2 = mainrooms[i][1] + (mainrooms[i][3]/2);
-					
-					if (x > boundX1 && x <= boundX2) {
-						if (y > boundY1 && y <= boundY2) {
-							return i;
-						}
-					}
-				}
-			}
-			return -1;
-		}
-		
-		function PlayerInBoss(x,y){
-			var boundX1 = bossroom[0] - (bossroom[2]/2);
-			var boundX2 = bossroom[0] + (bossroom[2]/2);
-			var boundY1 = bossroom[1] - (bossroom[3]/2);
-			var boundY2 = bossroom[1] + (bossroom[3]/2);
-				
-			if (x > boundX1 && x <= boundX2) {
-				if (y > boundY1 && y <= boundY2) {
-					return true;
-				}
-			}
-			return false;
-		}
-		
-		function MakeBounds(num){
-			var roombounds = mainrooms[num];
-			var boundX1 = roombounds[0] - (roombounds[2]/2);
-			var boundX2 = roombounds[0] + (roombounds[2]/2);
-			var boundY1 = roombounds[1] - (roombounds[3]/2);
-			var boundY2 = roombounds[1] + (roombounds[3]/2);
-			
-			// create upper wall
-			for (var i = boundX1 - (WALL_SIZE/2); i <= boundX2 + (WALL_SIZE/2); i += WALL_SIZE){
-				var tileX = i;
-				var tileY = boundY1 - (WALL_SIZE/2);
-				var tile = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'ledge'); // spawn a wall
-				
-				tile.body.immovable = true;
-				tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
-				tile.anchor.x = 0.5;
-				tile.anchor.y = 0.5;
-			}
-			// create lower wall
-			for (var i = boundX1 - (WALL_SIZE/2); i <= boundX2 + (WALL_SIZE/2); i += WALL_SIZE){
-				var tileX = i;
-				var tileY = boundY2 + (WALL_SIZE/2);
-				var tile = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'wall'); // spawn a wall
-				
-				tile.body.immovable = true;
-				tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
-				tile.anchor.x = 0.5;
-				tile.anchor.y = 0.5;
-			}
-			// create left wall
-			for (var i = boundY1 - (WALL_SIZE/2); i <= boundY2 + (WALL_SIZE/2); i += WALL_SIZE){
-				var tileX = boundX1 - (WALL_SIZE/2);
-				var tileY = i;
-				var tile = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'wall'); // spawn a wall
-				
-				tile.body.immovable = true;
-				tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
-				tile.anchor.x = 0.5;
-				tile.anchor.y = 0.5;
-			}
-			// create right wall
-			for (var i = boundY1 - (WALL_SIZE/2); i <= boundY2 + (WALL_SIZE/2); i += WALL_SIZE){
-				var tileX = boundX2 + (WALL_SIZE/2);
-				var tileY = i;
-				var tile = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'wall'); // spawn a wall
-				
-				tile.body.immovable = true;
-				tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
-				tile.anchor.x = 0.5;
-				tile.anchor.y = 0.5;
-			}
-		}
 		
 		var bounds = PlayerInBounds(player.body.x, player.body.y);
 		if (bounds != -1 && currentroom == null) {
@@ -653,25 +433,23 @@ DungeonFloor.prototype = {
 			var enemyspawns = game.rnd.integerInRange(2, 3);
 			for (var i = 0; i < enemyspawns; i++){
 				var roombounds = mainrooms[bounds];
-				var posX = roombounds[0] + game.rnd.integerInRange((-roombounds[2]/2)+1, (roombounds[2]/2)-1);
-				var posY = roombounds[1] + game.rnd.integerInRange((-roombounds[3]/2)+1, (roombounds[3]/2)-1);
-				//enemytable[enemytable.length] = new Enemy(posX, posY, "default", true);
+				var posX = roombounds[0] + game.rnd.integerInRange((-roombounds[2]/2) + (WALL_SIZE/2), (roombounds[2]/2) - (WALL_SIZE/2));
+				var posY = roombounds[1] + game.rnd.integerInRange((-roombounds[3]/2) + (WALL_SIZE/2), (roombounds[3]/2) + (WALL_SIZE/2));
 				enemy = new Enemy(game, posX, posY, "default", false, 'enemy_atlas', 'enemyidle1');
-				game.add.existing(enemy);
+				enemytable.push(enemy);
 				roomenemies.add(enemy);
 				temp++;
 			}
-			
 		} else if (PlayerInBoss(player.body.x, player.body.y) == true && currentroom == null) {
-			roomText.setText('In a boss room');
-		} else if (currentroom != null){
-			roomText.setText('In a normal room: ' + currentroom);
+			roomText.setText('End of dungeon. Press E to continue.');
 		} else {
 			roomText.setText('');
 		}
 		
+		
 		if (currentroom != null){
 			if (roomenemies.length == 0){
+				PLAYER_PROPERTIES.POINTS += 50;
 				currentwalls.removeAll();
 				currentroom = null;
 			}
@@ -680,161 +458,108 @@ DungeonFloor.prototype = {
 		
 		// extremely basic state handling
 		if (PLAYER_PROPERTIES.HEALTH <= 0) {
+			music.stop();
 			game.state.start('GameOver', true, true);
 		}
 		
 		if (game.input.keyboard.isDown(Phaser.Keyboard.E)) {
 			if (PlayerInBoss(player.body.x, player.body.y) == true){
-				game.state.start('NextFloor', true, true);
-			}
-		}
-		
-		if (weaponswitch > 0) { weaponswitch--; }
-		if (game.input.keyboard.isDown(Phaser.Keyboard.Q) && weaponswitch < 1) {
-			if (PLAYER_PROPERTIES.CURRENT_WEAPON == "default") {
-				PLAYER_PROPERTIES.CURRENT_WEAPON = "melee";
-				console.log(PLAYER_PROPERTIES.CURRENT_WEAPON);
-				
-			} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "melee") {
-				PLAYER_PROPERTIES.CURRENT_WEAPON = "default";
-				console.log(PLAYER_PROPERTIES.CURRENT_WEAPON);
-			}
-			weaponswitch = 20;
-		}
-		
-		healthText.setText('Health: ' + PLAYER_PROPERTIES.HEALTH);
-		
-		weaponText.setText('Weapon: ' + PLAYER_PROPERTIES.CURRENT_WEAPON);
-		
-		
-		// function used for 8-directional player movement
-		function PlayerMovement(){
-			player.body.velocity.x = 0;
-			player.body.velocity.y = 0;
-			
-			// run with SHIFT
-			var RUNBOOL = false;
-			if(game.input.keyboard.isDown(Phaser.Keyboard.SHIFT)){
-				RUNBOOL = true;
-			}
-		
-			// toggle run speed
-			var velocity = WALK_SPEED;
-			if (RUNBOOL == true){
-				velocity = RUN_SPEED;
-			}
-			
-			direction1 = "";
-			direction2 = "";
-			
-			if (game.input.keyboard.isDown(Phaser.Keyboard.A)) {
-				// Move left
-				player.body.velocity.x = -velocity;
-				direction2 = direction1;
-				direction1 = "left";
-			}
-			if (game.input.keyboard.isDown(Phaser.Keyboard.D)) {
-				// Move right
-				player.body.velocity.x = velocity;
-				direction2 = direction1;
-				direction1 = "right";
-			}
-			if (game.input.keyboard.isDown(Phaser.Keyboard.W)) {
-				// Move up
-				player.body.velocity.y = -velocity;
-				direction2 = direction1;
-				direction1 = "up";
-			}
-			if (game.input.keyboard.isDown(Phaser.Keyboard.S)) {
-				// Move down
-				player.body.velocity.y = velocity;
-				direction2 = direction1;
-				direction1 = "down";
-			}
-		
-			// negate opposite inputs
-			if ((direction1 == "left" && direction2 == "right") || (direction1 == "right" && direction2 == "left")){
-				direction2 = "";
-			}
-			if ((direction1 == "up" && direction2 == "down") || (direction1 == "down" && direction2 == "up")){
-				direction2 = "";
-			}
-			
-			if (direction1 == "" && direction2 == ""){
-				// Play idle animation
-				player.animations.play('idle');
-			} else if (direction1 == "left" && direction2 == ""){
-				// Play left animation
-				player.animations.play('walkleft');
-			} else if (direction1 == "right" && direction2 == ""){
-				// Play right animation
-				player.animations.play('walkright');
-			} else if (direction1 == "up" && direction2 == ""){
-				// Play up animation
-				player.animations.play('walkup');
-			} else if (direction1 == "down" && direction2 == ""){
-				// Play down animation
-				player.animations.play('walkdown');
-			} else if ((direction1 == "left" && direction2 == "up") || (direction1 == "up" && direction2 == "left")){
-				// Play up-left animation
-				player.animations.play('walkupleft');
-			} else if ((direction1 == "right" && direction2 == "up") || (direction1 == "up" && direction2 == "right")){
-				// Play up-right animation
-				player.animations.play('walkupright');
-			} else if ((direction1 == "left" && direction2 == "down") || (direction1 == "down" && direction2 == "left")){
-				// Play down-left animation
-				player.animations.play('walkdownleft');
-			} else if ((direction1 == "right" && direction2 == "down") || (direction1 == "down" && direction2 == "right")){
-				// Play down-right animation
-				player.animations.play('walkdownright');
-			}
-		}
-		
-		PlayerMovement();
-		
-		
-		function MakePlayerSlash(posX, posY, time, type){
-			if (PLAYER_PROPERTIES.CURRENT_WEAPON == "melee"){
-				var slash = new PlayerSlash(posX, posY, "melee");
-				playerslashtable.push(slash);
-				nextFire = time + 0.2; // this is the bullet rate of the weapon
-			}
-		}
-		
-		function MakePlayerBullet(posX, posY, time, type){
-			if (PLAYER_PROPERTIES.CURRENT_WEAPON == "default"){
-				bullet = new PlayerProjectile(game, posX, posY, "default", 'character_atlas', 'projectile1');
-				game.add.existing(bullet);
-
-				playerbullettable.push(bullet);
-				nextFire = time + 0.2; // this is the bullet rate of the weapon
-			}
-		}
-		
-		function FireButton(){
-			// fire weapon on left mouse click
-			if (game.input.activePointer.leftButton.isDown){
-				var time = (game.time.now)/1000; 
-				// check if you can fire the weapon (based on fire rate)
-				if (time > nextFire) {
-					// check weapon type
-					if (PLAYER_PROPERTIES.CURRENT_WEAPON == "default") {
-						MakePlayerBullet(player.body.x + 8, player.body.y + 8, time, "default");
-					} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "melee") {
-						MakePlayerSlash(player.body.x + 8, player.body.y + 8, time, "melee");
-					}
-					// list other weapon types here
+				PLAYER_PROPERTIES.POINTS += 100;
+				PLAYER_PROPERTIES.FLOOR += 1;
+				music.stop();
+				if (PLAYER_PROPERTIES.FLOOR != 4){
+					game.state.start('Transition', true, true);
+				} else {
+					game.state.start('End', true, true);
 				}
 			}
 		}
-		
-		FireButton()
-		
-		
-		
-		
+
 		
 		function ProjectileCheck(){
+			
+			for (var i = 0; i < playerbullettable.length; i++) {
+				var bullet = playerbullettable[i];
+				
+				if (bullet != null){
+				
+					// check if any bullet has collided into any enemy
+					for (var j = 0; j < enemytable.length; j++) {
+						var enemy = enemytable[j];
+					
+						if (enemy != null){
+							// check for bullet-enemy collision
+							var bulletHitEnemy = game.physics.arcade.collide(bullet, enemy);
+							// delete the bullet if it hits an enemy and damage the enemy
+							if (bulletHitEnemy == true){
+								bullet.kill();
+								bullet.destroy();
+								playerbullettable[i] = null;
+							
+								// enemy is damaged, delete enemy if it dies
+								enemy.damage = function(dmg) {
+									this.health -= bullet.damage;
+									if (this.health < 0) {
+										this.kill();
+										this.destroy();
+										enemytable[j] = null;
+										
+									}
+								}
+								enemy.damage(bullet.damage);
+							}
+						}
+					}
+				}
+			}
+			
+			for (var i = 0; i < playerslashtable.length; i++) {
+				var slash = playerslashtable[i];
+				
+				if (slash != null){
+					for (var k = 0; k < slash.hitboxes.length; k++){
+						var box = slash.hitboxes[k];
+						
+						for (var j = 0; j < enemytable.length; j++) {
+							var enemy = enemytable[j];
+							
+							if (enemy != null){
+								// check for bullet-enemy collision
+								var boxHitEnemy = game.physics.arcade.collide(box, enemy);
+								// delete the bullet if it hits an enemy and damage the enemy
+								if (boxHitEnemy == true){
+									
+									// enemy is damaged, delete enemy if it dies
+									enemy.damage = function(dmg) {
+										this.health -= slash.damage;
+										if (this.health < 0) {
+											this.kill();
+											this.destroy();
+											enemytable[j] = null;
+											
+										}
+									}
+									enemy.damage(slash.damage);
+								}
+							}
+						}
+					}
+					
+					slash.duration = slash.duration - 1;
+					if (slash.duration < 1){
+						for (var k = 0; k < slash.hitboxes.length; k++){
+							var box = slash.hitboxes[k];
+							box.kill();
+							box.destroy();
+						}
+						slash.mainslash.kill();
+						slash.mainslash.destroy();
+						playerslashtable.pop(i);
+					}
+				}
+			}
+
+			
 			
 			for (var i = 0; i < playerslashtable.length; i++) {
 				var slash = playerslashtable[i];
@@ -854,35 +579,7 @@ DungeonFloor.prototype = {
 				}
 			}
 			
-			for (var i = 0; i < enemybullettable.length; i++) {
-				var bullet = enemybullettable[i];
-				
-				if (bullet != null){
-					// check for bullet-wall collision
-					var bulletHitWall = game.physics.arcade.collide(bullet.model, walls);
-					var bulletHitCurrentWall = game.physics.arcade.collide(bullet.model, currentwalls);
-					// delete the bullet if it hits a wall
-					if (bulletHitWall == true || bulletHitCurrentWall == true){
-						bullet.model.kill();
-						bullet.model.destroy();
-						enemybullettable.pop(i);
-					}
-					
-					var bulletHitPlayer = game.physics.arcade.collide(bullet.model, player);
-					// delete the bullet if it hits an enemy and damage the enemy
-					if (bulletHitPlayer == true){
-						bullet.model.kill();
-						bullet.model.destroy();
-						enemybullettable.pop(i);
-						
-						// player is damaged
-						if (bulletHitPlayer == true && iframes <= 0){	
-							PLAYER_PROPERTIES.HEALTH -= bullet.damage;
-							iframes = IFRAMES_MAX;
-						}
-					}
-				}
-			}
+			
 		}
 		
 		ProjectileCheck();
@@ -895,33 +592,16 @@ DungeonFloor.prototype = {
 			iframes = 0;
 		}
 		
-
-		// base player physics
-		var playerHitWall = game.physics.arcade.collide(player, walls);
-		var playerHitCurrentWall = game.physics.arcade.collide(player, currentwalls);
 		
-		for (var i = 0; i < enemytable.length; i++) {
-			if (enemytable[i] == null){
-				enemytable.pop(i);
-			}
-		}
-		for (var i = 0; i < playerbullettable.length; i++) {
-			if (playerbullettable[i] == null){
-				playerbullettable.pop(i);
-			}
-		}
-		for (var i = 0; i < playerslashtable.length; i++) {
-			if (playerslashtable[i] == null){
-				playerslashtable.pop(i);
-			}
-		}
-		for (var i = 0; i < enemybullettable.length; i++) {
-			if (enemybullettable[i] == null){
-				enemybullettable.pop(i);
-			}
-		}
+		scoreText.setText('Score: ' + PLAYER_PROPERTIES.POINTS);
+		healthText.setText('Health: ' + PLAYER_PROPERTIES.HEALTH);
+		weaponText.setText('Weapon: ' + PLAYER_PROPERTIES.CURRENT_WEAPON);
+		healthText.bringToTop();
+		weaponText.bringToTop();
+		roomText.bringToTop();
+		scoreText.bringToTop();
 		
-		//console.log(game.time.fps);
+		//game.debug.text(game.time.fps || '--', 2, 14, "#00ff00");
 	}
 }
 
@@ -936,7 +616,7 @@ NextFloor.prototype = {
 		console.log('NextFloor: create');
 		
 		// testing state text
-		stateText = game.add.text(20, 20, 'NextFloor', { fontSize: '20px', fill: '#ffffff' });
+		//stateText = game.add.text(20, 20, 'NextFloor', { fontSize: '20px', fill: '#ffffff' });
 		
 		// input prompt
 		promptText = game.add.text(400, 300, 'Press SPACE to continue.', { fontSize: '20px', fill: '#ffffff' });
@@ -963,19 +643,54 @@ GameOver.prototype = {
 		console.log('GameOver: create');
 		
 		// testing state text
-		stateText = game.add.text(20, 20, 'GameOver', { fontSize: '20px', fill: '#ffffff' });
+		//stateText = game.add.text(20, 20, 'GameOver', { fontSize: '20px', fill: '#ffffff' });
 		
 		// input prompt
 		promptText = game.add.text(400, 300, 'Press SPACE to continue.', { fontSize: '20px', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
-		
-		PLAYER_PROPERTIES.HEALTH = 10;
 	},
 	
 	update: function() {
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){ // or isPressed
-			game.state.start('TitleScreen');
+			game.state.start('BeginMusic');
+		}
+	}
+	
+}
+
+var End = function(game) {};
+End.prototype = {
+	
+	preload: function() {
+		console.log('End: preload');
+	},
+	
+	create: function() {
+		console.log('End: create');
+		
+		// testing state text
+		//stateText = game.add.text(20, 20, 'End', { fontSize: '20px', fill: '#ffffff' });
+		
+		// input prompt
+		promptText = game.add.text(400, 250, 'You made it through the tomb!', { fontSize: '30px', fill: '#ffffff' });
+		promptText.anchor.x = 0.5;
+		promptText.anchor.y = 0.5;
+		
+		// input prompt
+		promptText = game.add.text(400, 300, 'Your score: ' + PLAYER_PROPERTIES.POINTS, { fontSize: '20px', fill: '#ffffff' });
+		promptText.anchor.x = 0.5;
+		promptText.anchor.y = 0.5;
+		
+		// input prompt
+		promptText = game.add.text(400, 350, 'Press SPACE to continue.', { fontSize: '20px', fill: '#ffffff' });
+		promptText.anchor.x = 0.5;
+		promptText.anchor.y = 0.5;
+	},
+	
+	update: function() {
+		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){ // or isPressed
+			game.state.start('BeginMusic');
 		}
 	}
 	

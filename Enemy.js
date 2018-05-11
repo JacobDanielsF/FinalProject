@@ -1,3 +1,4 @@
+
 function InRange(x1, y1, x2, y2, range){
 	var diff = game.math.distance(x1, y1, x2, y2);
 	if (diff < range){
@@ -30,7 +31,22 @@ function Enemy(game, posX, posY, type, roomtoggle, sprite, frame){
 		this.firecooldown = 1;
 		this.walkspeed = 100;
 		this.seekrange = 400;
+		this.points = 10;
+		
+		this.animations.add('idle', Phaser.Animation.generateFrameNames('enemyidle', 1, 2), 5, true);
+		this.animations.add('walkup', Phaser.Animation.generateFrameNames('enemyup', 1, 2), 5, true);
+		this.animations.add('walkright', Phaser.Animation.generateFrameNames('enemyright', 1, 2), 5, true);
+		this.animations.add('walkleft', Phaser.Animation.generateFrameNames('enemyleft', 1, 2), 5, true);
+		this.animations.add('walkdown', Phaser.Animation.generateFrameNames('enemydown', 1, 2), 5, true);
+		this.animations.add('walkupleft', Phaser.Animation.generateFrameNames('enemyupleft', 1, 2), 5, true);
+		this.animations.add('walkupright', Phaser.Animation.generateFrameNames('enemyupright', 1, 2), 5, true);
+		this.animations.add('walkdownleft', Phaser.Animation.generateFrameNames('enemydownleft', 1, 2), 5, true);
+		this.animations.add('walkdownright', Phaser.Animation.generateFrameNames('enemydownright', 1, 2), 5, true);
 	}
+	
+	
+	this.animations.play('idle');
+	game.add.existing(this);
 }
 
 Enemy.prototype = Object.create(Phaser.Sprite.prototype);
@@ -65,10 +81,22 @@ Enemy.prototype.update = function() {
 				var bullet = new EnemyProjectile(this.body.x + 8, this.body.y + 8, player.body.x, player.body.y, "default");
 				enemybullettable.push(bullet);
 				this.nextfire = time + this.firecooldown; // this is the bullet rate of the weapon
-
-				bullet.model.body.velocity.x = dirX*bullet.speed;
-				bullet.model.body.velocity.y = dirY*bullet.speed;
+				
+				bullet.body.velocity.x = dirX*bullet.speed;
+				bullet.body.velocity.y = dirY*bullet.speed;
 			}
+		}
+
+		if (dirX > game.math.difference(0, dirY)){
+			this.animations.play('walkright');
+		} else if (dirX < -game.math.difference(0, dirY)){
+			this.animations.play('walkleft');
+		} else if (dirY > game.math.difference(0, dirX)){
+			this.animations.play('walkdown');
+		} else if (dirY < -game.math.difference(0, dirX)){
+			this.animations.play('walkup');
+		} else {
+			this.animations.play('idle');
 		}
 						
 		if (this.type == "turret"){
@@ -79,62 +107,6 @@ Enemy.prototype.update = function() {
 		// enemy idle
 		this.body.velocity.x = 0;
 		this.body.velocity.y = 0;
-	}
-	
-	
-	
-	for (var i = 0; i < playerbullettable.length; i++) {
-		var bullet = playerbullettable[i];
-				
-		if (bullet != null){
-			var bulletHitEnemy = game.physics.arcade.collide(bullet, this);
-			// delete the bullet if it hits an enemy and damage the enemy
-			if (bulletHitEnemy == true){
-				bullet.kill();
-				bullet.destroy();
-				playerbullettable.pop(i);
-							
-				// enemy is damaged, delete enemy if it dies
-				this.health -= bullet.damage;
-				if (this.health < 0) {
-					if (roomenemies.length > 0 && this.room == true){
-						roomenemies.remove(this);
-					}
-					
-					this.kill();
-					this.destroy();
-				}
-			}
-		}
-	}
-	
-
-	for (var i = 0; i < playerslashtable.length; i++) {
-		var slash = playerslashtable[i];
-				
-		if (slash != null){
-			for (var k = 0; k < slash.hitboxes.length; k++){
-				var box = slash.hitboxes[k];
-						
-
-				// check for bullet-enemy collision
-				var boxHitEnemy = game.physics.arcade.collide(box, this);
-				// delete the bullet if it hits an enemy and damage the enemy
-				if (boxHitEnemy == true){
-									
-					// enemy is damaged, delete enemy if it dies
-					this.health -= slash.damage;
-					if (this.health < 0) {
-						if (roomenemies.length > 0 && this.room == true){
-							roomenemies.remove(this);
-						}
-						
-						this.kill();
-						this.destroy();
-					}
-				}
-			}
-		}
 	}
 	
 }

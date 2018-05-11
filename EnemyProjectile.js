@@ -1,29 +1,31 @@
-/*
-function EnemyProjectile(game, posX, posY, playerX, playerY type, sprite, frame){
-	Phaser.Sprite.call(this, game, posX, posY, sprite, frame);
-	this.anchor.set(0.5);
-	var scale = 1;
-	this.scale.x = scale;
-	this.scale.y = scale;
-	
+
+// enemy projectile class
+function EnemyProjectile(posX, posY, playerX, playerY, type){
 	this.type = type;
 	
-	game.physics.enable(this);
-	this.body.collideWorldBounds = false;
-	
-	// check enemy type
 	if (type == "default"){
-		this.speed = 600;
+		this.speed = 200;
 		this.damage = 1;
-		//this.rotation = game.physics.arcade.angleToPointer(Enemy) + (Math.PI/2);
+		Phaser.Sprite.call(this, game, posX, posY, 'enemy_atlas', 'projectile1');
 		
-		angle = game.math.angleBetween(posX, posY, playerX, playerY);
+		this.anchor.set(0.5);
+		var scale = 1;
+		this.scale.x = scale;
+		this.scale.y = scale;
+		
+		game.physics.enable(this);
+		this.body.collideWorldBounds = false;
+		//this.model = enemyprojectiles.create(posX, posY, 'enemy_atlas', 'projectile1');
+		
+		var angle = game.math.angleBetween(posX, posY, playerX, playerY);
 		this.rotation = angle;
+		
+		//this.model.anchor.set(0.5);
+		//var scale = 1;
+		//this.model.scale.x = scale;
+		//this.model.scale.y = scale;
 	}
-	
-	
-	
-	game.physics.arcade.moveToPointer(this, this.speed);
+	game.add.existing(this);
 }
 
 EnemyProjectile.prototype = Object.create(Phaser.Sprite.prototype);
@@ -39,5 +41,16 @@ EnemyProjectile.prototype.update = function() {
 		this.destroy();
 	}
 	
+	var bulletHitPlayer = game.physics.arcade.collide(this, player);
+	// delete the bullet if it hits an enemy and damage the enemy
+	if (bulletHitPlayer == true){
+		this.kill();
+		this.destroy();
+						
+		// player is damaged
+		if (bulletHitPlayer == true && iframes <= 0){	
+			PLAYER_PROPERTIES.HEALTH -= this.damage;
+			iframes = IFRAMES_MAX;
+		}
+	}
 }
-*/
