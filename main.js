@@ -1,4 +1,3 @@
-// Random dungeon generator for Phaser
 // main.js
 
 var game;
@@ -275,6 +274,7 @@ DungeonFloor.prototype = {
 		game.load.image('blank', 'assets/img/blank.png');
 		game.load.image('wooden_crossbow', 'assets/img/wooden_crossbow.png');
 		game.load.image('iron_dagger', 'assets/img/iron_dagger.png');
+		game.load.atlas('player', 'assets/img/player.png', 'assets/img/player.json');
 		
 		game.load.audio('Immuration', 'assets/audio/Immuration.mp3');
 		game.load.audio('In Pursuit', 'assets/audio/In Pursuit.mp3');
@@ -313,7 +313,7 @@ DungeonFloor.prototype = {
 		posX = posX - (posX % WALL_SIZE) + (WALL_SIZE/2);
 		posY = posY - (posY % WALL_SIZE) + (WALL_SIZE/2);
 		
-		player = new Player(game, posX, posY, 'character_atlas', 'playeridle1');
+		player = new Player(game, posX, posY, 'player', 'idledown');
 		
 		// invincibility frames
 		iframes = 0;
@@ -386,7 +386,8 @@ DungeonFloor.prototype = {
 		currentwalls = game.add.group();
 		currentwalls.enableBody = true;
 		
-		weapon = game.add.sprite(posX, posY, 'wooden_crossbow');
+		weaponoffset = -3;
+		weapon = game.add.sprite(posX, posY + weaponoffset, 'wooden_crossbow');
 		weapon.anchor.set(0.5);
 		game.physics.arcade.enable(weapon);
 		
