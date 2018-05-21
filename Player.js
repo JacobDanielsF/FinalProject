@@ -33,6 +33,13 @@ Player.prototype.constructor = Player;
 
 Player.prototype.update = function() {
 	
+	weaponicon.body.x = player.body.x + 340;
+	weaponicon.body.y = player.body.y + 240;
+	
+	weaponicon2.body.x = player.body.x + 360;
+	weaponicon2.body.y = player.body.y + 200;
+	
+	
 	var angle = game.physics.arcade.angleToPointer(player);
 	//console.log(angle);
 	
@@ -152,64 +159,61 @@ Player.prototype.update = function() {
 		
 		if (weaponswitch > 0) { weaponswitch--; }
 		if (game.input.keyboard.isDown(Phaser.Keyboard.Q) && weaponswitch < 1) {
-			if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Wooden Crossbow") {
-				PLAYER_PROPERTIES.CURRENT_WEAPON = "Iron Dagger";
-				weapon.loadTexture("iron_dagger");
-				PLAYER_PROPERTIES.FIRE_RATE = 0.2;
-				
-			} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Iron Dagger") {
-				PLAYER_PROPERTIES.CURRENT_WEAPON = "Wooden Crossbow";
-				weapon.loadTexture("wooden_crossbow");
-				PLAYER_PROPERTIES.FIRE_RATE = 0.2;
+			
+			if (PLAYER_PROPERTIES.CURRENT_WEAPON == PLAYER_PROPERTIES.WEAPON_1) {
+				PLAYER_PROPERTIES.CURRENT_WEAPON = PLAYER_PROPERTIES.WEAPON_2;
+				weaponicon.loadTexture(GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON));
+				weaponicon2.loadTexture(GetWeaponSprite(PLAYER_PROPERTIES.WEAPON_1));
+			} else {
+				PLAYER_PROPERTIES.CURRENT_WEAPON = PLAYER_PROPERTIES.WEAPON_1;
+				weaponicon.loadTexture(GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON));
+				weaponicon2.loadTexture(GetWeaponSprite(PLAYER_PROPERTIES.WEAPON_2));
 			}
+			
+			SetWeaponSprite();
+			SetFireRate();
+			
 			weaponswitch = 20;
+			
 		}
 		
 		
+		
 		//function UpdateWeaponPos(){
-			
 			
 			var range = 32;
 			if (slashframe < 0){
 				weapon.body.x = player.body.x + (Math.cos(angle)*range);
 				weapon.body.y = weaponoffset + player.body.y + (Math.sin(angle)*range);
 				weapon.rotation = angle + (Math.PI/4);
-			} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Wooden Crossbow") {
-				range -= slashframe*(10/PLAYER_PROPERTIES.FIRE_RATE);
+			} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Wooden Crossbow" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Short Bow" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Revolver Gun" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Energy Staff") {
+				range -= slashframe*50;
 				weapon.body.x = player.body.x + (Math.cos(angle)*range);
 				weapon.body.y = weaponoffset + player.body.y + (Math.sin(angle)*range);
 				weapon.rotation = angle + (Math.PI/4);
 				slashframe = slashframe - 0.03;
-			} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Iron Dagger") {
+			} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Iron Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Bronze Sword") {
 				//console.log(slashframe);
-				angle += -0.8 + (slashframe*7);
+				angle += -1 + (slashframe*10);
 				weapon.body.x = player.body.x + (Math.cos(angle)*range);
 				weapon.body.y = weaponoffset + player.body.y + (Math.sin(angle)*range);
 				weapon.rotation = angle + (Math.PI/4);
-				slashframe = slashframe - 0.03;
+				slashframe = slashframe - 0.02;
 			}
 		//}
 		
 		//UpdateWeaponPos();
 		
 		function MakePlayerSlash(posX, posY, time, type){
-			
-			if (type == "Iron Dagger"){
-				slash = new PlayerSlash(posX, posY + weaponoffset, type);
-				playerslashtable.push(slash);
-				nextFire = time + PLAYER_PROPERTIES.FIRE_RATE; // this is the bullet rate of the weapon
-			}
-			
+			slash = new PlayerSlash(posX, posY + weaponoffset, type);
+			playerslashtable.push(slash);
+			nextFire = time + PLAYER_PROPERTIES.FIRE_RATE; // this is the bullet rate of the weapon
 		}
 		
 		function MakePlayerBullet(posX, posY, time, type){
-			if (type == "Wooden Crossbow"){
-				bullet = new PlayerProjectile(posX, posY + weaponoffset, type, 'character_atlas', 'projectile1');
-				//game.add.existing(bullet);
-
-				playerbullettable.push(bullet);
-				nextFire = time + PLAYER_PROPERTIES.FIRE_RATE; // this is the bullet rate of the weapon
-			}
+			bullet = new PlayerProjectile(posX, posY + weaponoffset, type);
+			playerbullettable.push(bullet);
+			nextFire = time + PLAYER_PROPERTIES.FIRE_RATE; // this is the bullet rate of the weapon
 		}
 		
 		
@@ -220,15 +224,17 @@ Player.prototype.update = function() {
 				// check if you can fire the weapon (based on fire rate)
 				if (time > nextFire) {
 					// check weapon type
-					if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Wooden Crossbow") {
+					if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Wooden Crossbow" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Short Bow" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Revolver Gun" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Energy Staff") {
 						MakePlayerBullet(player.body.x + 16, player.body.y + 16, time, PLAYER_PROPERTIES.CURRENT_WEAPON);
-					} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Iron Dagger") {
+						
+					} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Iron Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Bronze Sword") {
 						MakePlayerSlash(player.body.x + 8, player.body.y + 8, time, PLAYER_PROPERTIES.CURRENT_WEAPON);
+						
 					}
 					// list other weapon types here
 					
-					isslashing = true
-					slashframe = nextFire - time;
+					isslashing = true;
+					slashframe = 0.2;
 				} else {
 					isslashing = false
 				}

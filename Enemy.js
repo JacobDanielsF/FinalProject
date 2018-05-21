@@ -1,11 +1,5 @@
 
-function InRange(x1, y1, x2, y2, range){
-	var diff = game.math.distance(x1, y1, x2, y2);
-	if (diff < range){
-		return true;
-	}
-	return false;
-}
+
 
 
 
