@@ -131,14 +131,7 @@
 		// places tiles across the map space. essentially a grid full of squares carved out by checking InBounds().
 		// the status returned by InBounds() indicates what kind of sprite should be placed.
 		function MakeWalls(){
-			var map = [];
-			// creating 2D array, because JS is weird.
-			for ( var i = 0; i <FLOOR_SIZE/(WALL_SIZE) ; i++ ) {
-				map[i] = []; 
-			}
-			var k=0;
 			for (var i = WALL_SIZE/2; i <= FLOOR_SIZE-(WALL_SIZE/2); i += WALL_SIZE) {
-				var f=0;
 				for (var j = WALL_SIZE/2; j <= FLOOR_SIZE-(WALL_SIZE/2); j += WALL_SIZE) {
 					var tilestatus = InBounds(i,j);
 					
@@ -149,15 +142,13 @@
 						tile.body.immovable = true;
 						tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
 						tile.anchor.x = 0.5;
-						tile.anchor.y = 0.5
-						map[k][f] = "0";
+						tile.anchor.y = 0.5;
 					} else if (tilestatus == "ledge") {
 						var tile = walls.create(i, j, 'tile_atlas', 'ledge'); // spawn a ledge
 						tile.body.immovable = true;
 						tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
 						tile.anchor.x = 0.5;
 						tile.anchor.y = 0.5;
-						map[k][f] = "0";
 					} else if (tilestatus == "air")  { // if status == "air"
 						var tile = game.add.sprite(i, j, 'tile_atlas', 'floor1'); // spawn a floor tile
 						tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
@@ -186,31 +177,17 @@
 							overlay.anchor.x = 0.5;
 							overlay.anchor.y = 0.5;
 						}
-						map[k][f] = "-";
+						
 						
 					} else if (tilestatus == "OOB") {
 						var tile = game.add.sprite(i, j, 'tile_atlas', 'wall'); // spawn a wall
 						tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
 						tile.anchor.x = 0.5;
 						tile.anchor.y = 0.5;
-						map[k][f] = " ";
 					}
-					f++;
+					
 				}
-				k++;
 			}
-			// Prints out the map. Replace the console log with where you want it to go.
-			// 
-			/*for(var i=0;i<k;i++){
-				var linePrint = "";
-				for(var j=0;j<k;j++){
-					//var tempNum = map[i][j]
-					linePrint += map[j][i]+" ";
-				}
-					// instead of console log, use this to represent the map
-				 //console.log(linePrint); 
-			}*/
-			
 		}
 		
 		// Shuffle()
