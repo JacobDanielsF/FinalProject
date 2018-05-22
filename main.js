@@ -73,6 +73,18 @@ function SetFireRate(){
 	if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Bronze Sword"){
 		PLAYER_PROPERTIES.FIRE_RATE = 0.3;
 	}
+	if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Ornate Dagger"){
+		PLAYER_PROPERTIES.FIRE_RATE = 0.3;
+	}
+	if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Bone Dagger"){
+		PLAYER_PROPERTIES.FIRE_RATE = 0.35;
+	}
+	if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Serpentine Staff"){
+		PLAYER_PROPERTIES.FIRE_RATE = 0.4;
+	}
+	if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Stone Sword"){
+		PLAYER_PROPERTIES.FIRE_RATE = 0.5;
+	}
 }
 
 function GetWeaponSprite(index){
@@ -94,16 +106,28 @@ function GetWeaponSprite(index){
 	if (index == "Bronze Sword"){
 		return "bronze_sword";
 	}
+	if (index == "Ornate Dagger"){
+		return "ornate_dagger";
+	}
+	if (index == "Bone Dagger"){
+		return "bone_dagger";
+	}
+	if (index == "Serpentine Staff"){
+		return "serpentine_staff";
+	}
+	if (index == "Stone Sword"){
+		return "stone_sword";
+	}
 }
 
 function SetWeaponSprite(){
 	weapon.loadTexture(GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON));
 }
 
-var tier = 1;
 
 var FLOOR_WEAPONS = {
 	A: ["short_bow", "revolver_gun", "energy_staff", "bronze_sword"],
+	B: ["ornate_dagger", "bone_dagger", "serpentine_staff", "stone_sword"],
 }
 
 
@@ -343,6 +367,10 @@ DungeonFloor.prototype = {
 		game.load.image('revolver_gun', 'assets/img/revolver_gun.png');
 		game.load.image('energy_staff', 'assets/img/energy_staff.png');
 		game.load.image('bronze_sword', 'assets/img/bronze_sword.png');
+		game.load.image('ornate_dagger', 'assets/img/ornate_dagger.png');
+		game.load.image('bone_dagger', 'assets/img/bone_dagger.png');
+		game.load.image('serpentine_staff', 'assets/img/serpentine_staff.png');
+		game.load.image('stone_sword', 'assets/img/stone_sword.png');
 		
 		game.load.atlas('arrow', 'assets/img/arrow_bow_s.png', 'assets/img/2_frame.json');
 		game.load.atlas('bolt', 'assets/img/bolt_crossbow_s.png', 'assets/img/2_frame.json');
@@ -360,7 +388,7 @@ DungeonFloor.prototype = {
 	create: function() {
 		console.log('DungeonFloor: create');
 		
-		game.world.setBounds(0, 0, FLOOR_SIZE, FLOOR_SIZE);
+		game.world.setBounds(-FLOOR_SIZE/2, -FLOOR_SIZE/2, FLOOR_SIZE*2, FLOOR_SIZE*2);
 
 		game.physics.startSystem(Phaser.Physics.ARCADE);
 		
@@ -375,7 +403,6 @@ DungeonFloor.prototype = {
 		
 		points = [];
 		enemies = [];
-		bosscoords = [];
 		playercoords = [];
 		treasure = [];
 		
@@ -494,6 +521,7 @@ DungeonFloor.prototype = {
 		weaponicon2.scale.set(1);
 		game.physics.arcade.enable(weaponicon2);
 		
+		inbossroom = false
 		
 		music = game.add.audio('Immuration', 1, true);
 		music.play();
@@ -561,6 +589,10 @@ DungeonFloor.prototype = {
 			}
 		} else if (PlayerInBoss(player.body.x, player.body.y) == true && currentroom == null) {
 			roomText.setText('End of dungeon. Press E to continue.');
+			if (inbossroom == false) {
+				inbossroom = true
+				MakeBossBounds();
+			}
 		} else {
 			roomText.setText('');
 		}
@@ -573,12 +605,18 @@ DungeonFloor.prototype = {
 				currentroom = null;
 				
 				var chance = game.rnd.integerInRange(0, 2);
-				if (tier == 1 && chance != 0){
+				if (PLAYER_PROPERTIES.FLOOR < 2 && chance != 0){
 					console.log(FLOOR_WEAPONS.A.length-1);
 					var rand = game.rnd.integerInRange(0, FLOOR_WEAPONS.A.length-1);
 					var lootX = lastroombounds[0];
 					var lootY = lastroombounds[1];
 					new Loot(game, lootX, lootY, FLOOR_WEAPONS.A[rand]);
+				} else if (chance != 0){
+					console.log(FLOOR_WEAPONS.B.length-1);
+					var rand = game.rnd.integerInRange(0, FLOOR_WEAPONS.B.length-1);
+					var lootX = lastroombounds[0];
+					var lootY = lastroombounds[1];
+					new Loot(game, lootX, lootY, FLOOR_WEAPONS.B[rand]);
 				}
 			}
 		}

@@ -82,6 +82,26 @@ function PlayerProjectile(posX, posY, type){
 		this.animations.add('anim', Phaser.Animation.generateFrameNames('sprite', 1, 3), 8, true);
 		this.animations.play('anim');
 	}
+	if (type == "Serpentine Staff"){
+		Phaser.Sprite.call(this, game, posX, posY, 'orb', 'sprite1');
+		this.anchor.set(0.5);
+		var scale = 1.5;
+		this.scale.x = scale;
+		this.scale.y = scale;
+	
+		this.type = type;
+	
+		game.physics.enable(this);
+		this.body.collideWorldBounds = false;
+		
+		this.speed = 650;
+		this.damage = 2;
+		this.rotation = game.physics.arcade.angleToPointer(player) + (Math.PI/4);
+		this.duration = 50;
+		
+		this.animations.add('anim', Phaser.Animation.generateFrameNames('sprite', 1, 3), 8, true);
+		this.animations.play('anim');
+	}
 	
 	game.physics.arcade.moveToPointer(this, this.speed);
 	game.add.existing(this);
@@ -110,8 +130,8 @@ function PlayerSlash(posX, posY, type){
 	if (type == "Iron Dagger"){
 		var angle = game.physics.arcade.angleToPointer(player);
 		
-		var hitboxDist = 65
-		var slashDist = hitboxDist*0.8
+		var hitboxDist = 65;
+		var slashDist = hitboxDist*0.8;
 		var slash = game.add.sprite(player.body.x+(Math.cos(angle)*(hitboxDist-10))+16, player.body.y+(Math.sin(angle)*(slashDist))+16 , 'slash');
 		slash.anchor.x = 0.5;
 		slash.anchor.y = 0.5;
@@ -131,11 +151,12 @@ function PlayerSlash(posX, posY, type){
 		this.duration = 5;
 		this.damage = 2;
 		
-	} else if (type == "Bronze Sword"){
+	}
+	if (type == "Bronze Sword"){
 		var angle = game.physics.arcade.angleToPointer(player);
 		
-		var hitboxDist = 75
-		var slashDist = hitboxDist*0.8
+		var hitboxDist = 75;
+		var slashDist = hitboxDist*0.8;
 		var slash = game.add.sprite(player.body.x+(Math.cos(angle)*(hitboxDist-10))+16, player.body.y+(Math.sin(angle)*(slashDist))+16 , 'slash');
 		slash.anchor.x = 0.5;
 		slash.anchor.y = 0.5;
@@ -154,6 +175,81 @@ function PlayerSlash(posX, posY, type){
 		
 		this.duration = 5;
 		this.damage = 3;
+		
+	}
+	if (type == "Ornate Dagger"){
+		var angle = game.physics.arcade.angleToPointer(player);
+		
+		var hitboxDist = 65;
+		var slashDist = hitboxDist*0.8;
+		var slash = game.add.sprite(player.body.x+(Math.cos(angle)*(hitboxDist-10))+16, player.body.y+(Math.sin(angle)*(slashDist))+16 , 'slash');
+		slash.anchor.x = 0.5;
+		slash.anchor.y = 0.5;
+		slash.scale.setTo(1.2, 1);
+		slash.rotation = game.physics.arcade.angleToPointer(player) + (Math.PI/2);
+		this.mainslash = slash
+
+		var increment = 0.25
+		for (var i = 0; i < 5; i++){
+			var newSlash = game.add.sprite(player.body.x+(Math.cos(angle+increment*(i-2))*hitboxDist)+16, player.body.y+(Math.sin(angle+increment*(i-2))*hitboxDist)+16, 'blank');
+			game.physics.arcade.enable(newSlash);
+			newSlash.anchor.x = 0.5;
+			newSlash.anchor.y = 0.5;
+			hitboxes.push(newSlash);
+		}
+		
+		this.duration = 7;
+		this.damage = 3;
+		
+	}
+	if (type == "Bone Dagger"){
+		var angle = game.physics.arcade.angleToPointer(player);
+		
+		var hitboxDist = 70;
+		var slashDist = hitboxDist*0.8;
+		var slash = game.add.sprite(player.body.x+(Math.cos(angle)*(hitboxDist-10))+16, player.body.y+(Math.sin(angle)*(slashDist))+16 , 'slash');
+		slash.anchor.x = 0.5;
+		slash.anchor.y = 0.5;
+		slash.scale.setTo(1.2, 1);
+		slash.rotation = game.physics.arcade.angleToPointer(player) + (Math.PI/2);
+		this.mainslash = slash
+
+		var increment = 0.25
+		for (var i = 0; i < 5; i++){
+			var newSlash = game.add.sprite(player.body.x+(Math.cos(angle+increment*(i-2))*hitboxDist)+16, player.body.y+(Math.sin(angle+increment*(i-2))*hitboxDist)+16, 'blank');
+			game.physics.arcade.enable(newSlash);
+			newSlash.anchor.x = 0.5;
+			newSlash.anchor.y = 0.5;
+			hitboxes.push(newSlash);
+		}
+		
+		this.duration = 6;
+		this.damage = 4;
+		
+	}
+	if (type == "Stone Sword"){
+		var angle = game.physics.arcade.angleToPointer(player);
+		
+		var hitboxDist = 80;
+		var slashDist = hitboxDist*0.8;
+		var slash = game.add.sprite(player.body.x+(Math.cos(angle)*(hitboxDist-10))+16, player.body.y+(Math.sin(angle)*(slashDist))+16 , 'slash');
+		slash.anchor.x = 0.5;
+		slash.anchor.y = 0.5;
+		slash.scale.setTo(1.2, 1);
+		slash.rotation = game.physics.arcade.angleToPointer(player) + (Math.PI/2);
+		this.mainslash = slash
+
+		var increment = 0.25
+		for (var i = 0; i < 5; i++){
+			var newSlash = game.add.sprite(player.body.x+(Math.cos(angle+increment*(i-2))*hitboxDist)+16, player.body.y+(Math.sin(angle+increment*(i-2))*hitboxDist)+16, 'blank');
+			game.physics.arcade.enable(newSlash);
+			newSlash.anchor.x = 0.5;
+			newSlash.anchor.y = 0.5;
+			hitboxes.push(newSlash);
+		}
+		
+		this.duration = 7;
+		this.damage = 4;
 		
 	}
 	

@@ -8,22 +8,33 @@ function Loot(game, posX, posY, type){
 	
 	if (type == "wooden_crossbow"){
 		this.name = "Wooden Crossbow";
-		
-	} else if (type == "iron_dagger"){
+	}
+	if (type == "iron_dagger"){
 		this.name = "Iron Dagger";
-		
-	} else if (type == "short_bow"){
+	}
+	if (type == "short_bow"){
 		this.name = "Short Bow";
-		
-	} else if (type == "revolver_gun"){
+	}
+	if (type == "revolver_gun"){
 		this.name = "Revolver Gun";
-		
-	} else if (type == "energy_staff"){
+	}
+	if (type == "energy_staff"){
 		this.name = "Energy Staff";
-		
-	} else if (type == "bronze_sword"){
+	}
+	if (type == "bronze_sword"){
 		this.name = "Bronze Sword";
-		
+	}
+	if (type == "ornate_dagger"){
+		this.name = "Ornate Dagger";
+	}
+	if (type == "bone_dagger"){
+		this.name = "Bone Dagger";
+	}
+	if (type == "serpentine_staff"){
+		this.name = "Serpentine Staff";
+	}
+	if (type == "stone_sword"){
+		this.name = "Stone Sword";
 	}
 	
 	game.physics.enable(this);

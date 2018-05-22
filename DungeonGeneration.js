@@ -41,7 +41,6 @@
 			
 	
 			if (roomtype == "boss") { // save boss coordinates.
-				bosscoords = [x, y];
 				bossroom = [x, y, width, height];
 			}
 			
@@ -317,6 +316,59 @@ function PlayerInBounds(x,y){
 			var boundX2 = roombounds[0] + (roombounds[2]/2);
 			var boundY1 = roombounds[1] - (roombounds[3]/2);
 			var boundY2 = roombounds[1] + (roombounds[3]/2);
+			
+			// create upper wall
+			for (var i = boundX1 - (WALL_SIZE/2); i <= boundX2 + (WALL_SIZE/2); i += WALL_SIZE){
+				var tileX = i;
+				var tileY = boundY1 - (WALL_SIZE/2);
+				var tile = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'ledge'); // spawn a wall
+				
+				tile.body.immovable = true;
+				tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
+				tile.anchor.x = 0.5;
+				tile.anchor.y = 0.5;
+			}
+			// create lower wall
+			for (var i = boundX1 - (WALL_SIZE/2); i <= boundX2 + (WALL_SIZE/2); i += WALL_SIZE){
+				var tileX = i;
+				var tileY = boundY2 + (WALL_SIZE/2);
+				var tile = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'wall'); // spawn a wall
+				
+				tile.body.immovable = true;
+				tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
+				tile.anchor.x = 0.5;
+				tile.anchor.y = 0.5;
+			}
+			// create left wall
+			for (var i = boundY1 - (WALL_SIZE/2); i <= boundY2 + (WALL_SIZE/2); i += WALL_SIZE){
+				var tileX = boundX1 - (WALL_SIZE/2);
+				var tileY = i;
+				var tile = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'wall'); // spawn a wall
+				
+				tile.body.immovable = true;
+				tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
+				tile.anchor.x = 0.5;
+				tile.anchor.y = 0.5;
+			}
+			// create right wall
+			for (var i = boundY1 - (WALL_SIZE/2); i <= boundY2 + (WALL_SIZE/2); i += WALL_SIZE){
+				var tileX = boundX2 + (WALL_SIZE/2);
+				var tileY = i;
+				var tile = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'wall'); // spawn a wall
+				
+				tile.body.immovable = true;
+				tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
+				tile.anchor.x = 0.5;
+				tile.anchor.y = 0.5;
+			}
+		}
+		
+		
+		function MakeBossBounds(){
+			var boundX1 = bossroom[0] - (bossroom[2]/2);
+			var boundX2 = bossroom[0] + (bossroom[2]/2);
+			var boundY1 = bossroom[1] - (bossroom[3]/2);
+			var boundY2 = bossroom[1] + (bossroom[3]/2);
 			
 			// create upper wall
 			for (var i = boundX1 - (WALL_SIZE/2); i <= boundX2 + (WALL_SIZE/2); i += WALL_SIZE){
