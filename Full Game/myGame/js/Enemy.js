@@ -1,11 +1,5 @@
 
-function InRange(x1, y1, x2, y2, range){
-	var diff = game.math.distance(x1, y1, x2, y2);
-	if (diff < range){
-		return true;
-	}
-	return false;
-}
+
 
 
 
@@ -79,7 +73,8 @@ Enemy.prototype.update = function() {
 							
 			if (time > this.nextfire){
 				var bullet = new EnemyProjectile(this.body.x + 8, this.body.y + 8, player.body.x, player.body.y, "default");
-				enemybullettable.push(bullet);
+				//enemybullettable.push(bullet);
+				enemybulletgroup.add(bullet);
 				this.nextfire = time + this.firecooldown; // this is the bullet rate of the weapon
 				
 				bullet.body.velocity.x = dirX*bullet.speed;

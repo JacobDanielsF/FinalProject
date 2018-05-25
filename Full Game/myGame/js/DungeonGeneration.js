@@ -265,3 +265,154 @@
 		
 //SpawnDungeon.prototype = Object.create();
 SpawnDungeon.prototype.constructor = SpawnDungeon;
+
+
+
+
+
+
+function PlayerInBounds(x,y){
+			for (var i = 0; i < mainrooms.length; i++) { // check the bounds of all rooms
+				var skip = false;
+				for (var j = 0; j < completedrooms.length; j++){
+					if (i == completedrooms[j]) {
+						skip = true;
+					}
+				}
+				if (skip == false){
+					var boundX1 = mainrooms[i][0] - (mainrooms[i][2]/2);
+					var boundX2 = mainrooms[i][0] + (mainrooms[i][2]/2);
+					var boundY1 = mainrooms[i][1] - (mainrooms[i][3]/2);
+					var boundY2 = mainrooms[i][1] + (mainrooms[i][3]/2);
+					
+					if (x > boundX1 - (boundX1 % WALL_SIZE) + (WALL_SIZE/2) && x <= boundX2 - (boundX2 % WALL_SIZE) - (WALL_SIZE/2)) {
+						if (y > boundY1 - (boundY1 % WALL_SIZE) + (WALL_SIZE/2) && y <= boundY2 - (boundY2 % WALL_SIZE) - (WALL_SIZE/2)) {
+							return i;
+						}
+					}
+				}
+			}
+			return -1;
+		}
+		
+		function PlayerInBoss(x,y){
+			var boundX1 = bossroom[0] - (bossroom[2]/2);
+			var boundX2 = bossroom[0] + (bossroom[2]/2);
+			var boundY1 = bossroom[1] - (bossroom[3]/2);
+			var boundY2 = bossroom[1] + (bossroom[3]/2);
+				
+			if (x > boundX1 - (boundX1 % WALL_SIZE) && x <= boundX2 - (boundX2 % WALL_SIZE)) {
+				if (y > boundY1 - (boundY1 % WALL_SIZE) && y <= boundY2 - (boundY2 % WALL_SIZE)) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		//console.log(player.body.x + ", " + player.body.y);
+		
+		function MakeBounds(num){
+			var roombounds = mainrooms[num];
+			var boundX1 = roombounds[0] - (roombounds[2]/2);
+			var boundX2 = roombounds[0] + (roombounds[2]/2);
+			var boundY1 = roombounds[1] - (roombounds[3]/2);
+			var boundY2 = roombounds[1] + (roombounds[3]/2);
+			
+			// create upper wall
+			for (var i = boundX1 - (WALL_SIZE/2); i <= boundX2 + (WALL_SIZE/2); i += WALL_SIZE){
+				var tileX = i;
+				var tileY = boundY1 - (WALL_SIZE/2);
+				var tile = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'ledge'); // spawn a wall
+				
+				tile.body.immovable = true;
+				tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
+				tile.anchor.x = 0.5;
+				tile.anchor.y = 0.5;
+			}
+			// create lower wall
+			for (var i = boundX1 - (WALL_SIZE/2); i <= boundX2 + (WALL_SIZE/2); i += WALL_SIZE){
+				var tileX = i;
+				var tileY = boundY2 + (WALL_SIZE/2);
+				var tile = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'wall'); // spawn a wall
+				
+				tile.body.immovable = true;
+				tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
+				tile.anchor.x = 0.5;
+				tile.anchor.y = 0.5;
+			}
+			// create left wall
+			for (var i = boundY1 - (WALL_SIZE/2); i <= boundY2 + (WALL_SIZE/2); i += WALL_SIZE){
+				var tileX = boundX1 - (WALL_SIZE/2);
+				var tileY = i;
+				var tile = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'wall'); // spawn a wall
+				
+				tile.body.immovable = true;
+				tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
+				tile.anchor.x = 0.5;
+				tile.anchor.y = 0.5;
+			}
+			// create right wall
+			for (var i = boundY1 - (WALL_SIZE/2); i <= boundY2 + (WALL_SIZE/2); i += WALL_SIZE){
+				var tileX = boundX2 + (WALL_SIZE/2);
+				var tileY = i;
+				var tile = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'wall'); // spawn a wall
+				
+				tile.body.immovable = true;
+				tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
+				tile.anchor.x = 0.5;
+				tile.anchor.y = 0.5;
+			}
+		}
+		
+		
+		function MakeBossBounds(){
+			var boundX1 = bossroom[0] - (bossroom[2]/2);
+			var boundX2 = bossroom[0] + (bossroom[2]/2);
+			var boundY1 = bossroom[1] - (bossroom[3]/2);
+			var boundY2 = bossroom[1] + (bossroom[3]/2);
+			
+			// create upper wall
+			for (var i = boundX1 - (WALL_SIZE/2); i <= boundX2 + (WALL_SIZE/2); i += WALL_SIZE){
+				var tileX = i;
+				var tileY = boundY1 - (WALL_SIZE/2);
+				var tile = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'ledge'); // spawn a wall
+				
+				tile.body.immovable = true;
+				tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
+				tile.anchor.x = 0.5;
+				tile.anchor.y = 0.5;
+			}
+			// create lower wall
+			for (var i = boundX1 - (WALL_SIZE/2); i <= boundX2 + (WALL_SIZE/2); i += WALL_SIZE){
+				var tileX = i;
+				var tileY = boundY2 + (WALL_SIZE/2);
+				var tile = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'wall'); // spawn a wall
+				
+				tile.body.immovable = true;
+				tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
+				tile.anchor.x = 0.5;
+				tile.anchor.y = 0.5;
+			}
+			// create left wall
+			for (var i = boundY1 - (WALL_SIZE/2); i <= boundY2 + (WALL_SIZE/2); i += WALL_SIZE){
+				var tileX = boundX1 - (WALL_SIZE/2);
+				var tileY = i;
+				var tile = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'wall'); // spawn a wall
+				
+				tile.body.immovable = true;
+				tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
+				tile.anchor.x = 0.5;
+				tile.anchor.y = 0.5;
+			}
+			// create right wall
+			for (var i = boundY1 - (WALL_SIZE/2); i <= boundY2 + (WALL_SIZE/2); i += WALL_SIZE){
+				var tileX = boundX2 + (WALL_SIZE/2);
+				var tileY = i;
+				var tile = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'wall'); // spawn a wall
+				
+				tile.body.immovable = true;
+				tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
+				tile.anchor.x = 0.5;
+				tile.anchor.y = 0.5;
+			}
+		}

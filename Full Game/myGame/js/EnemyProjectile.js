@@ -6,10 +6,10 @@ function EnemyProjectile(posX, posY, playerX, playerY, type){
 	if (type == "default"){
 		this.speed = 200;
 		this.damage = 1;
-		Phaser.Sprite.call(this, game, posX, posY, 'enemy_atlas', 'projectile1');
+		Phaser.Sprite.call(this, game, posX, posY, 'enemyproj', 'sprite1');
 		
 		this.anchor.set(0.5);
-		var scale = 1;
+		var scale = 1.5;
 		this.scale.x = scale;
 		this.scale.y = scale;
 		
@@ -20,10 +20,8 @@ function EnemyProjectile(posX, posY, playerX, playerY, type){
 		var angle = game.math.angleBetween(posX, posY, playerX, playerY);
 		this.rotation = angle;
 		
-		//this.model.anchor.set(0.5);
-		//var scale = 1;
-		//this.model.scale.x = scale;
-		//this.model.scale.y = scale;
+		this.animations.add('anim', Phaser.Animation.generateFrameNames('sprite', 1, 2), 8, true);
+		this.animations.play('anim');
 	}
 	game.add.existing(this);
 }
