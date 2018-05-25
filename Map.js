@@ -26,15 +26,6 @@ function MakeMap(){
 	}
 	return map;
 }
-function render () {
-
-    game.debug.geom(floor,'#0fffff');
-
-}
-
-var floor;
-var groupThing
-var showMap;
 function Map(){
 	for ( var i = 0; i <FLOOR_SIZE/(WALL_SIZE) ; i++ ) {
 		map[i] = []; 
@@ -43,9 +34,7 @@ function Map(){
 	console.log(mapHeight+" "+mapWidth);
 	
 	let posX = game.camera.width-(mapWidth*2);
-	// let posX = 300;
 	let posY = 0;
-	//Phaser.Sprite.call(this, game, posX, posY, 'map4');
 	pixel = game.add.sprite(posX, posY, 'map3');
 	permX = 0;
 	permY = 0;
@@ -62,33 +51,6 @@ function Map(){
 	pixel.fixedToCamera = true;
 	pixel.bringToTop();
 	console.log(player.x+" playa "+player.y);
-	//game.add.existing(this);
-	
-}
-
-var lastPlayerPostionX;
-var lastPlayerPostionY;
-function unchangedPositionX(){
-	playerX = player.body.x;
-	let truth = false;
-	if(playerX==lastPlayerPostionX){
-		truth = true;
-	}else{
-		truth = false;
-	}
-	lastPlayerPostionX = playerX;
-	return truth;
-}
-function unchangedPositionY(){
-	playerY = player.body.y;
-	let truth = false;
-	if(playerY==lastPlayerPostionY){
-		truth = true;
-	}else{
-		truth = false;
-	}
-	lastPlayerPostionY = playerY;
-	return truth;
 }
 
 Map.prototype = Object.create(Phaser.Sprite.prototype);
