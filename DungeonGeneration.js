@@ -41,6 +41,7 @@
 			
 	
 			if (roomtype == "boss") { // save boss coordinates.
+				bosscoords = [x, y];
 				bossroom = [x, y, width, height];
 			}
 			

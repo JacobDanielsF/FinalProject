@@ -38,6 +38,10 @@ Player.prototype.update = function() {
 	
 	weaponicon2.body.x = player.body.x + 360;
 	weaponicon2.body.y = player.body.y + 200;
+
+	
+	shader.body.x = player.body.x - 400 + 16;
+	shader.body.y = player.body.y - 300 + 20;
 	
 	
 	var angle = game.physics.arcade.angleToPointer(player);
@@ -173,7 +177,7 @@ Player.prototype.update = function() {
 			SetWeaponSprite();
 			SetFireRate();
 			
-			weaponswitch = 20;
+			weaponswitch = 10;
 			
 		}
 		
@@ -182,7 +186,7 @@ Player.prototype.update = function() {
 		//function UpdateWeaponPos(){
 			
 			var range = 32;
-			if (slashframe < 0){
+			if (slashframe < 0 || PLAYER_PROPERTIES.CURRENT_WEAPON == "Knife Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Iron Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Ornate Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Bone Dagger"){
 				weapon.body.x = player.body.x + (Math.cos(angle)*range);
 				weapon.body.y = weaponoffset + player.body.y + (Math.sin(angle)*range);
 				weapon.rotation = angle + (Math.PI/4);
@@ -192,7 +196,7 @@ Player.prototype.update = function() {
 				weapon.body.y = weaponoffset + player.body.y + (Math.sin(angle)*range);
 				weapon.rotation = angle + (Math.PI/4);
 				slashframe = slashframe - 0.03;
-			} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Iron Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Bronze Sword" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Ornate Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Bone Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Stone Sword") {
+			} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Bronze Sword" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Stone Sword") {
 				//console.log(slashframe);
 				angle += -1 + (slashframe*10);
 				weapon.body.x = player.body.x + (Math.cos(angle)*range);
@@ -206,13 +210,24 @@ Player.prototype.update = function() {
 		
 		function MakePlayerSlash(posX, posY, time, type){
 			slash = new PlayerSlash(posX, posY + weaponoffset, type);
-			playerslashtable.push(slash);
+			if (playerslash != null){
+				for (var k = 0; k < playerslash.hitboxes.length; k++){
+					var box = playerslash.hitboxes[k];
+					box.kill();
+					box.destroy();
+				}
+				playerslash.mainslash.kill();
+				playerslash.mainslash.destroy();
+				playerslash = null;
+			}
+			playerslash = slash;
 			nextFire = time + PLAYER_PROPERTIES.FIRE_RATE; // this is the bullet rate of the weapon
 		}
 		
-		function MakePlayerBullet(posX, posY, time, type){
-			bullet = new PlayerProjectile(posX, posY + weaponoffset, type);
-			playerbullettable.push(bullet);
+		function MakePlayerBullet(posX, posY, time, type, angleoffset){
+			bullet = new PlayerProjectile(posX, posY + weaponoffset, type, angleoffset);
+			//playerbullettable.push(bullet);
+			playerbulletgroup.add(bullet);
 			nextFire = time + PLAYER_PROPERTIES.FIRE_RATE; // this is the bullet rate of the weapon
 		}
 		
@@ -224,10 +239,15 @@ Player.prototype.update = function() {
 				// check if you can fire the weapon (based on fire rate)
 				if (time > nextFire) {
 					// check weapon type
-					if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Wooden Crossbow" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Short Bow" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Revolver Gun" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Energy Staff" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Serpentine Staff") {
-						MakePlayerBullet(player.body.x + 16, player.body.y + 16, time, PLAYER_PROPERTIES.CURRENT_WEAPON);
+					if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Knife Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Ornate Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Bone Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Iron Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Wooden Crossbow" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Short Bow" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Revolver Gun") {
+						MakePlayerBullet(player.body.x + 16, player.body.y + 16, time, PLAYER_PROPERTIES.CURRENT_WEAPON, 0);
 						
-					} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Iron Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Bronze Sword" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Ornate Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Bone Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Stone Sword") {
+					} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Energy Staff" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Serpentine Staff"){
+						for (var i = 0; i < 3; i++){
+							MakePlayerBullet(player.body.x + 16, player.body.y + 16, time, PLAYER_PROPERTIES.CURRENT_WEAPON, (i - 1)*0.2);
+						}
+						
+					} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Bronze Sword" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Stone Sword") {
 						MakePlayerSlash(player.body.x + 8, player.body.y + 8, time, PLAYER_PROPERTIES.CURRENT_WEAPON);
 						
 					}
@@ -236,7 +256,7 @@ Player.prototype.update = function() {
 					isslashing = true;
 					slashframe = 0.2;
 				} else {
-					isslashing = false
+					isslashing = false;
 				}
 			}
 			
@@ -245,9 +265,17 @@ Player.prototype.update = function() {
 		
 		//FireButton();
 		
+		weaponshadow.body.x = weapon.body.x;
+		weaponshadow.body.y = weapon.body.y+4;
+		weaponshadow.rotation = weapon.rotation;
+		
 	if (angle < 0){
+		weaponshadow.bringToTop();
+		weapon.bringToTop();
 		player.bringToTop();
 	} else {
+		weaponshadow.bringToTop();
+		player.bringToTop();
 		weapon.bringToTop();
 	}
 }

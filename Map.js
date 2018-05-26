@@ -27,15 +27,15 @@ function MakeMap(){
 	return map;
 }
 function Map(){
-	for ( var i = 0; i <FLOOR_SIZE/(WALL_SIZE) ; i++ ) {
-		map[i] = []; 
-	}
+	//for ( var i = 0; i <FLOOR_SIZE/(WALL_SIZE) ; i++ ) {
+	//	map[i] = [];
+	//}
 	map = MakeMap();
 	console.log(mapHeight+" "+mapWidth);
 	
 	let posX = game.camera.width-(mapWidth*2);
 	let posY = 0;
-	pixel = game.add.sprite(posX, posY, 'map3');
+	this.pixel = game.add.sprite(posX, posY, 'map3');
 	permX = 0;
 	permY = 0;
 	for(var i=0;i<mapHeight;i++){
@@ -43,13 +43,13 @@ function Map(){
 			posX = permX+(2*j);
 			posY = permY;
 			if(map[j][i]=="0"){
-				pixels = pixel.addChild(game.make.sprite(posX, posY,"map1"));
+				pixels = this.pixel.addChild(game.make.sprite(posX, posY,"map1"));
 			}
 		}
 		permY += 2;
 	}
-	pixel.fixedToCamera = true;
-	pixel.bringToTop();
+	this.pixel.fixedToCamera = true;
+	this.pixel.bringToTop();
 	console.log(player.x+" playa "+player.y);
 }
 
@@ -57,7 +57,8 @@ Map.prototype = Object.create(Phaser.Sprite.prototype);
 Map.prototype.constructor = Map;
 
 
-
+/*
 Map.prototype.update = function() {
-	
+	this.pixel.bringToTop();
 }
+*/

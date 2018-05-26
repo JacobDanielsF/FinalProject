@@ -56,34 +56,40 @@ function InRange(x1, y1, x2, y2, range){
 
 function SetFireRate(){
 	if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Wooden Crossbow"){
-		PLAYER_PROPERTIES.FIRE_RATE = 0.4;
-	}
-	if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Iron Dagger"){
-		PLAYER_PROPERTIES.FIRE_RATE = 0.25;
+		PLAYER_PROPERTIES.FIRE_RATE = 0.8;
 	}
 	if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Short Bow"){
-		PLAYER_PROPERTIES.FIRE_RATE = 0.45;
+		PLAYER_PROPERTIES.FIRE_RATE = 0.6;
 	}
 	if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Revolver Gun"){
+		PLAYER_PROPERTIES.FIRE_RATE = 0.2;
+	}
+	
+	if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Bronze Sword"){
 		PLAYER_PROPERTIES.FIRE_RATE = 0.5;
 	}
-	if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Energy Staff"){
-		PLAYER_PROPERTIES.FIRE_RATE = 0.35;
+	if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Stone Sword"){
+		PLAYER_PROPERTIES.FIRE_RATE = 1;
 	}
-	if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Bronze Sword"){
+	
+	if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Knife Dagger"){
+		PLAYER_PROPERTIES.FIRE_RATE = 0.3;
+	}
+	if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Iron Dagger"){
 		PLAYER_PROPERTIES.FIRE_RATE = 0.3;
 	}
 	if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Ornate Dagger"){
 		PLAYER_PROPERTIES.FIRE_RATE = 0.3;
 	}
 	if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Bone Dagger"){
-		PLAYER_PROPERTIES.FIRE_RATE = 0.35;
+		PLAYER_PROPERTIES.FIRE_RATE = 0.3;
+	}
+	
+	if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Energy Staff"){
+		PLAYER_PROPERTIES.FIRE_RATE = 0.6;
 	}
 	if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Serpentine Staff"){
-		PLAYER_PROPERTIES.FIRE_RATE = 0.4;
-	}
-	if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Stone Sword"){
-		PLAYER_PROPERTIES.FIRE_RATE = 0.5;
+		PLAYER_PROPERTIES.FIRE_RATE = 0.6;
 	}
 }
 
@@ -118,6 +124,9 @@ function GetWeaponSprite(index){
 	if (index == "Stone Sword"){
 		return "stone_sword";
 	}
+	if (index == "Knife Dagger"){
+		return "knife_dagger";
+	}
 }
 
 function SetWeaponSprite(){
@@ -126,8 +135,8 @@ function SetWeaponSprite(){
 
 
 var FLOOR_WEAPONS = {
-	A: ["short_bow", "revolver_gun", "energy_staff", "bronze_sword"],
-	B: ["ornate_dagger", "bone_dagger", "serpentine_staff", "stone_sword"],
+	A: ["wooden_crossbow", "iron_dagger", "iron_dagger", "iron_dagger", "short_bow", "energy_staff", "bronze_sword", "bronze_sword"],
+	B: ["ornate_dagger", "bone_dagger", "serpentine_staff", "stone_sword", "revolver_gun"],
 }
 
 
@@ -192,9 +201,9 @@ TitleScreen.prototype = {
 		PLAYER_PROPERTIES.POINTS = 0;
 		PLAYER_PROPERTIES.FLOOR = 0;
 		PLAYER_PROPERTIES.HEALTH = 10;
-		PLAYER_PROPERTIES.CURRENT_WEAPON = "Wooden Crossbow";
-		PLAYER_PROPERTIES.WEAPON_1 = "Wooden Crossbow";
-		PLAYER_PROPERTIES.WEAPON_2 = "Iron Dagger";
+		PLAYER_PROPERTIES.CURRENT_WEAPON = "Knife Dagger";
+		PLAYER_PROPERTIES.WEAPON_1 = "Knife Dagger";
+		PLAYER_PROPERTIES.WEAPON_2 = "Knife Dagger";
 		SetFireRate();
 	},
 	
@@ -371,12 +380,19 @@ DungeonFloor.prototype = {
 		game.load.image('bone_dagger', 'assets/img/bone_dagger.png');
 		game.load.image('serpentine_staff', 'assets/img/serpentine_staff.png');
 		game.load.image('stone_sword', 'assets/img/stone_sword.png');
+		game.load.image('knife_dagger', 'assets/img/knife_dagger.png');
+		
+		game.load.image('shader', 'assets/img/shader.png');
+		game.load.image('shadow', 'assets/img/shadow.png');
 		
 		game.load.atlas('arrow', 'assets/img/arrow_bow_s.png', 'assets/img/2_frame.json');
 		game.load.atlas('bolt', 'assets/img/bolt_crossbow_s.png', 'assets/img/2_frame.json');
 		game.load.atlas('bullet', 'assets/img/bullet_gun_s.png', 'assets/img/3_frame.json');
 		game.load.atlas('orb', 'assets/img/missile_staff_s.png', 'assets/img/2_frame.json');
 		game.load.atlas('enemyproj', 'assets/img/enemy_proj_s.png', 'assets/img/3_frame.json');
+		
+		game.load.image('map1', 'assets/img/map1.png');
+		game.load.image('map3', 'assets/img/map3.png');
 		
 		game.load.audio('Immuration', 'assets/audio/Immuration.mp3');
 		game.load.audio('In Pursuit', 'assets/audio/In Pursuit.mp3');
@@ -404,6 +420,7 @@ DungeonFloor.prototype = {
 		points = [];
 		enemies = [];
 		playercoords = [];
+		bosscoords = [];
 		treasure = [];
 		
 		SpawnDungeon(); // this all the work of dungeon generation.
@@ -450,44 +467,49 @@ DungeonFloor.prototype = {
 		pickupText.fixedToCamera = true;
 		
 		
-		// create projectile groups
-		playerprojectiles = game.add.group();
-		playerprojectiles.enableBody = true;
 		
-		enemyprojectiles = game.add.group();
-		enemyprojectiles.enableBody = true;
-		
-		// weapon cooldown
-		nextFire = 0;
-		
-		// create enemy group
 		enemygroup = game.add.group();
 		enemygroup.enableBody = true;
 		
-		enemytable = [];
+		// create projectile groups
+		playerbulletgroup = game.add.group();
+		playerbulletgroup.enableBody = true;
+		
+		enemybulletgroup = game.add.group();
+		enemybulletgroup.enableBody = true;
+		
+		//roomenemies = game.add.group();
+		//roomenemies.enableBody = true;
+		
+		// weapon cooldown
+		nextFire = 0;
+
+		
+		//enemytable = [];
 		
 		
 		// spawn enemies in hallways
 		for (var i = 0; i < enemies.length; i++){
 			enemy = new Enemy(game, enemies[i][0], enemies[i][1], "default", false, 'enemy_atlas', 'enemyidle1');
-			enemytable.push(enemy);
+			//enemytable.push(enemy);
+			enemygroup.add(enemy);
+			//roomenemies.add(enemy);
 			//game.add.existing(enemy);
 		}
 		
-		playerbullettable = [];
+		//playerbullettable = [];
 		
-		//playerbulletgroup = game.add.group();
-		//playerbulletgroup.enableBody = true;
+		//playerslashtable = [];
 		
-		playerslashtable = [];
-		enemybullettable = [];
+		playerslash = null;
+		//enemybullettable = [];
 		
 		weaponswitch = 0;
 		
 		lastroombounds = null;
 		currentroom = null;
-		roomenemies = game.add.group();
-		roomenemies.enableBody = true;
+		roomenemies = 0;
+		
 		completedrooms = [];
 		
 		currentwalls = game.add.group();
@@ -522,6 +544,37 @@ DungeonFloor.prototype = {
 		game.physics.arcade.enable(weaponicon2);
 		
 		inbossroom = false
+		
+		shader = game.add.sprite(posX, posY, 'shader');
+		shader.anchor.set(0.5);
+		game.physics.arcade.enable(shader);
+		
+		bosscomplete = false
+		
+		weaponshadow = game.add.sprite(posX, posY + weaponoffset + 4, weaponsprite);
+		weaponshadow.anchor.set(0.5);
+		weaponshadow.scale.set(1);
+		weaponshadow.tint = 0x000000;
+		weaponshadow.alpha = 0.4;
+		game.physics.arcade.enable(weaponshadow);
+		
+		game.input.mouse.mouseWheelCallback = mouseWheel;
+		function mouseWheel(event) {
+			if (PLAYER_PROPERTIES.CURRENT_WEAPON == PLAYER_PROPERTIES.WEAPON_1) {
+				PLAYER_PROPERTIES.CURRENT_WEAPON = PLAYER_PROPERTIES.WEAPON_2;
+				weaponicon.loadTexture(GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON));
+				weaponicon2.loadTexture(GetWeaponSprite(PLAYER_PROPERTIES.WEAPON_1));
+			} else {
+				PLAYER_PROPERTIES.CURRENT_WEAPON = PLAYER_PROPERTIES.WEAPON_1;
+				weaponicon.loadTexture(GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON));
+				weaponicon2.loadTexture(GetWeaponSprite(PLAYER_PROPERTIES.WEAPON_2));
+			}
+			
+			SetWeaponSprite();
+			SetFireRate();
+		}
+		
+		map = new Map();
 		
 		music = game.add.audio('Immuration', 1, true);
 		music.play();
@@ -562,6 +615,7 @@ DungeonFloor.prototype = {
 			
 			var temp = 0;
 			var enemyspawns = game.rnd.integerInRange(2, 3);
+			roomenemies = enemyspawns;
 			for (var i = 0; i < enemyspawns; i++){
 				var roombounds = mainrooms[bounds];
 				var wallpos = game.rnd.integerInRange(1, 4);
@@ -583,23 +637,28 @@ DungeonFloor.prototype = {
 				//posX = roombounds[0] + game.rnd.integerInRange((-roombounds[2]/2) + (WALL_SIZE/2), (roombounds[2]/2) - (WALL_SIZE/2));
 				//posY = roombounds[1] + game.rnd.integerInRange((-roombounds[3]/2) + (WALL_SIZE/2), (roombounds[3]/2) - (WALL_SIZE/2));
 				enemy = new Enemy(game, posX, posY, "default", false, 'enemy_atlas', 'enemyidle1');
-				enemytable.push(enemy);
-				roomenemies.add(enemy);
+				//enemytable.push(enemy);
+				enemygroup.add(enemy);
+				//roomenemies.add(enemy);
 				temp++;
 			}
 		} else if (PlayerInBoss(player.body.x, player.body.y) == true && currentroom == null) {
-			roomText.setText('End of dungeon. Press E to continue.');
 			if (inbossroom == false) {
 				inbossroom = true
 				MakeBossBounds();
+				boss = new Boss(game, bosscoords[0], bosscoords[1], "turret", false, 'enemy_atlas', 'enemyidle1');
 			}
 		} else {
 			roomText.setText('');
 		}
 		
+		if (bosscomplete == true) {
+			roomText.setText('End of dungeon. Press E to continue.');
+		}
+		
 		
 		if (currentroom != null){
-			if (roomenemies.length == 0){
+			if (roomenemies == 0){
 				PLAYER_PROPERTIES.POINTS += 50;
 				currentwalls.removeAll();
 				currentroom = null;
@@ -643,7 +702,49 @@ DungeonFloor.prototype = {
 
 		
 		function ProjectileCheck(){
+			playerbulletgroup.forEach(function(bullet) {
+				if (bullet != null){
+					// check if any bullet has collided into any enemy
+					enemygroup.forEach(function(enemy) {
+					
+						if (enemy != null){
+							// check for bullet-enemy collision
+							var bulletHitEnemy = game.physics.arcade.collide(bullet, enemy);
+							// delete the bullet if it hits an enemy and damage the enemy
+							if (bulletHitEnemy == true){
+								bullet.kill();
+								bullet.destroy();
+								//playerbullettable[i] = null;
+							
+								// enemy is damaged, delete enemy if it dies
+								enemy.damage = function(dmg) {
+									this.health -= bullet.damage;
+									if (this.health < 0) {
+										if (roomenemies > 0){
+											roomenemies--;
+										}
+										
+										this.kill();
+										this.destroy();
+										//enemytable[j] = null;
+									}
+								}
+								enemy.damage(bullet.damage);
+							}
+						}
+					}, this);
+					
+					bullet.duration = bullet.duration - 1;
+					if (bullet.duration < 1){
+						bullet.kill();
+						bullet.destroy();
+						//playerbullettable.pop(i);
+					}
+				}
+			}, this);
 			
+			
+			/*
 			for (var i = 0; i < playerbullettable.length; i++) {
 				var bullet = playerbullettable[i];
 				
@@ -685,16 +786,16 @@ DungeonFloor.prototype = {
 					}
 				}
 			}
+			*/
 			
-			for (var i = 0; i < playerslashtable.length; i++) {
-				var slash = playerslashtable[i];
-				
+			
+			var slash = playerslash;
+			
 				if (slash != null){
 					for (var k = 0; k < slash.hitboxes.length; k++){
 						var box = slash.hitboxes[k];
 						
-						for (var j = 0; j < enemytable.length; j++) {
-							var enemy = enemytable[j];
+						enemygroup.forEach(function(enemy) {
 							
 							if (enemy != null){
 								// check for bullet-enemy collision
@@ -706,16 +807,20 @@ DungeonFloor.prototype = {
 									enemy.damage = function(dmg) {
 										this.health -= slash.damage;
 										if (this.health < 0) {
+											if (roomenemies > 0){
+												roomenemies--;
+											}
+											
 											this.kill();
 											this.destroy();
-											enemytable[j] = null;
+											//enemytable[j] = null;
 											
 										}
 									}
 									enemy.damage(slash.damage);
 								}
 							}
-						}
+						}, this);
 					}
 					
 					slash.duration = slash.duration - 1;
@@ -727,13 +832,10 @@ DungeonFloor.prototype = {
 						}
 						slash.mainslash.kill();
 						slash.mainslash.destroy();
-						playerslashtable.pop(i);
 					}
 				}
-			}
-
 			
-			
+			/*
 			for (var i = 0; i < playerslashtable.length; i++) {
 				var slash = playerslashtable[i];
 				
@@ -751,7 +853,7 @@ DungeonFloor.prototype = {
 					}
 				}
 			}
-			
+			*/
 			
 		}
 		
@@ -766,6 +868,8 @@ DungeonFloor.prototype = {
 		}
 		
 		
+		shader.bringToTop();
+		map.pixel.bringToTop();
 		scoreText.setText('Score: ' + PLAYER_PROPERTIES.POINTS);
 		healthText.setText('Health: ' + PLAYER_PROPERTIES.HEALTH);
 		weaponText.setText(PLAYER_PROPERTIES.CURRENT_WEAPON);
@@ -774,6 +878,8 @@ DungeonFloor.prototype = {
 		roomText.bringToTop();
 		scoreText.bringToTop();
 		weaponicon.bringToTop();
+		weaponicon2.bringToTop();
+		pickupText.bringToTop();
 		
 		//game.debug.text(game.time.fps || '--', 2, 14, "#00ff00");
 	}
