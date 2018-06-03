@@ -15,21 +15,18 @@ function Boss(game, posX, posY, type, roomtoggle, sprite, frame){
 	
 	// check boss type
 	if (type == "default"||type == "triple"){
-		this.health = 3;
 		this.nextfire = 4;
 		this.firecooldown = 1;
 		this.walkspeed = 100;
 		this.seekrange = 400;
 	}
 	if (type == "rapid"){
-		this.health = 3;
 		this.nextfire = 1;
 		this.firecooldown = 0.1;
 		this.walkspeed = 50;
 		this.seekrange = 400;
 	}
 	if (type == "turret"){
-		this.health = 3;
 		this.nextfire = 1;
 		this.firecooldown = 0.3;
 		this.nextWave = 2;
@@ -39,7 +36,9 @@ function Boss(game, posX, posY, type, roomtoggle, sprite, frame){
 	}
 	game.add.existing(this);
 	
-	// temp
+	this.poison = false;
+	
+	this.health = 30;
 	healthBoss = game.add.text(game.camera.width/2, 32, 'Bosses health: ' + (this.health+1), { fontSize: '20px', fill: '#ffffff' });
 	healthBoss.anchor.x = 0.5;
 	healthBoss.anchor.y = 0.5;
@@ -183,6 +182,11 @@ Boss.prototype.update = function() {
 			var bulletHitBoss = game.physics.arcade.collide(bullet, this);
 			// delete the bullet if it hits an boss and damage the boss
 			if (bulletHitBoss == true){
+				if (bullet.type == "Scorpion Dagger" && this.poison == false){
+					this.poison = true;
+					this.walkspeed /= 2;
+				}
+				
 				bullet.kill();
 				bullet.destroy();
 				//playerbullettable.pop(i);			
@@ -216,6 +220,7 @@ Boss.prototype.update = function() {
 					// boss is damaged, delete boss if it dies
 					this.health -= slash.damage;
 					if (this.health < 0) {
+						healthBoss.setText("");
 						
 						bosscomplete = true;
 						
@@ -226,4 +231,16 @@ Boss.prototype.update = function() {
 			}
 		}
 	
+	if (this.poison == true){
+		this.health -= 0.1;
+		
+		if (this.health < 0){
+			healthBoss.setText("");
+			
+			bosscomplete = true;
+			
+			this.kill();
+			this.destroy();
+		}
+	}
 }

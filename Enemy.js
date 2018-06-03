@@ -5,12 +5,16 @@
 
 
 // enemy class
-function Enemy(game, posX, posY, type, roomtoggle, sprite, frame){
-	Phaser.Sprite.call(this, game, posX, posY, sprite, frame);
+function Enemy(game, posX, posY, type, roomtoggle){
+	if (type == 'scorpion'){
+		Phaser.Sprite.call(this, game, posX, posY, 'scorpion', 'scorpionidleright');
+		this.scale.set(0.5);
+	}
+	if (type == 'snake'){
+		Phaser.Sprite.call(this, game, posX, posY, 'snake', 'snakeright1');
+		this.scale.set(0.5);
+	}
 	this.anchor.set(0.5);
-	var scale = 1;
-	this.scale.x = scale;
-	this.scale.y = scale;
 	
 	this.type = type;
 	this.room = roomtoggle;
@@ -19,7 +23,7 @@ function Enemy(game, posX, posY, type, roomtoggle, sprite, frame){
 	this.body.collideWorldBounds = false;
 	
 	// check enemy type
-	if (type == "default"){
+	if (type == "scorpion"){
 		this.health = 3;
 		this.nextfire = 4;
 		this.firecooldown = 1;
@@ -27,17 +31,23 @@ function Enemy(game, posX, posY, type, roomtoggle, sprite, frame){
 		this.seekrange = 400;
 		this.points = 10;
 		
-		this.animations.add('idle', Phaser.Animation.generateFrameNames('enemyidle', 1, 2), 5, true);
-		this.animations.add('walkup', Phaser.Animation.generateFrameNames('enemyup', 1, 2), 5, true);
-		this.animations.add('walkright', Phaser.Animation.generateFrameNames('enemyright', 1, 2), 5, true);
-		this.animations.add('walkleft', Phaser.Animation.generateFrameNames('enemyleft', 1, 2), 5, true);
-		this.animations.add('walkdown', Phaser.Animation.generateFrameNames('enemydown', 1, 2), 5, true);
-		this.animations.add('walkupleft', Phaser.Animation.generateFrameNames('enemyupleft', 1, 2), 5, true);
-		this.animations.add('walkupright', Phaser.Animation.generateFrameNames('enemyupright', 1, 2), 5, true);
-		this.animations.add('walkdownleft', Phaser.Animation.generateFrameNames('enemydownleft', 1, 2), 5, true);
-		this.animations.add('walkdownright', Phaser.Animation.generateFrameNames('enemydownright', 1, 2), 5, true);
+		this.animations.add('walkright', Phaser.Animation.generateFrameNames('scorpionwalkright', 2, 3), 5, true);
+		this.animations.add('walkleft', Phaser.Animation.generateFrameNames('scorpionwalkleft', 2, 3), 5, true);
+	}
+	if (type == "snake"){
+		this.health = 5;
+		this.nextfire = 4;
+		this.firecooldown = 1.5;
+		this.walkspeed = 120;
+		this.seekrange = 400;
+		this.points = 20;
+		
+		this.animations.add('walkright', Phaser.Animation.generateFrameNames('snakeright', 1, 2), 5, true);
+		this.animations.add('walkleft', Phaser.Animation.generateFrameNames('snakeleft', 1, 2), 5, true);
 	}
 	
+	this.direction = "right";
+	this.poison = false;
 	
 	this.animations.play('idle');
 	game.add.existing(this);
@@ -67,12 +77,12 @@ Enemy.prototype.update = function() {
 						
 		// how does they enemy move? do they fire a projectile? if so, what kind?
 		// enemy type determines actions here.
-		if (this.type == "default"){
+		if (this.type == 'scorpion'){
 			this.body.velocity.x = dirX * this.walkspeed;
 			this.body.velocity.y = dirY * this.walkspeed;
-							
+			
 			if (time > this.nextfire){
-				var bullet = new EnemyProjectile(this.body.x + 8, this.body.y + 8, player.body.x, player.body.y, "default");
+				var bullet = new EnemyProjectile(this.body.x + 8, this.body.y + 8, player.body.x, player.body.y, "scorpion");
 				//enemybullettable.push(bullet);
 				enemybulletgroup.add(bullet);
 				this.nextfire = time + this.firecooldown; // this is the bullet rate of the weapon
@@ -81,19 +91,62 @@ Enemy.prototype.update = function() {
 				bullet.body.velocity.y = dirY*bullet.speed;
 			}
 		}
-
-		if (dirX > game.math.difference(0, dirY)){
-			this.animations.play('walkright');
-		} else if (dirX < -game.math.difference(0, dirY)){
-			this.animations.play('walkleft');
-		} else if (dirY > game.math.difference(0, dirX)){
-			this.animations.play('walkdown');
-		} else if (dirY < -game.math.difference(0, dirX)){
-			this.animations.play('walkup');
-		} else {
-			this.animations.play('idle');
+		
+		if (this.type == 'snake'){
+			this.body.velocity.x = dirX * this.walkspeed;
+			this.body.velocity.y = dirY * this.walkspeed;
+			
+			if (time > this.nextfire){
+				for (var i = 0; i < 2; i++){
+					var bullet = new EnemyProjectile(this.body.x + 16, this.body.y + 16, player.body.x, player.body.y, "snake");
+					//enemybullettable.push(bullet);
+					enemybulletgroup.add(bullet);
+					this.nextfire = time + this.firecooldown; // this is the bullet rate of the weapon
+					
+					var angleoffset = (i - 0.5)*0.3;
+					var angle = game.math.angleBetween(this.body.x + 16, this.body.y + 16, player.body.x, player.body.y) + angleoffset;
+					
+					var targetX = this.body.x+(Math.cos(angle)*70)+16;
+					var targetY = this.body.y+(Math.sin(angle)*70)+16;
+					game.physics.arcade.moveToXY(bullet, targetX, targetY, bullet.speed);
+					
+					enemyspitfx.play();
+				}
+			}
 		}
-						
+		
+		if (this.type == 'scorpion'){
+			if (dirX > 0){
+				this.animations.play('walkright');
+				this.direction = "right";
+			} else if (dirX < 0){
+				this.animations.play('walkleft');
+				this.direction = "left";
+			} else {
+				if (this.direction == "left"){
+					player.frameName = 'scorpionidleleft';
+				} else {
+					player.frameName = 'scorpionidleright';
+				}
+			}
+		}
+		
+		if (this.type == 'snake'){
+			if (dirX > 0){
+				this.animations.play('walkright');
+				this.direction = "right";
+			} else if (dirX < 0){
+				this.animations.play('walkleft');
+				this.direction = "left";
+			} else {
+				if (this.direction == "left"){
+					player.frameName = 'snakeright1';
+				} else {
+					player.frameName = 'snakeleft1';
+				}
+			}
+		}
+		
 		if (this.type == "turret"){
 			// more types
 		}
@@ -104,5 +157,17 @@ Enemy.prototype.update = function() {
 		this.body.velocity.y = 0;
 	}
 	
+	if (this.poison == true){
+		this.health -= 0.1;
+		
+		if (this.health <= 0){
+			if (roomenemies > 0){
+				roomenemies--;
+			}
+			
+			this.kill();
+			this.destroy();
+		}
+	}
 }
 

@@ -3,7 +3,7 @@
 function EnemyProjectile(posX, posY, playerX, playerY, type){
 	this.type = type;
 	
-	if (type == "default"){
+	if (type == "scorpion"){
 		this.speed = 200;
 		this.damage = 1;
 		Phaser.Sprite.call(this, game, posX, posY, 'enemyproj', 'sprite1');
@@ -23,6 +23,28 @@ function EnemyProjectile(posX, posY, playerX, playerY, type){
 		this.animations.add('anim', Phaser.Animation.generateFrameNames('sprite', 1, 2), 8, true);
 		this.animations.play('anim');
 	}
+	
+	if (type == "snake"){
+		this.speed = 250;
+		this.damage = 1;
+		Phaser.Sprite.call(this, game, posX, posY, 'enemyproj', 'sprite1');
+		
+		this.anchor.set(0.5);
+		var scale = 1;
+		this.scale.x = scale;
+		this.scale.y = scale;
+		
+		game.physics.enable(this);
+		this.body.collideWorldBounds = false;
+		//this.model = enemyprojectiles.create(posX, posY, 'enemy_atlas', 'projectile1');
+		
+		var angle = game.math.angleBetween(posX, posY, playerX, playerY);
+		this.rotation = angle;
+		
+		this.animations.add('anim', Phaser.Animation.generateFrameNames('sprite', 1, 2), 8, true);
+		this.animations.play('anim');
+	}
+	
 	game.add.existing(this);
 }
 
@@ -47,8 +69,30 @@ EnemyProjectile.prototype.update = function() {
 						
 		// player is damaged
 		if (bulletHitPlayer == true && iframes <= 0){	
-			PLAYER_PROPERTIES.HEALTH -= this.damage;
+			if (PLAYER_PROPERTIES.WEAPON_1 == "Bone Dagger" || PLAYER_PROPERTIES.WEAPON_2 == "Bone Dagger"){
+				PLAYER_PROPERTIES.HEALTH -= 2*(this.damage);
+			} else {
+				PLAYER_PROPERTIES.HEALTH -= this.damage;
+			}
 			iframes = IFRAMES_MAX;
+		}
+		
+		var rand = game.rnd.integerInRange(1, 5);
+		
+		if (rand == 1){
+			gruntfx1.play();
+		}
+		if (rand == 2){
+			gruntfx2.play();
+		}
+		if (rand == 3){
+			gruntfx3.play();
+		}
+		if (rand == 4){
+			gruntfx4.play();
+		}
+		if (rand == 5){
+			gruntfx5.play();
 		}
 	}
 }

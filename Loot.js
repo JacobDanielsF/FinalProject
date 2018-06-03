@@ -15,6 +15,9 @@ function Loot(game, posX, posY, type){
 	if (type == "short_bow"){
 		this.name = "Short Bow";
 	}
+	if (type == "composite_bow"){
+		this.name = "Composite Bow";
+	}
 	if (type == "revolver_gun"){
 		this.name = "Revolver Gun";
 	}
@@ -51,6 +54,10 @@ Loot.prototype.update = function() {
 		pickupText.setText('Press SPACE to pick up ' + this.name);
 		
 		if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){
+			
+			if (this.name == "Ornate Dagger"){
+				player.ornateuse = false;
+			}
 			
 			if (PLAYER_PROPERTIES.CURRENT_WEAPON == PLAYER_PROPERTIES.WEAPON_1) {
 				PLAYER_PROPERTIES.WEAPON_1 = this.name;

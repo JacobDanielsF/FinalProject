@@ -14,10 +14,28 @@ function PlayerProjectile(posX, posY, type, angleoffset){
 		game.physics.enable(this);
 		this.body.collideWorldBounds = false;
 		
-		this.speed = 600;
+		this.speed = 550;
 		this.damage = 1;
 		this.rotation = game.physics.arcade.angleToPointer(player) + (Math.PI/4);
 		this.duration = 35;
+		
+	}
+	if (type == "Scorpion Dagger"){
+		Phaser.Sprite.call(this, game, posX, posY, 'scorpion_dagger');
+		this.anchor.set(0.5);
+		var scale = 0.8;
+		this.scale.x = scale;
+		this.scale.y = scale;
+	
+		this.type = type;
+	
+		game.physics.enable(this);
+		this.body.collideWorldBounds = false;
+		
+		this.speed = 650;
+		this.damage = 0;
+		this.rotation = game.physics.arcade.angleToPointer(player) + (Math.PI/4);
+		this.duration = 40;
 		
 	}
 	if (type == "Iron Dagger"){
@@ -32,7 +50,7 @@ function PlayerProjectile(posX, posY, type, angleoffset){
 		game.physics.enable(this);
 		this.body.collideWorldBounds = false;
 		
-		this.speed = 600;
+		this.speed = 650;
 		this.damage = 1;
 		this.rotation = game.physics.arcade.angleToPointer(player) + (Math.PI/4);
 		this.duration = 40;
@@ -44,14 +62,18 @@ function PlayerProjectile(posX, posY, type, angleoffset){
 		var scale = 0.8;
 		this.scale.x = scale;
 		this.scale.y = scale;
-	
+		
 		this.type = type;
 	
 		game.physics.enable(this);
 		this.body.collideWorldBounds = false;
 		
-		this.speed = 700;
-		this.damage = 2;
+		this.speed = 600;
+		if (ornateuse == false){
+			this.damage = 2;
+		} else {
+			this.damage = 0.5;
+		}
 		this.rotation = game.physics.arcade.angleToPointer(player) + (Math.PI/4);
 		this.duration = 30;
 
@@ -68,7 +90,7 @@ function PlayerProjectile(posX, posY, type, angleoffset){
 		game.physics.enable(this);
 		this.body.collideWorldBounds = false;
 		
-		this.speed = 650;
+		this.speed = 600;
 		this.damage = 2;
 		this.rotation = game.physics.arcade.angleToPointer(player) + (Math.PI/4);
 		this.duration = 35;
@@ -106,7 +128,27 @@ function PlayerProjectile(posX, posY, type, angleoffset){
 		game.physics.enable(this);
 		this.body.collideWorldBounds = false;
 		
-		this.speed = 500;
+		this.speed = 550;
+		this.damage = 2;
+		this.rotation = game.physics.arcade.angleToPointer(player) + (Math.PI/4);
+		this.duration = 40;
+		
+		this.animations.add('anim', Phaser.Animation.generateFrameNames('sprite', 1, 2), 8, true);
+		this.animations.play('anim');
+	}
+	if (type == "Composite Bow"){
+		Phaser.Sprite.call(this, game, posX, posY, 'arrow', 'sprite1');
+		this.anchor.set(0.5);
+		var scale = 1.5;
+		this.scale.x = scale;
+		this.scale.y = scale;
+	
+		this.type = type;
+	
+		game.physics.enable(this);
+		this.body.collideWorldBounds = false;
+		
+		this.speed = 550;
 		this.damage = 2;
 		this.rotation = game.physics.arcade.angleToPointer(player) + (Math.PI/4);
 		this.duration = 40;
@@ -146,10 +188,10 @@ function PlayerProjectile(posX, posY, type, angleoffset){
 		game.physics.enable(this);
 		this.body.collideWorldBounds = false;
 		
-		this.speed = 550;
+		this.speed = 500;
 		this.damage = 1;
 		this.rotation = game.physics.arcade.angleToPointer(player) + (Math.PI/4);
-		this.duration = 50;
+		this.duration = 40;
 		
 		this.animations.add('anim', Phaser.Animation.generateFrameNames('sprite', 1, 3), 8, true);
 		this.animations.play('anim');
@@ -166,10 +208,10 @@ function PlayerProjectile(posX, posY, type, angleoffset){
 		game.physics.enable(this);
 		this.body.collideWorldBounds = false;
 		
-		this.speed = 650;
+		this.speed = 600;
 		this.damage = 2;
 		this.rotation = game.physics.arcade.angleToPointer(player) + (Math.PI/4);
-		this.duration = 50;
+		this.duration = 45;
 		
 		this.animations.add('anim', Phaser.Animation.generateFrameNames('sprite', 1, 3), 8, true);
 		this.animations.play('anim');
@@ -184,8 +226,8 @@ function PlayerProjectile(posX, posY, type, angleoffset){
 	game.physics.arcade.moveToXY(this, targetX, targetY, this.speed);
 	//game.physics.arcade.moveToPointer(this, this.speed);
 	
-	//this.body.velocity.x = 0;
-	//this.body.velocity.y = 0;
+	this.body.velocity.x += (player.body.velocity.x)/2;
+	this.body.velocity.y += (player.body.velocity.y)/2;
 	
 	game.add.existing(this);
 }
@@ -201,9 +243,12 @@ PlayerProjectile.prototype.update = function() {
 	if (bulletHitWall == true || bulletHitCurrentWall == true){
 		this.kill();
 		this.destroy();
+		if (this.type == "Knife Dagger" || this.type == "Iron Dagger" || this.type == "Scorpion Dagger" || this.type == "Ornate Dagger" || this.type == "Bone Dagger" || this.type == "Wooden Crossbow" || this.type == "Short Bow" || this.type == "Composite Bow" || this.type == "Revolver Gun"){
+			rangedhitfx.play();
+		}
 	}
 	
-	if (this.type == "Knife Dagger" || this.type == "Iron Dagger" || this.type == "Ornate Dagger" || this.type == "Bone Dagger"){
+	if (this.type == "Knife Dagger" || this.type == "Iron Dagger" || this.type == "Ornate Dagger" || this.type == "Bone Dagger" || this.type == "Scorpion Dagger"){
 		this.rotation = this.rotation + 0.5;
 		this.blink--;
 		if (this.blink < 0){

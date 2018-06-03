@@ -64,8 +64,11 @@ BossProjectile.prototype.update = function() {
 						
 		// player is damaged
 		if (bulletHitPlayer == true && iframes <= 0){	
-			PLAYER_PROPERTIES.HEALTH -= this.damage;
-			iframes = IFRAMES_MAX;
+			if (PLAYER_PROPERTIES.WEAPON_1 == "Bone Dagger" || PLAYER_PROPERTIES.WEAPON_2 == "Bone Dagger"){
+				PLAYER_PROPERTIES.HEALTH -= 2*(this.damage);
+			} else {
+				PLAYER_PROPERTIES.HEALTH -= this.damage;
+			}
 		}
 	}
 	

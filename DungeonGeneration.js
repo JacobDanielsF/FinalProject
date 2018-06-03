@@ -301,8 +301,8 @@ function PlayerInBounds(x,y){
 			var boundY1 = bossroom[1] - (bossroom[3]/2);
 			var boundY2 = bossroom[1] + (bossroom[3]/2);
 				
-			if (x > boundX1 - (boundX1 % WALL_SIZE) && x <= boundX2 - (boundX2 % WALL_SIZE)) {
-				if (y > boundY1 - (boundY1 % WALL_SIZE) && y <= boundY2 - (boundY2 % WALL_SIZE)) {
+			if (x > boundX1 - (boundX1 % WALL_SIZE) + (WALL_SIZE/2) && x <= boundX2 - (boundX2 % WALL_SIZE) - (WALL_SIZE/2)) {
+				if (y > boundY1 - (boundY1 % WALL_SIZE) + (WALL_SIZE/2) && y <= boundY2 - (boundY2 % WALL_SIZE) - (WALL_SIZE/2)) {
 					return true;
 				}
 			}
