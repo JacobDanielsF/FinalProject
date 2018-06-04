@@ -33,6 +33,8 @@ function Enemy(game, posX, posY, type, roomtoggle){
 		
 		this.animations.add('walkright', Phaser.Animation.generateFrameNames('scorpionwalkright', 2, 3), 5, true);
 		this.animations.add('walkleft', Phaser.Animation.generateFrameNames('scorpionwalkleft', 2, 3), 5, true);
+		this.animations.add('attackright', ['scorpionattackright'], 5, true);
+		this.animations.add('attackleft', ['scorpionattackleft'], 5, true);
 	}
 	if (type == "snake"){
 		this.health = 5;
@@ -44,11 +46,15 @@ function Enemy(game, posX, posY, type, roomtoggle){
 		
 		this.animations.add('walkright', Phaser.Animation.generateFrameNames('snakeright', 1, 2), 5, true);
 		this.animations.add('walkleft', Phaser.Animation.generateFrameNames('snakeleft', 1, 2), 5, true);
+		this.animations.add('attackright', Phaser.Animation.generateFrameNames('snakeattackright', 1, 2), 5, true);
+		this.animations.add('attackleft', Phaser.Animation.generateFrameNames('snakeattackleft', 1, 2), 5, true);
 	}
 	
 	this.direction = "right";
 	this.poison = false;
-	
+	// first thing that came to mind for overriding the walk animations based on attacks. 
+	this.attacking = false;
+	this.attackTimer = 0;
 	this.animations.play('idle');
 	game.add.existing(this);
 }
@@ -86,7 +92,14 @@ Enemy.prototype.update = function() {
 				//enemybullettable.push(bullet);
 				enemybulletgroup.add(bullet);
 				this.nextfire = time + this.firecooldown; // this is the bullet rate of the weapon
+				if (dirX>0){
+					this.animations.play('attackright');	
+				}
+				if (dirX<0){
+					this.animations.play('attackleft');	
+				}
 				
+				this.attackTimer = time+0.25;
 				bullet.body.velocity.x = dirX*bullet.speed;
 				bullet.body.velocity.y = dirY*bullet.speed;
 			}
@@ -95,6 +108,15 @@ Enemy.prototype.update = function() {
 		if (this.type == 'snake'){
 			this.body.velocity.x = dirX * this.walkspeed;
 			this.body.velocity.y = dirY * this.walkspeed;
+			if(time>(this.nextfire-0.29)){
+				if (dirX>0){
+					this.animations.play('attackright');	
+				}
+				if (dirX<0){
+					this.animations.play('attackleft');	
+				}
+				this.attackTimer = time+0.1;
+			}
 			
 			if (time > this.nextfire){
 				for (var i = 0; i < 2; i++){
@@ -117,11 +139,15 @@ Enemy.prototype.update = function() {
 		
 		if (this.type == 'scorpion'){
 			if (dirX > 0){
-				this.animations.play('walkright');
-				this.direction = "right";
+				if(time>this.attackTimer){	
+					this.animations.play('walkright');
+					this.direction = "right";
+				}
 			} else if (dirX < 0){
-				this.animations.play('walkleft');
-				this.direction = "left";
+				if(time>this.attackTimer){	
+					this.animations.play('walkleft');
+					this.direction = "left";
+				}
 			} else {
 				if (this.direction == "left"){
 					player.frameName = 'scorpionidleleft';
@@ -133,11 +159,15 @@ Enemy.prototype.update = function() {
 		
 		if (this.type == 'snake'){
 			if (dirX > 0){
-				this.animations.play('walkright');
-				this.direction = "right";
+				if(time>this.attackTimer){	
+					this.animations.play('walkright');
+					this.direction = "right";
+				}
 			} else if (dirX < 0){
-				this.animations.play('walkleft');
-				this.direction = "left";
+				if(time>this.attackTimer){
+					this.animations.play('walkleft');
+					this.direction = "left";
+				}
 			} else {
 				if (this.direction == "left"){
 					player.frameName = 'snakeright1';
