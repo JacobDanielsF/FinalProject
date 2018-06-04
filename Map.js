@@ -26,10 +26,8 @@ function MakeMap(){
 	}
 	return map;
 }
+var pixels = [];
 function Map(){
-	//for ( var i = 0; i <FLOOR_SIZE/(WALL_SIZE) ; i++ ) {
-	//	map[i] = [];
-	//}
 	map = MakeMap();
 	console.log(mapHeight+" "+mapWidth);
 	
@@ -38,27 +36,49 @@ function Map(){
 	this.pixel = game.add.sprite(posX, posY, 'map3');
 	permX = 0;
 	permY = 0;
+	let q = 0;
+	// Change this to basic (or whatever else) for the previous verion. Change to advanced for new version.
+	this.mode = "advanced"
 	for(var i=0;i<mapHeight;i++){
 		for(var j=0;j<mapWidth;j++){
 			posX = permX+(2*j);
 			posY = permY;
 			if(map[j][i]=="0"){
-				pixels = this.pixel.addChild(game.make.sprite(posX, posY,"map1"));
+				pixels[q] = this.pixel.addChild(game.make.sprite(posX, posY,"map1"));
+				if(this.mode=="advanced"){
+					pixels[q].alpha = 0;
+				}
+				q++;
+				// wallPixelGroup.add(pixels);
 			}
 		}
 		permY += 2;
 	}
+	Phaser.Sprite.call(this, game, 672, 0, 'map2');
 	this.pixel.fixedToCamera = true;
 	this.pixel.bringToTop();
-	console.log(player.x+" playa "+player.y);
+	this.fixedToCamera = true;
+	game.add.existing(this);
 }
 
 Map.prototype = Object.create(Phaser.Sprite.prototype);
 Map.prototype.constructor = Map;
 
 
-/*
+
 Map.prototype.update = function() {
-	this.pixel.bringToTop();
+	if(this.mode=="advanced"){
+		// Changes the position of the playerDot correctly.
+		this.fixedToCamera = false;
+		this.x = (player.x/32)+game.camera.width-(mapWidth*2);
+		this.y = (player.y-32)/32;
+		this.fixedToCamera = true;
+		// Checks to see what walls are in range.
+		for(var pixelTest=0;pixelTest<pixels.length;pixelTest++){
+			if(  InRange( this.x, this.y, (pixels[pixelTest].x+672), pixels[pixelTest].y, 6)   ){
+				pixels[pixelTest].alpha=1;
+			}
+		}
+	}
+	this.bringToTop();
 }
-*/

@@ -185,14 +185,16 @@ BeginMusic.prototype = {
 	}
 	
 }
-
+var difficulty=1;
+var difficultyText="Easy";
 var TitleScreen = function(game) {};
 TitleScreen.prototype = {
 	
 	preload: function() {
 		console.log('TitleScreen: preload');
 		game.load.image('logo', 'assets/img/logo.png');
-		
+		game.load.image('border', 'assets/img/border.png');
+		game.load.atlas('tile_atlas', 'assets/img/tile_atlas.png', 'assets/img/tile_sprites.json');
 		game.load.audio('In Pursuit', 'assets/audio/In Pursuit.mp3');
 	},
 	
@@ -201,27 +203,41 @@ TitleScreen.prototype = {
 		
 		// testing state text
 		//stateText = game.add.text(20, 20, 'TitleScreen', { fontSize: '20px', fill: '#ffffff' });
-		
+		for (let i=64;i<config.width-64;i+=56){
+			for (let j=64;j<config.height-64;j+=59){
+				let titleTile = game.add.image(i,j,'tile_atlas','floor1');
+				titleTile.scale.x = 0.875;
+				titleTile.scale.y = 0.921875;
+				titleTile.alpha = 0.5;
+			}
+		}
 		var logo = game.add.sprite(400, 250, 'logo');
-		
 		logo.anchor.set(0.5);
 		var scale = 2;
 		logo.scale.x = scale;
 		logo.scale.y = scale;
 		
+		
+		let titleTile = game.add.image(0,0,'border');
+		titleTile.alpha = 0.5;
+	
 		//promptText = game.add.text(400, 250, 'Tomb of the Ancients', { fontSize: '40px', fill: '#ffffff' });
 		//promptText.anchor.x = 0.5;
 		//promptText.anchor.y = 0.5;
 		
 		// input prompt
-		promptText = game.add.text(400, 450, 'Press SPACE to begin.', { fontSize: '20px', fill: '#ffffff' });
+		promptText = game.add.text(400, 400, 'Press SPACE to begin.', { fontSize: '20px', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
 		
-		promptText = game.add.text(400, 500, 'Press Q to view credits.', { fontSize: '20px', fill: '#ffffff' });
+		promptText = game.add.text(400, 450, 'Press Q to view credits.', { fontSize: '20px', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
 		
+		diffText = game.add.text(400, 500, 'Press E to change difficulty: '+difficultyText, { fontSize: '20px', fill: '#ffffff' });
+		diffText.anchor.x = 0.5;
+		diffText.anchor.y = 0.5;
+
 		PLAYER_PROPERTIES.POINTS = 0;
 		PLAYER_PROPERTIES.FLOOR = 0;
 		PLAYER_PROPERTIES.HEALTH = 10;
@@ -233,6 +249,16 @@ TitleScreen.prototype = {
 	
 	update: function() {
 		// shift to main game state
+		if(game.input.keyboard.justPressed(Phaser.Keyboard.E)){
+			difficulty *= -1; 
+			if(difficulty==1){
+				difficultyText="Easy";
+			}
+			if(difficulty==-1){
+				difficultyText="Hard";
+			}
+			diffText.setText('Press E to change difficulty: '+difficultyText);
+		}
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){ // or isPressed
 			game.state.start('Tutorial');
 		}
@@ -309,6 +335,7 @@ Tutorial.prototype = {
 		// testing state text
 		//stateText = game.add.text(20, 20, 'Tutorial', { fontSize: '20px', fill: '#ffffff' });
 		
+
 		newText = game.add.text(400, 200, 'Press WASD to move, SHIFT to run.', { fontSize: '20px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
@@ -426,6 +453,7 @@ DungeonFloor.prototype = {
 		game.load.atlas('enemyproj', 'assets/img/enemy_proj_s.png', 'assets/img/3_frame.json');
 		
 		game.load.image('map1', 'assets/img/map1.png');
+		game.load.image('map2', 'assets/img/map2.png');
 		game.load.image('map3', 'assets/img/map3.png');
 		
 		game.load.audio('Immuration', 'assets/audio/Immuration.mp3');
@@ -627,9 +655,9 @@ DungeonFloor.prototype = {
 			SetWeaponSprite();
 			SetFireRate();
 		}
-		
-		map = new Map();
-		
+		if(difficulty==1){
+			map = new Map();
+		}
 		roommusic = game.add.audio('Doomed Romance', 1, true);
 		bossmusic = game.add.audio('Maelstrom', 1, true);
 		
@@ -967,7 +995,9 @@ DungeonFloor.prototype = {
 		
 		
 		shader.bringToTop();
-		map.pixel.bringToTop();
+		if(difficulty==1){
+			map.pixel.bringToTop();
+		}
 		scoreText.setText('Score: ' + PLAYER_PROPERTIES.POINTS);
 		healthText.setText('Health: ' + PLAYER_PROPERTIES.HEALTH);
 		weaponText.setText(PLAYER_PROPERTIES.CURRENT_WEAPON);
