@@ -37,7 +37,7 @@ function Boss(game, posX, posY, type, roomtoggle, sprite, frame){
 	game.add.existing(this);
 	
 	this.poison = false;
-	
+	this.body.immovable = true;
 	this.health = 30;
 	healthBoss = game.add.text(game.camera.width/2, 32, 'Bosses health: ' + (this.health+1), { fontSize: '20px', fill: '#ffffff' });
 	healthBoss.anchor.x = 0.5;

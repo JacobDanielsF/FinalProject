@@ -69,6 +69,25 @@ BossProjectile.prototype.update = function() {
 			} else {
 				PLAYER_PROPERTIES.HEALTH -= this.damage;
 			}
+			iframes = IFRAMES_MAX;
+		}
+		
+		var rand = game.rnd.integerInRange(1, 5);
+		
+		if (rand == 1){
+			gruntfx1.play();
+		}
+		if (rand == 2){
+			gruntfx2.play();
+		}
+		if (rand == 3){
+			gruntfx3.play();
+		}
+		if (rand == 4){
+			gruntfx4.play();
+		}
+		if (rand == 5){
+			gruntfx5.play();
 		}
 	}
 	
