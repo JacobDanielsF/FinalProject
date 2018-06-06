@@ -29,23 +29,19 @@ function MakeMap(){
 var pixels = [];
 function Map(){
 	map = MakeMap();
-	console.log(mapHeight+" "+mapWidth);
-	
 	let posX = game.camera.width-(mapWidth*2);
 	let posY = 0;
 	this.pixel = game.add.sprite(posX, posY, 'map3');
 	permX = 0;
 	permY = 0;
 	let q = 0;
-	// Change this to basic (or whatever else) for the previous verion. Change to advanced for new version.
-	this.mode = "advanced"
 	for(var i=0;i<mapHeight;i++){
 		for(var j=0;j<mapWidth;j++){
 			posX = permX+(2*j);
 			posY = permY;
 			if(map[j][i]=="0"){
 				pixels[q] = this.pixel.addChild(game.make.sprite(posX, posY,"map1"));
-				if(this.mode=="advanced"){
+				if(difficulty>0){
 					pixels[q].alpha = 0;
 				}
 				q++;
@@ -54,7 +50,10 @@ function Map(){
 		}
 		permY += 2;
 	}
+	
 	Phaser.Sprite.call(this, game, 672, 0, 'map2');
+	this.anchor.x = 0.5;
+	this.anchor.y = 0.5;
 	this.pixel.fixedToCamera = true;
 	this.pixel.bringToTop();
 	this.fixedToCamera = true;
@@ -67,11 +66,18 @@ Map.prototype.constructor = Map;
 
 
 Map.prototype.update = function() {
-	if(this.mode=="advanced"){
+	if(difficulty==0){
+		this.fixedToCamera = false;
+		this.x = (player.x/32)+game.camera.width-(mapWidth*2);
+		this.y = (player.y+32)/32;
+		// console.log("changed6");
+		this.fixedToCamera = true;
+	}
+	if(difficulty==1){
 		// Changes the position of the playerDot correctly.
 		this.fixedToCamera = false;
 		this.x = (player.x/32)+game.camera.width-(mapWidth*2);
-		this.y = (player.y-32)/32;
+		this.y = player.y/32;
 		this.fixedToCamera = true;
 		// Checks to see what walls are in range.
 		for(var pixelTest=0;pixelTest<pixels.length;pixelTest++){

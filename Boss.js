@@ -5,8 +5,7 @@ function Boss(game, posX, posY, type, roomtoggle, sprite, frame){
 	var scale = 1;
 	this.scale.x = scale;
 	this.scale.y = scale;
-	this.anchor.x=0.5;
-	this.anchor.y=0.5;
+	this.anchor.set(0.5);
 	this.type = type;
 	this.room = roomtoggle;
 	
@@ -31,7 +30,7 @@ function Boss(game, posX, posY, type, roomtoggle, sprite, frame){
 		this.firecooldown = 0.3;
 		this.nextWave = 2;
 		this.waveFire = 1;
-		this.walkspeed = 0;
+		this.walkspeed = 0.5;
 		this.seekrange = 400;
 	}
 	game.add.existing(this);
@@ -44,6 +43,12 @@ function Boss(game, posX, posY, type, roomtoggle, sprite, frame){
 	healthBoss.anchor.y = 0.5;
 	healthBoss.bringToTop();
 	healthBoss.fixedToCamera = true;
+	
+	// adding this because the shots only go from the anchor the first time, then they come from the top left.
+	this.fireOnce = false;
+	
+	this.animations.add('idle', Phaser.Animation.generateFrameNames('boss', 1, 12), 9, true);
+	this.animations.play('idle');
 }
 var healthBoss
 Boss.prototype = Object.create(Phaser.Sprite.prototype);
@@ -113,7 +118,7 @@ Boss.prototype.update = function() {
 			if (time > this.nextfire){
 				var bullet = []
 				for (var i = 0;i<3;i++){
-					bullet[i] = new BossProjectile(this.body.x + 8, this.body.y + 8, player.body.x, player.body.y, "triple",'enemy_atlas', 'projectile1',i);
+					bullet[i] = new BossProjectile(this.body.x + 8, this.body.y + 8, player.body.x, player.body.y, "triple", 'enemy_atlas', 'projectile1',i);
 					//enemybullettable.push(bullet[i]);
 					enemybulletgroup.add(bullet[i]);
 				}
@@ -129,23 +134,46 @@ Boss.prototype.update = function() {
 		
 						
 		if (this.type == "turret"){
-			var dirX = game.math.clamp((player.body.x - this.body.x)/128, -1, 1);
-			var dirY = game.math.clamp((player.body.y - this.body.y)/128, -1, 1);
+			var dirX = game.math.clamp((player.body.x - (this.body.x+64))/128, -1, 1);
+			var dirY = game.math.clamp((player.body.y - (this.body.y+75))/128, -1, 1);
 			this.body.velocity.x = dirX * this.walkspeed;
 			this.body.velocity.y = dirY * this.walkspeed;
 			if (time > this.nextfire){
-				var bullet = new BossProjectile(this.body.x + 8, this.body.y + 8, player.body.x, player.body.y, "default",'enemyproj', 'sprite1');
+				if(this.fireOnce==false){
+					var bullet = new BossProjectile(this.body.x, this.body.y, player.body.x, player.body.y, "default",'enemyproj', 'sprite1');
+					
+				}else{
+					var bullet = new BossProjectile(this.body.x + 64, this.body.y + 75, player.body.x, player.body.y, "default",'enemyproj', 'sprite1');	
+				}
 				//enemybullettable.push(bullet);
 				enemybulletgroup.add(bullet);
 				this.nextfire = time + this.firecooldown; // this is the bullet rate of the weapon
-
-				bullet.body.velocity.x = dirX*bullet.speed;
-				bullet.body.velocity.y = dirY*bullet.speed;
+				var fixY = Math.abs(dirY*bullet.speed);	
+				var fixX = Math.abs(dirX*bullet.speed);
+				var fix 
+				if(fixX>fixY){
+					fix = fixX;
+				}else{
+					fix = fixY;
+				}
+				game.physics.arcade.moveToObject(bullet,player, fix);
+				//bullet.angle = game.math.angleBetween(bullet.x, bullet.y, player.x, player.y);
+					
+		
 			}
 			if (time > this.nextWave){
 				var wave = []
-				for (var i = 0;i<4;i++){
-					wave[i] = new BossProjectile(this.body.x + 8, this.body.y + 8, player.body.x, player.body.y, "default",'enemyproj', 'sprite1',i);
+				for (var i = 0; i<4; i++){
+					// Basically a duct tape fix. Problem described above the initial this.fireOnce.
+					if(this.fireOnce==false){
+						wave[i] = new BossProjectile(this.body.x, this.body.y, player.body.x, player.body.y, "default",'enemyproj', 'sprite1',i);
+						if(i>2){
+							this.fireOnce=true;
+						}
+					}else{
+						wave[i] = new BossProjectile(this.body.x + 64, this.body.y + 75, player.body.x, player.body.y, "default",'enemyproj', 'sprite1',i);	
+					}
+					
 					//enemybullettable.push(wave[i]);
 					enemybulletgroup.add(wave[i]);
 				}

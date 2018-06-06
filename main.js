@@ -185,7 +185,7 @@ BeginMusic.prototype = {
 	}
 	
 }
-var difficulty=1;
+var difficulty=0;
 var difficultyText="Easy";
 var TitleScreen = function(game) {};
 TitleScreen.prototype = {
@@ -226,7 +226,7 @@ TitleScreen.prototype = {
 		//promptText.anchor.y = 0.5;
 		
 		// input prompt
-		promptText = game.add.text(400, 400, 'Press SPACE to begin.', { fontSize: '20px', fill: '#ffffff' });
+		promptText = game.add.text(400, 400, 'Press SPACE to begin.', { font: 'bold 20pt FreeMono', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
 		
@@ -250,12 +250,18 @@ TitleScreen.prototype = {
 	update: function() {
 		// shift to main game state
 		if(game.input.keyboard.justPressed(Phaser.Keyboard.E)){
-			difficulty *= -1; 
-			if(difficulty==1){
+			difficulty += 1; 
+			if(difficulty>2){
+				difficulty=0;
+			}
+			if(difficulty==0){
 				difficultyText="Easy";
 			}
-			if(difficulty==-1){
+			if(difficulty==1){
 				difficultyText="Hard";
+			}
+			if(difficulty==2){
+				difficultyText="Pro";
 			}
 			diffText.setText('Press E to change difficulty: '+difficultyText);
 		}
@@ -428,6 +434,7 @@ DungeonFloor.prototype = {
 		game.load.image('blank', 'assets/img/blank.png');
 		game.load.image('slash', 'assets/img/slash_s.png');
 		game.load.atlas('player', 'assets/img/player.png', 'assets/img/player.json');
+		game.load.atlas('boss', 'assets/img/boss.png', 'assets/img/boss.json');
 		
 		game.load.image('wooden_crossbow', 'assets/img/wooden_crossbow.png');
 		game.load.image('iron_dagger', 'assets/img/iron_dagger.png');
@@ -528,6 +535,11 @@ DungeonFloor.prototype = {
 		weaponText.anchor.y = 0.5;
 		weaponText.fixedToCamera = true;
 		
+		EText = game.add.text(740, 500, 'E', { fontSize: '18px', fill: '#ffffff' });
+		EText.anchor.x = 1;
+		EText.anchor.y = 0.5;
+		EText.fixedToCamera = true;
+		
 		roomText = game.add.text(400, 500, '', { fontSize: '20px', fill: '#ffffff' });
 		roomText.anchor.x = 0.5;
 		roomText.anchor.y = 0.5;
@@ -606,9 +618,10 @@ DungeonFloor.prototype = {
 		slashframe = 0;
 		
 		var weaponsprite = GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON);
-		weaponicon = game.add.sprite(posX + 340, posY + 240, weaponsprite);
+		weaponicon = game.add.sprite(760, 550, weaponsprite);
 		weaponicon.anchor.set(0.5);
 		weaponicon.scale.set(2);
+		weaponicon.fixedToCamera = true;
 		game.physics.arcade.enable(weaponicon);
 		
 		var weaponsprite2;
@@ -617,16 +630,22 @@ DungeonFloor.prototype = {
 		} else {
 			weaponsprite2 = GetWeaponSprite(PLAYER_PROPERTIES.WEAPON_1);
 		}
-		weaponicon2 = game.add.sprite(posX + 360, posY + 200, weaponsprite2);
+		
+		weaponicon2 = game.add.sprite(770, 500, weaponsprite2);
 		weaponicon2.anchor.set(0.5);
 		weaponicon2.scale.set(1);
+		weaponicon2.fixedToCamera = true;
 		game.physics.arcade.enable(weaponicon2);
 		
 		inbossroom = false
 		
 		shader = game.add.sprite(posX, posY, 'shader');
-		shader.anchor.set(0.5);
+		shader.scale.set(1.1);
+		//shader.anchor.set(0.5);
 		game.physics.arcade.enable(shader);
+		shader.x = 0;
+		shader.y = 0;
+		shader.fixedToCamera = true;
 		
 		bosscomplete = false
 		
@@ -655,7 +674,7 @@ DungeonFloor.prototype = {
 			SetWeaponSprite();
 			SetFireRate();
 		}
-		if(difficulty==1){
+		if(difficulty<2){
 			map = new Map();
 		}
 		roommusic = game.add.audio('Doomed Romance', 1, true);
@@ -757,7 +776,7 @@ DungeonFloor.prototype = {
 			if (inbossroom == false) {
 				inbossroom = true
 				MakeBossBounds();
-				boss = new Boss(game, bosscoords[0], bosscoords[1], "turret", false, 'enemy_atlas', 'enemyidle1');
+				boss = new Boss(game, bosscoords[0], bosscoords[1], "turret", false, 'boss', 'boss1');
 				
 				doorslamfx.play();
 				
@@ -995,7 +1014,7 @@ DungeonFloor.prototype = {
 		
 		
 		shader.bringToTop();
-		if(difficulty==1){
+		if(difficulty<2){
 			map.pixel.bringToTop();
 		}
 		scoreText.setText('Score: ' + PLAYER_PROPERTIES.POINTS);
@@ -1003,6 +1022,7 @@ DungeonFloor.prototype = {
 		weaponText.setText(PLAYER_PROPERTIES.CURRENT_WEAPON);
 		healthText.bringToTop();
 		weaponText.bringToTop();
+		EText.bringToTop();
 		roomText.bringToTop();
 		scoreText.bringToTop();
 		weaponicon.bringToTop();
