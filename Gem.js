@@ -7,7 +7,7 @@ function Gem(game, posX, posY, type){
 	
 	game.physics.enable(this);
 	
-	this.animations.add('sparkle', Phaser.Animation.generateFrameNames('sprite', 1, 4), 12, true);
+	this.animations.add('sparkle', Phaser.Animation.generateFrameNames('sprite', 1, 4), 4, true);
 	this.animations.play('sparkle');
 	
 	game.add.existing(this);
@@ -24,6 +24,8 @@ Gem.prototype.update = function() {
 	var gemHitPlayer = game.physics.arcade.collide(this, player);
 	// delete the bullet if it hits an enemy and damage the enemy
 	if (gemHitPlayer == true){
+		gemfx.play();
+		
 		PLAYER_PROPERTIES.POINTS += 1;
 		
 		this.kill();

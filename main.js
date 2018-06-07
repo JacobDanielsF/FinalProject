@@ -426,9 +426,15 @@ Transition.prototype = {
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
 		
+		PLAYER_PROPERTIES.HEALTH += 2;
+		
+		if (PLAYER_PROPERTIES.HEALTH > 10){
+			PLAYER_PROPERTIES.HEALTH = 10;
+		}
+		
 		tick = 0;
 		
-		floorsound = game.add.audio('floor_change', 0.5, false);
+		floorsound = game.add.audio('floor_change', 0.25, false);
 		floorsound.play();
 	},
 	
@@ -453,7 +459,7 @@ DungeonFloor.prototype = {
 	// preload dungeon assets
 	preload: function() {
 		console.log('DungeonFloor: preload');
-		game.load.atlas('enemy_atlas', 'assets/img/enemy8_atlas.png', 'assets/img/enemy8_sprites.json');
+		//game.load.atlas('enemy_atlas', 'assets/img/enemy8_atlas.png', 'assets/img/enemy8_sprites.json');
 		game.load.atlas('scorpion', 'assets/img/scorpion.png', 'assets/img/scorpion.json');
 		game.load.atlas('snake', 'assets/img/snake.png', 'assets/img/snake.json');
 		
@@ -508,12 +514,17 @@ DungeonFloor.prototype = {
 		game.load.audio('enemy_spit', 'assets/audio/enemy_spit.mp3');
 		game.load.audio('door_slam', 'assets/audio/door_slam.mp3');
 		game.load.audio('crossbow_shoot', 'assets/audio/crossbow_shoot.mp3');
+		game.load.audio('bow_shoot', 'assets/audio/bow_shoot.mp3');
 		
 		game.load.audio('grunt1', 'assets/audio/grunt1.mp3');
 		game.load.audio('grunt2', 'assets/audio/grunt2.mp3');
 		game.load.audio('grunt3', 'assets/audio/grunt3.mp3');
 		game.load.audio('grunt4', 'assets/audio/grunt4.mp3');
 		game.load.audio('grunt5', 'assets/audio/grunt5.mp3');
+		
+		game.load.audio('gem', 'assets/audio/gem.mp3');
+		game.load.audio('enemy_hit', 'assets/audio/enemy_hit.mp3');
+		game.load.audio('stinger', 'assets/audio/stinger.mp3');
 		
 		//game.time.advancedTiming = true;
 	},
@@ -724,9 +735,10 @@ DungeonFloor.prototype = {
 		
 		stepfx = game.add.audio('player_step', 1, true);
 		whooshfx = game.add.audio('whoosh', 1, false);
-		rangedhitfx = game.add.audio('ranged_hit', 0.5, false);
+		rangedhitfx = game.add.audio('ranged_hit', 0.1, false);
 		enemyspitfx = game.add.audio('enemy_spit', 1, false);
-		crossbowfx = game.add.audio('crossbow_shoot', 1, false);
+		crossbowfx = game.add.audio('crossbow_shoot', 0.75, false);
+		bowfx = game.add.audio('bow_shoot', 1, false);
 		doorslamfx = game.add.audio('door_slam', 0.75, false);
 		lightdoorslamfx = game.add.audio('door_slam', 0.25, false);
 		
@@ -736,6 +748,10 @@ DungeonFloor.prototype = {
 		gruntfx3 = game.add.audio('grunt3', gruntvolume, false);
 		gruntfx4 = game.add.audio('grunt4', gruntvolume, false);
 		gruntfx5 = game.add.audio('grunt5', gruntvolume, false);
+		
+		gemfx = game.add.audio('gem', 0.5, false);
+		enemyhitfx = game.add.audio('enemy_hit', 0.25, false);
+		stingerfx = game.add.audio('stinger', 0.25, false);
 		
 		mainmusic = game.add.audio('Immuration', 1, true);
 		mainmusic.play();
@@ -943,6 +959,8 @@ DungeonFloor.prototype = {
 									}
 								}
 								enemy.damage(bullet.damage);
+								
+								enemyhitfx.play();
 							}
 						}
 					}, this);
@@ -1033,6 +1051,8 @@ DungeonFloor.prototype = {
 										}
 									}
 									enemy.damage(slash.damage);
+									
+									enemyhitfx.play();
 								}
 							}
 						}, this);
@@ -1081,7 +1101,7 @@ DungeonFloor.prototype = {
 				if (InRange(player.body.x, player.body.y, thisloot.centerX, thisloot.centerY, 70) == true) {
 					pickupText.setText('Press SPACE to pick up ' + thisloot.name);
 					
-					if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){
+					if (game.input.keyboard.justPressed(Phaser.Keyboard.SPACEBAR)){
 						
 						if (thisloot.name == "Ornate Dagger"){
 							player.ornateuse = false;
@@ -1114,7 +1134,7 @@ DungeonFloor.prototype = {
 						
 						thisloot = new Loot(player.body.x, player.body.y, lastweapon);
 						
-						pickupcooldown = 5;
+						pickupcooldown = 10;
 					}
 					
 				} else {

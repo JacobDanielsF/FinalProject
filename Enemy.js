@@ -98,6 +98,8 @@ Enemy.prototype.update = function() {
 				this.attackTimer = time+0.25;
 				bullet.body.velocity.x = dirX*bullet.speed;
 				bullet.body.velocity.y = dirY*bullet.speed;
+				
+				stingerfx.play();
 			}
 		}
 		
@@ -127,9 +129,8 @@ Enemy.prototype.update = function() {
 					var targetX = this.body.x+(Math.cos(angle)*70)+16;
 					var targetY = this.body.y+(Math.sin(angle)*70)+16;
 					game.physics.arcade.moveToXY(bullet, targetX, targetY, bullet.speed);
-					
-					enemyspitfx.play();
 				}
+				enemyspitfx.play();
 			}
 		}
 		

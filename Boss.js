@@ -80,13 +80,16 @@ Boss.prototype.update = function() {
 			this.body.velocity.y = dirY * this.walkspeed;
 							
 			if (time > this.nextfire){
-				var bullet = new BossProjectile(this.body.x + 8, this.body.y + 8, player.body.x, player.body.y, "default",'enemy_atlas', 'projectile1');
+				var bullet = new BossProjectile(this.body.x + 8, this.body.y + 8, player.body.x, player.body.y, "default", 'enemyproj', 'sprite1');
 				//enemybullettable.push(bullet);
 				enemybulletgroup.add(bullet);
 				this.nextfire = time + this.firecooldown; // this is the bullet rate of the weapon
 
 				bullet.body.velocity.x = dirX*bullet.speed;
 				bullet.body.velocity.y = dirY*bullet.speed;
+				
+				this.animations.add('anim', Phaser.Animation.generateFrameNames('sprite', 1, 2), 8, true);
+				this.animations.play('anim');
 			}
 		}	
 		if (this.type == "rapid"){
@@ -95,12 +98,15 @@ Boss.prototype.update = function() {
 			this.body.velocity.x = dirX * this.walkspeed;
 			this.body.velocity.y = dirY * this.walkspeed;
 			if (time > this.nextfire){
-				var bullet = new BossProjectile(this.body.x + 8, this.body.y + 8, player.body.x, player.body.y, "rapid",'enemy_atlas', 'projectile1');
+				var bullet = new BossProjectile(this.body.x + 8, this.body.y + 8, player.body.x, player.body.y, "rapid", 'enemyproj', 'sprite1');
 				//enemybullettable.push(bullet);
 				enemybulletgroup.add(bullet);
 				this.nextfire = time + this.firecooldown; // this is the bullet rate of the weapon
 				bullet.body.velocity.x = dirX*bullet.speed;
 				bullet.body.velocity.y = dirY*bullet.speed;
+				
+				this.animations.add('anim', Phaser.Animation.generateFrameNames('sprite', 1, 2), 8, true);
+				this.animations.play('anim');
 			}
 		}
 		// Functions to an extent. Lots of stuff to work out.
@@ -119,9 +125,12 @@ Boss.prototype.update = function() {
 			if (time > this.nextfire){
 				var bullet = []
 				for (var i = 0;i<3;i++){
-					bullet[i] = new BossProjectile(this.body.x + 8, this.body.y + 8, player.body.x, player.body.y, "triple", 'enemy_atlas', 'projectile1',i);
+					bullet[i] = new BossProjectile(this.body.x + 8, this.body.y + 8, player.body.x, player.body.y, "triple", 'enemyproj', 'sprite1',i);
 					//enemybullettable.push(bullet[i]);
 					enemybulletgroup.add(bullet[i]);
+					
+					this.animations.add('anim', Phaser.Animation.generateFrameNames('sprite', 1, 2), 8, true);
+				this.animations.play('anim');
 				}
 				// rotation for bullets still needs to be adjusted here
 				this.nextfire = time + this.firecooldown; // this is the bullet rate of the weapon

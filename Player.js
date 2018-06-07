@@ -227,6 +227,9 @@ Player.prototype.update = function() {
 						if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Wooden Crossbow") {
 							crossbowfx.play();
 						}
+						if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Short Bow" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Composite Bow") {
+							bowfx.play();
+						}
 						
 						if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Ornate Dagger") { ornateuse = true; }
 						
