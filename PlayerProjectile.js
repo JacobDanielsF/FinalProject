@@ -5,7 +5,7 @@ function PlayerProjectile(posX, posY, type, angleoffset){
 	if (type == "Knife Dagger"){
 		Phaser.Sprite.call(this, game, posX, posY, 'knife_dagger');
 		this.anchor.set(0.5);
-		var scale = 0.8;
+		var scale = 0.75;
 		this.scale.x = scale;
 		this.scale.y = scale;
 	
@@ -23,7 +23,7 @@ function PlayerProjectile(posX, posY, type, angleoffset){
 	if (type == "Scorpion Dagger"){
 		Phaser.Sprite.call(this, game, posX, posY, 'scorpion_dagger');
 		this.anchor.set(0.5);
-		var scale = 0.8;
+		var scale = 0.75;
 		this.scale.x = scale;
 		this.scale.y = scale;
 	
@@ -41,7 +41,7 @@ function PlayerProjectile(posX, posY, type, angleoffset){
 	if (type == "Iron Dagger"){
 		Phaser.Sprite.call(this, game, posX, posY, 'iron_dagger');
 		this.anchor.set(0.5);
-		var scale = 0.8;
+		var scale = 0.75;
 		this.scale.x = scale;
 		this.scale.y = scale;
 	
@@ -59,7 +59,7 @@ function PlayerProjectile(posX, posY, type, angleoffset){
 	if (type == "Ornate Dagger"){
 		Phaser.Sprite.call(this, game, posX, posY, 'ornate_dagger');
 		this.anchor.set(0.5);
-		var scale = 0.8;
+		var scale = 0.75;
 		this.scale.x = scale;
 		this.scale.y = scale;
 		
@@ -81,7 +81,7 @@ function PlayerProjectile(posX, posY, type, angleoffset){
 	if (type == "Bone Dagger"){
 		Phaser.Sprite.call(this, game, posX, posY, 'bone_dagger');
 		this.anchor.set(0.5);
-		var scale = 0.8;
+		var scale = 0.75;
 		this.scale.x = scale;
 		this.scale.y = scale;
 	
@@ -217,7 +217,7 @@ function PlayerProjectile(posX, posY, type, angleoffset){
 		this.animations.play('anim');
 	}
 	
-	this.blink = 7;
+	this.blink = 8;
 	//this.tick = 0;
 	
 	var angle = game.physics.arcade.angleToPointer(player) + angleoffset;
@@ -252,10 +252,10 @@ PlayerProjectile.prototype.update = function() {
 		this.rotation = this.rotation + 0.5;
 		this.blink--;
 		if (this.blink < 0){
-			this.blink = 7;
+			this.blink = 8;
 			this.tint = 0xFFFFFF;
 		} else {
-			this.tint = 0xFFFFFF - (0x030303 * this.blink * 7);
+			this.tint = 0xFFFFFF - (0x030303 * this.blink * 8);
 		}
 	}
 }
@@ -275,9 +275,9 @@ function PlayerSlash(posX, posY, type){
 		slash.anchor.y = 0.5;
 		slash.scale.setTo(1.2, 1);
 		slash.rotation = game.physics.arcade.angleToPointer(player) + (Math.PI/2);
-		this.mainslash = slash
+		this.mainslash = slash;
 
-		var increment = 0.25
+		var increment = 0.25;
 		for (var i = 0; i < 5; i++){
 			var newSlash = game.add.sprite(player.body.x+(Math.cos(angle+increment*(i-2))*hitboxDist)+16, player.body.y+(Math.sin(angle+increment*(i-2))*hitboxDist)+16, 'blank');
 			game.physics.arcade.enable(newSlash);
@@ -300,9 +300,9 @@ function PlayerSlash(posX, posY, type){
 		slash.anchor.y = 0.5;
 		slash.scale.setTo(1.2, 1);
 		slash.rotation = game.physics.arcade.angleToPointer(player) + (Math.PI/2);
-		this.mainslash = slash
+		this.mainslash = slash;
 
-		var increment = 0.25
+		var increment = 0.25;
 		for (var i = 0; i < 5; i++){
 			var newSlash = game.add.sprite(player.body.x+(Math.cos(angle+increment*(i-2))*hitboxDist)+16, player.body.y+(Math.sin(angle+increment*(i-2))*hitboxDist)+16, 'blank');
 			game.physics.arcade.enable(newSlash);

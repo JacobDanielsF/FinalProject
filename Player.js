@@ -8,7 +8,7 @@ function Player(game, posX, posY, sprite, frame){
 	
 	game.physics.enable(this);
 	this.body.collideWorldBounds = false;
-	this.body.setSize(64, 84, 32, 26);
+	this.body.setSize(54, 74, 37, 33);
 	
 		
 	// lock the camera to the player
@@ -23,8 +23,7 @@ function Player(game, posX, posY, sprite, frame){
 	//this.animations.play('idle');
 	
 	this.bulletfire = 0;
-	this.walkspeed = 300;
-	this.runspeed = 400;
+	this.walkspeed = WALK_SPEED;
 	this.direction = "down";
 	this.ornateuse = false;
 	game.add.existing(this);
@@ -42,8 +41,8 @@ Player.prototype.update = function() {
 	weaponicon2.body.y = player.body.y + 200;
 
 	
-	shader.body.x = player.body.x - 400 + 16;
-	shader.body.y = player.body.y - 300 + 20;
+	//shader.body.x = player.body.x - 400 + 16;
+	//shader.body.y = player.body.y - 300 + 20;
 	
 	
 	var angle = game.physics.arcade.angleToPointer(player);
@@ -56,17 +55,9 @@ Player.prototype.update = function() {
 			this.body.velocity.x = 0;
 			this.body.velocity.y = 0;
 			
-			// run with SHIFT
-			var RUNBOOL = false;
-			if(game.input.keyboard.isDown(Phaser.Keyboard.SHIFT)){
-				RUNBOOL = true;
-			}
 		
 			// toggle run speed
 			var velocity = this.walkspeed;
-			if (RUNBOOL == true){
-				velocity = this.runspeed;
-			}
 			
 			/*
 			if (angle < Math.PI/4 && angle > -(Math.PI/4)){

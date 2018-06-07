@@ -32,10 +32,10 @@ var ROOM_MAX = 3*ROOM_SCALE;
 var ROOM_MIN = 2.5*ROOM_SCALE;
 var START_ROOM = 2*ROOM_SCALE;
 var BOSS_ROOM = 4*ROOM_SCALE;
-var WALK_SPEED = 300; // default player speed
-var RUN_SPEED = 400; // running speed
+var WALK_SPEED = 350; // default player speed
 var DEBUG_ENABLED = false; // debug toggle
 var IFRAMES_MAX = 20; // invincibility frames
+var MAIN_FONT = 'Verdana';
 
 var PLAYER_PROPERTIES = {
 	VELOCITY: 80, // unused
@@ -152,6 +152,38 @@ function SetWeaponSprite(){
 	weaponshadow.loadTexture(GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON));
 }
 
+function SpawnGems(num, x, y, range){
+	for (var i = 0; i < num; i++){
+		//var thisX = x + game.rnd.integerInRange(-50, 50)/2;
+		//var thisY = y + game.rnd.integerInRange(-50, 50)/2;
+		
+		var angle = (game.rnd.integerInRange(-100, 100)/100) * Math.PI;
+		
+		var thisrange = game.rnd.integerInRange(1, range);
+		var thisX = x + (Math.cos(angle) * thisrange);
+		var thisY = y + (Math.sin(angle) * thisrange);
+		
+		var gem;
+		var rand = game.rnd.integerInRange(1, 5);
+		if (rand == 1){
+			//gem = game.add.sprite(thisX, thisY, 'topaz');
+			gem = new Gem(game, thisX, thisY, 'topaz');
+		} else if (rand == 2){
+			//gem = game.add.sprite(thisX, thisY, 'ruby');
+			gem = new Gem(game, thisX, thisY, 'ruby');
+		} else if (rand == 3){
+			//gem = game.add.sprite(thisX, thisY, 'sapphire');
+			gem = new Gem(game, thisX, thisY, 'sapphire');
+		} else if (rand == 4){
+			//gem = game.add.sprite(thisX, thisY, 'emerald');
+			gem = new Gem(game, thisX, thisY, 'emerald');
+		} else {
+			//gem = game.add.sprite(thisX, thisY, 'diamond');
+			gem = new Gem(game, thisX, thisY, 'diamond');
+		}
+	}
+}
+
 
 var FLOOR_WEAPONS = {
 	A: ["wooden_crossbow", "iron_dagger", "iron_dagger", "iron_dagger", "short_bow", "energy_staff", "bronze_sword", "bronze_sword"],
@@ -220,21 +252,17 @@ TitleScreen.prototype = {
 		
 		let titleTile = game.add.image(0,0,'border');
 		titleTile.alpha = 0.5;
-	
-		//promptText = game.add.text(400, 250, 'Tomb of the Ancients', { fontSize: '40px', fill: '#ffffff' });
-		//promptText.anchor.x = 0.5;
-		//promptText.anchor.y = 0.5;
 		
 		// input prompt
-		promptText = game.add.text(400, 400, 'Press SPACE to begin.', { font: 'bold 20pt FreeMono', fill: '#ffffff' });
+		promptText = game.add.text(400, 400, 'Press SPACE to begin.', { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
 		
-		promptText = game.add.text(400, 450, 'Press Q to view credits.', { fontSize: '20px', fill: '#ffffff' });
+		promptText = game.add.text(400, 450, 'Press Q to view credits.', { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
 		
-		diffText = game.add.text(400, 500, 'Press E to change difficulty: '+difficultyText, { fontSize: '20px', fill: '#ffffff' });
+		diffText = game.add.text(400, 500, 'Press E to change difficulty: '+difficultyText, { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		diffText.anchor.x = 0.5;
 		diffText.anchor.y = 0.5;
 
@@ -288,32 +316,32 @@ Credits.prototype = {
 		// testing state text
 		//stateText = game.add.text(20, 20, 'Credits', { fontSize: '20px', fill: '#ffffff' });
 		
-		newText = game.add.text(400, 100, 'CREDITS', { fontSize: '30px', fill: '#ffffff' });
+		newText = game.add.text(400, 100, 'CREDITS', { font: MAIN_FONT, fontStyle: 'bold', fontSize: '30px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
-		newText = game.add.text(400, 150, 'Developed by: Jacob Daniels-Flechtner, Kameron Fincher,', { fontSize: '20px', fill: '#ffffff' });
+		newText = game.add.text(400, 150, 'Developed by: Jacob Daniels-Flechtner, Kameron Fincher,', { font: MAIN_FONT, fontStyle: 'bold', fontSize: '30px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
-		newText = game.add.text(400, 175, 'Jeffrey Yao, Alexai Zachow and Eric Mitchell.', { fontSize: '20px', fill: '#ffffff' });
+		newText = game.add.text(400, 175, 'Jeffrey Yao, Alexai Zachow and Eric Mitchell.', { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
-		newText = game.add.text(400, 250, 'Demo sprites (from opengameart.org) by:', { fontSize: '20px', fill: '#ffffff' });
+		newText = game.add.text(400, 250, 'Demo sprites (from opengameart.org) by:', { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
-		newText = game.add.text(400, 275, 'gtkampos, Andor Salga, and MetaShinryu.', { fontSize: '20px', fill: '#ffffff' });
+		newText = game.add.text(400, 275, 'gtkampos, Andor Salga, and MetaShinryu.', { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
-		newText = game.add.text(400, 350, 'Music by: Purple Planet Music.', { fontSize: '20px', fill: '#ffffff' });
+		newText = game.add.text(400, 350, 'Music by: Purple Planet Music.', { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
 		// input prompt
-		promptText = game.add.text(400, 500, 'Press Q to go back.', { fontSize: '20px', fill: '#ffffff' });
+		promptText = game.add.text(400, 500, 'Press Q to go back.', { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
 
@@ -341,29 +369,29 @@ Tutorial.prototype = {
 		// testing state text
 		//stateText = game.add.text(20, 20, 'Tutorial', { fontSize: '20px', fill: '#ffffff' });
 		
-
-		newText = game.add.text(400, 200, 'Press WASD to move, SHIFT to run.', { fontSize: '20px', fill: '#ffffff' });
+		
+		newText = game.add.text(400, 200, 'Use WASD to move.', { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
-		newText = game.add.text(400, 250, 'Left-click to use your weapon.', { fontSize: '20px', fill: '#ffffff' });
+		newText = game.add.text(400, 250, 'Left-click to use your weapon.', { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
-		newText = game.add.text(400, 300, 'Press Q to switch weapons.', { fontSize: '20px', fill: '#ffffff' });
+		newText = game.add.text(400, 300, 'Press Q to switch weapons.', { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
-		newText = game.add.text(400, 350, 'Rack up points by defeating enemies and clearing rooms.', { fontSize: '20px', fill: '#ffffff' });
+		newText = game.add.text(400, 350, 'Rack up points by defeating enemies and clearing rooms.', { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
-		newText = game.add.text(400, 400, 'Attempt to progress through 4 floors of the temple.', { fontSize: '20px', fill: '#ffffff' });
+		newText = game.add.text(400, 400, 'Attempt to progress through 4 floors of the temple.', { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
 		// input prompt
-		promptText = game.add.text(400, 450, 'Press SPACE to continue.', { fontSize: '20px', fill: '#ffffff' });
+		promptText = game.add.text(400, 450, 'Press SPACE to continue.', { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
 
@@ -394,7 +422,7 @@ Transition.prototype = {
 		// testing state text
 		//stateText = game.add.text(20, 20, 'Transition', { fontSize: '20px', fill: '#ffffff' });
 		
-		promptText = game.add.text(400, 300, 'Floor ' + (PLAYER_PROPERTIES.FLOOR + 1), { fontSize: '30px', fill: '#ffffff' });
+		promptText = game.add.text(400, 300, 'Floor ' + (PLAYER_PROPERTIES.FLOOR + 1), { font: MAIN_FONT, fontStyle: 'bold', fontSize: '30px', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
 		
@@ -449,6 +477,12 @@ DungeonFloor.prototype = {
 		game.load.image('knife_dagger', 'assets/img/knife_dagger.png');
 		game.load.image('composite_bow', 'assets/img/composite_bow.png');
 		game.load.image('scorpion_dagger', 'assets/img/scorpion_dagger.png');
+		
+		game.load.atlas('topaz', 'assets/img/topaz.png', 'assets/img/gem.json');
+		game.load.atlas('sapphire', 'assets/img/sapphire.png', 'assets/img/gem.json');
+		game.load.atlas('ruby', 'assets/img/ruby.png', 'assets/img/gem.json');
+		game.load.atlas('diamond', 'assets/img/diamond.png', 'assets/img/gem.json');
+		game.load.atlas('emerald', 'assets/img/emerald.png', 'assets/img/gem.json');
 		
 		game.load.image('shader', 'assets/img/shader.png');
 		game.load.image('shadow', 'assets/img/shadow.png');
@@ -525,32 +559,32 @@ DungeonFloor.prototype = {
 		//stateText = game.add.text(20, 20, 'DungeonFloor', { fontSize: '20px', fill: '#ffffff' });
 		//stateText.fixedToCamera = true;
 		
-		healthText = game.add.text(350, 550, 'Health: ' + PLAYER_PROPERTIES.HEALTH, { fontSize: '20px', fill: '#ffffff' });
+		healthText = game.add.text(350, 550, 'Health: ' + PLAYER_PROPERTIES.HEALTH, { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		healthText.anchor.x = 0.5;
 		healthText.anchor.y = 0.5;
 		healthText.fixedToCamera = true;
 		
-		weaponText = game.add.text(720, 550, PLAYER_PROPERTIES.CURRENT_WEAPON, { fontSize: '20px', fill: '#ffffff' });
+		weaponText = game.add.text(720, 550, PLAYER_PROPERTIES.CURRENT_WEAPON, { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		weaponText.anchor.x = 1;
 		weaponText.anchor.y = 0.5;
 		weaponText.fixedToCamera = true;
 		
-		EText = game.add.text(740, 500, 'E', { fontSize: '18px', fill: '#ffffff' });
-		EText.anchor.x = 1;
-		EText.anchor.y = 0.5;
-		EText.fixedToCamera = true;
+		QText = game.add.text(740, 500, 'Q', { font: MAIN_FONT, fontStyle: 'bold', fontSize: '18px', fill: '#ffffff' });
+		QText.anchor.x = 1;
+		QText.anchor.y = 0.5;
+		QText.fixedToCamera = true;
 		
-		roomText = game.add.text(400, 500, '', { fontSize: '20px', fill: '#ffffff' });
+		roomText = game.add.text(400, 500, '', { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		roomText.anchor.x = 0.5;
 		roomText.anchor.y = 0.5;
 		roomText.fixedToCamera = true;
 		
-		scoreText = game.add.text(50, 550, 'Score: ' + PLAYER_PROPERTIES.POINTS, { fontSize: '20px', fill: '#ffffff' });
+		scoreText = game.add.text(50, 550, 'Score: ' + PLAYER_PROPERTIES.POINTS, { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		scoreText.anchor.x = 0;
 		scoreText.anchor.y = 0.5;
 		scoreText.fixedToCamera = true;
 		
-		pickupText = game.add.text(400, 500, '', { fontSize: '20px', fill: '#ffffff' });
+		pickupText = game.add.text(400, 500, '', { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		pickupText.anchor.x = 0.5;
 		pickupText.anchor.y = 0.5;
 		pickupText.fixedToCamera = true;
@@ -567,8 +601,12 @@ DungeonFloor.prototype = {
 		enemybulletgroup = game.add.group();
 		enemybulletgroup.enableBody = true;
 		
-		//roomenemies = game.add.group();
-		//roomenemies.enableBody = true;
+		gemgroup = game.add.group();
+		gemgroup.enableBody = true;
+		
+		//lootgroup = game.add.group();
+		//lootgroup.enableBody = true;
+		thisloot = null;
 		
 		// weapon cooldown
 		nextFire = 0;
@@ -640,7 +678,7 @@ DungeonFloor.prototype = {
 		inbossroom = false
 		
 		shader = game.add.sprite(posX, posY, 'shader');
-		shader.scale.set(1.1);
+		//shader.scale.set(1.1);
 		//shader.anchor.set(0.5);
 		game.physics.arcade.enable(shader);
 		shader.x = 0;
@@ -677,6 +715,10 @@ DungeonFloor.prototype = {
 		if(difficulty<2){
 			map = new Map();
 		}
+		
+		pickupcooldown = 0;
+		
+		// music/sound variables
 		roommusic = game.add.audio('Doomed Romance', 1, true);
 		bossmusic = game.add.audio('Maelstrom', 1, true);
 		
@@ -796,21 +838,46 @@ DungeonFloor.prototype = {
 		
 		if (currentroom != null){
 			if (roomenemies == 0){
-				PLAYER_PROPERTIES.POINTS += 50;
 				currentwalls.removeAll();
 				currentroom = null;
 				
-				var chance = game.rnd.integerInRange(0, 2);
+				var chance = game.rnd.integerInRange(1, 2);
 				if (PLAYER_PROPERTIES.FLOOR < 2 && chance != 0){
+					
 					var rand = game.rnd.integerInRange(0, FLOOR_WEAPONS.A.length-1);
 					var lootX = lastroombounds[0];
 					var lootY = lastroombounds[1];
-					new Loot(game, lootX, lootY, FLOOR_WEAPONS.A[rand]);
+					
+					if (thisloot != null){
+						thisloot.item.kill();
+						thisloot.item.destroy();
+						
+						thisloot.shadow.kill();
+						thisloot.shadow.destroy();
+						
+						thisloot = null;
+					}
+					
+					thisloot = new Loot(lootX, lootY, FLOOR_WEAPONS.A[rand]);
+					
 				} else if (chance != 0){
+					
 					var rand = game.rnd.integerInRange(0, FLOOR_WEAPONS.B.length-1);
 					var lootX = lastroombounds[0];
 					var lootY = lastroombounds[1];
-					new Loot(game, lootX, lootY, FLOOR_WEAPONS.B[rand]);
+					
+					if (thisloot != null){
+						thisloot.item.kill();
+						thisloot.item.destroy();
+						
+						thisloot.shadow.kill();
+						thisloot.shadow.destroy();
+						
+						thisloot = null;
+					}
+					
+					thisloot = new Loot(lootX, lootY, FLOOR_WEAPONS.B[rand]);
+					
 				}
 				
 				lightdoorslamfx.play();
@@ -829,7 +896,6 @@ DungeonFloor.prototype = {
 		if (game.input.keyboard.isDown(Phaser.Keyboard.E)) {
 			if (PlayerInBoss(player.body.x, player.body.y) == true){
 				currentroom = null;
-				PLAYER_PROPERTIES.POINTS += 100;
 				PLAYER_PROPERTIES.FLOOR += 1;
 				music.stop();
 				if (PLAYER_PROPERTIES.FLOOR != 4){
@@ -868,6 +934,8 @@ DungeonFloor.prototype = {
 										if (roomenemies > 0){
 											roomenemies--;
 										}
+										
+										SpawnGems(this.gemcount, this.body.x, this.body.y, 20);
 										
 										this.kill();
 										this.destroy();
@@ -956,6 +1024,8 @@ DungeonFloor.prototype = {
 												roomenemies--;
 											}
 											
+											SpawnGems(this.gemcount, this.body.x, this.body.y, 20);
+											
 											this.kill();
 											this.destroy();
 											//enemytable[j] = null;
@@ -1005,6 +1075,57 @@ DungeonFloor.prototype = {
 		ProjectileCheck();
 		
 		
+		if (pickupcooldown <= 0){
+			if (thisloot != null && pickupcooldown <= 0){
+				
+				if (InRange(player.body.x, player.body.y, thisloot.centerX, thisloot.centerY, 70) == true) {
+					pickupText.setText('Press SPACE to pick up ' + thisloot.name);
+					
+					if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){
+						
+						if (thisloot.name == "Ornate Dagger"){
+							player.ornateuse = false;
+						}
+						
+						if (PLAYER_PROPERTIES.CURRENT_WEAPON == PLAYER_PROPERTIES.WEAPON_1) {
+							PLAYER_PROPERTIES.WEAPON_1 = thisloot.name;
+						} else {
+							PLAYER_PROPERTIES.WEAPON_2 = thisloot.name;
+						}
+						
+						var lastweapon = GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON);
+						
+						PLAYER_PROPERTIES.CURRENT_WEAPON = thisloot.name;
+						SetWeaponSprite();
+						SetFireRate();
+						weaponicon.loadTexture(GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON));
+						
+						nextFire = 0;
+						isslashing = false;
+						slashframe = 0;
+						
+						pickupText.setText('');
+						
+						thisloot.item.kill();
+						thisloot.item.destroy();
+						
+						thisloot.shadow.kill();
+						thisloot.shadow.destroy();
+						
+						thisloot = new Loot(player.body.x, player.body.y, lastweapon);
+						
+						pickupcooldown = 5;
+					}
+					
+				} else {
+					pickupText.setText('');
+				}
+				
+			}
+		} else {
+			pickupcooldown--;
+		}
+		
 		// invincibility frame counter
 		if (iframes > 0){
 			iframes--;
@@ -1022,7 +1143,7 @@ DungeonFloor.prototype = {
 		weaponText.setText(PLAYER_PROPERTIES.CURRENT_WEAPON);
 		healthText.bringToTop();
 		weaponText.bringToTop();
-		EText.bringToTop();
+		QText.bringToTop();
 		roomText.bringToTop();
 		scoreText.bringToTop();
 		weaponicon.bringToTop();
@@ -1079,12 +1200,12 @@ GameOver.prototype = {
 		// testing state text
 		//stateText = game.add.text(20, 20, 'GameOver', { fontSize: '20px', fill: '#ffffff' });
 		
-		promptText = game.add.text(400, 270, 'GAME OVER', { fontSize: '30px', fill: '#ffffff' });
+		promptText = game.add.text(400, 270, 'GAME OVER', { font: MAIN_FONT, fontStyle: 'bold', fontSize: '30px', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
 		
 		// input prompt
-		promptText = game.add.text(400, 330, 'Press SPACE to continue.', { fontSize: '20px', fill: '#ffffff' });
+		promptText = game.add.text(400, 330, 'Press SPACE to continue.', { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
 		
@@ -1117,17 +1238,17 @@ End.prototype = {
 		//stateText = game.add.text(20, 20, 'End', { fontSize: '20px', fill: '#ffffff' });
 		
 		// input prompt
-		promptText = game.add.text(400, 250, 'You made it through the tomb!', { fontSize: '30px', fill: '#ffffff' });
+		promptText = game.add.text(400, 250, 'You made it through the tomb!', { font: MAIN_FONT, fontStyle: 'bold', fontSize: '30px', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
 		
 		// input prompt
-		promptText = game.add.text(400, 300, 'Your score: ' + PLAYER_PROPERTIES.POINTS, { fontSize: '20px', fill: '#ffffff' });
+		promptText = game.add.text(400, 300, 'Your score: ' + PLAYER_PROPERTIES.POINTS, { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
 		
 		// input prompt
-		promptText = game.add.text(400, 350, 'Press SPACE to continue.', { fontSize: '20px', fill: '#ffffff' });
+		promptText = game.add.text(400, 350, 'Press SPACE to continue.', { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
 		

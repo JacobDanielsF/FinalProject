@@ -61,6 +61,20 @@ EnemyProjectile.prototype.update = function() {
 		this.destroy();
 	}
 	
+	var slash = playerslash;
+			
+	if (slash != null){
+		for (var k = 0; k < slash.hitboxes.length; k++){
+			var box = slash.hitboxes[k];
+			
+			var bulletHitSlash = game.physics.arcade.collide(this, box);
+			if (bulletHitSlash == true){
+				this.kill();
+				this.destroy();
+			}
+		}
+	}
+	
 	var bulletHitPlayer = game.physics.arcade.collide(this, player);
 	// delete the bullet if it hits an enemy and damage the enemy
 	if (bulletHitPlayer == true){
@@ -95,4 +109,5 @@ EnemyProjectile.prototype.update = function() {
 			gruntfx5.play();
 		}
 	}
+	
 }

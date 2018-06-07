@@ -1,11 +1,31 @@
-function Loot(game, posX, posY, type){
+function Loot(posX, posY, type){
 	
+	var shadow = game.add.sprite(posX, posY+2, type);
+	shadow.anchor.set(0.5);
+	shadow.tint = 0x000000;
+	shadow.alpha = 0.4;
+	this.shadow = shadow;
+	
+	var item = game.add.sprite(posX, posY, type);
+	item.anchor.set(0.5);
+	this.item = item;
+	
+	this.centerX = posX;
+	this.centerY = posY;
+	
+	/*
 	Phaser.Sprite.call(this, game, posX, posY, type);
 	this.anchor.set(0.5);
 	var scale = 1;
 	this.scale.x = scale;
 	this.scale.y = scale;
-	
+	*/
+	if (type == "knife_dagger"){
+		this.name = "Knife Dagger";
+	}
+	if (type == "scorpion_dagger"){
+		this.name = "Scorpion Dagger";
+	}
 	if (type == "wooden_crossbow"){
 		this.name = "Wooden Crossbow";
 	}
@@ -40,14 +60,13 @@ function Loot(game, posX, posY, type){
 		this.name = "Stone Sword";
 	}
 	
-	game.physics.enable(this);
-	
-	game.add.existing(this);
+	//game.add.existing(this);
 }
 
-Loot.prototype = Object.create(Phaser.Sprite.prototype);
+//Loot.prototype = Object.create(Phaser.Sprite.prototype);
 Loot.prototype.constructor = Loot;
 
+/*
 Loot.prototype.update = function() {
 	
 	if (InRange(player.body.x, player.body.y, this.body.x, this.body.y, 70) == true) {
@@ -84,3 +103,4 @@ Loot.prototype.update = function() {
 	}
 	
 }
+*/

@@ -35,6 +35,8 @@ function Map(){
 	permX = 0;
 	permY = 0;
 	let q = 0;
+	// Change this to basic (or whatever else) for the previous verion. Change to advanced for new version.
+	this.mode = "basic";
 	for(var i=0;i<mapHeight;i++){
 		for(var j=0;j<mapWidth;j++){
 			posX = permX+(2*j);
@@ -76,8 +78,8 @@ Map.prototype.update = function() {
 	if(difficulty==1){
 		// Changes the position of the playerDot correctly.
 		this.fixedToCamera = false;
-		this.x = (player.x/32)+game.camera.width-(mapWidth*2);
-		this.y = player.y/32;
+		this.x = (player.x/32) + game.camera.width-(mapWidth*2);
+		this.y = (player.y/32);
 		this.fixedToCamera = true;
 		// Checks to see what walls are in range.
 		for(var pixelTest=0;pixelTest<pixels.length;pixelTest++){

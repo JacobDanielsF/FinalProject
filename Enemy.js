@@ -1,19 +1,13 @@
 
-
-
-
-
-
 // enemy class
 function Enemy(game, posX, posY, type, roomtoggle){
 	if (type == 'scorpion'){
 		Phaser.Sprite.call(this, game, posX, posY, 'scorpion', 'scorpionidleright');
-		this.scale.set(0.5);
 	}
 	if (type == 'snake'){
 		Phaser.Sprite.call(this, game, posX, posY, 'snake', 'snakeright1');
-		this.scale.set(0.5);
 	}
+	this.scale.set(0.5);
 	this.anchor.set(0.5);
 	
 	this.type = type;
@@ -30,6 +24,7 @@ function Enemy(game, posX, posY, type, roomtoggle){
 		this.walkspeed = 100;
 		this.seekrange = 400;
 		this.points = 10;
+		this.gemcount = 3;
 		
 		this.animations.add('walkright', Phaser.Animation.generateFrameNames('scorpionwalkright', 2, 3), 5, true);
 		this.animations.add('walkleft', Phaser.Animation.generateFrameNames('scorpionwalkleft', 2, 3), 5, true);
@@ -43,6 +38,7 @@ function Enemy(game, posX, posY, type, roomtoggle){
 		this.walkspeed = 120;
 		this.seekrange = 400;
 		this.points = 20;
+		this.gemcount = 5;
 		
 		this.animations.add('walkright', Phaser.Animation.generateFrameNames('snakeright', 1, 2), 5, true);
 		this.animations.add('walkleft', Phaser.Animation.generateFrameNames('snakeleft', 1, 2), 5, true);

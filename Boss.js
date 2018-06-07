@@ -38,6 +38,7 @@ function Boss(game, posX, posY, type, roomtoggle, sprite, frame){
 	this.poison = false;
 	this.body.immovable = true;
 	this.health = 30;
+	this.gemcount = 20;
 	healthBoss = game.add.text(game.camera.width/2, 32, 'Bosses health: ' + (this.health+1), { fontSize: '20px', fill: '#ffffff' });
 	healthBoss.anchor.x = 0.5;
 	healthBoss.anchor.y = 0.5;
@@ -224,6 +225,7 @@ Boss.prototype.update = function() {
 					healthBoss.setText("");
 					
 					bosscomplete = true;
+					SpawnGems(this.gemcount, this.body.x + 64, this.body.y + 75, 60);
 					
 					this.kill();
 					this.destroy();
@@ -251,6 +253,7 @@ Boss.prototype.update = function() {
 						healthBoss.setText("");
 						
 						bosscomplete = true;
+						SpawnGems(this.gemcount, this.body.x, this.body.y, 60);
 						
 						this.kill();
 						this.destroy();
@@ -266,6 +269,7 @@ Boss.prototype.update = function() {
 			healthBoss.setText("");
 			
 			bosscomplete = true;
+			SpawnGems(this.gemcount, this.body.x, this.body.y, 60);
 			
 			this.kill();
 			this.destroy();
