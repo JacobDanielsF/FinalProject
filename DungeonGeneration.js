@@ -1,3 +1,8 @@
+// ARTG/CMPM 120 Final Project
+// Tomb of the Ancients
+// DungeonGeneration.js
+// Methods which handle dungeon generation
+
 		// DUNGEON GENERATION
 		// Dungeon generation methods, in the order that they are accessed: SpawnDungeon(), Shuffle(), MakeRoom(), MakePath(), MakeWalls(), InBounds()
 		// SpawnDungeon() determines the general layout of a dungeon while applying significant randomization.

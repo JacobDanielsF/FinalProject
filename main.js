@@ -1,4 +1,7 @@
+// ARTG/CMPM 120 Final Project
+// Tomb of the Ancients
 // main.js
+// Main game loop and states
 
 var game;
 var config = {

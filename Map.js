@@ -1,3 +1,8 @@
+// ARTG/CMPM 120 Final Project
+// Tomb of the Ancients
+// Map.js
+// Methods for displaying the dungeon map
+
 var mapHeight;
 var mapWidth;
 function MakeMap(){

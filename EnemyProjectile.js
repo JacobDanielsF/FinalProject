@@ -1,5 +1,8 @@
+// ARTG/CMPM 120 Final Project
+// Tomb of the Ancients
+// EnemyProjectile.js
+// Enemy projectile prefab
 
-// enemy projectile class
 function EnemyProjectile(posX, posY, playerX, playerY, type){
 	this.type = type;
 	

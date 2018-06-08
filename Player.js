@@ -1,3 +1,7 @@
+// ARTG/CMPM 120 Final Project
+// Tomb of the Ancients
+// Player.js
+// Player prefab
 
 function Player(game, posX, posY, sprite, frame){
 	Phaser.Sprite.call(this, game, posX, posY, sprite, frame);

@@ -1,3 +1,7 @@
+// ARTG/CMPM 120 Final Project
+// Tomb of the Ancients
+// PlayerProjectile.js
+// Player projectile and slash prefabs
 
 function PlayerProjectile(posX, posY, type, angleoffset){
 	

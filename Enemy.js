@@ -1,5 +1,8 @@
+// ARTG/CMPM 120 Final Project
+// Tomb of the Ancients
+// Enemy.js
+// Enemy prefab
 
-// enemy class
 function Enemy(game, posX, posY, type, roomtoggle){
 	if (type == 'scorpion'){
 		Phaser.Sprite.call(this, game, posX, posY, 'scorpion', 'scorpionidleright');

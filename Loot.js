@@ -1,3 +1,8 @@
+// ARTG/CMPM 120 Final Project
+// Tomb of the Ancients
+// Loot.js
+// Loot prefab
+
 function Loot(posX, posY, type){
 	
 	var shadow = game.add.sprite(posX, posY+2, type);

@@ -1,3 +1,8 @@
+// ARTG/CMPM 120 Final Project
+// Tomb of the Ancients
+// Gem.js
+// Gem prefab
+
 function Gem(game, posX, posY, type){
 	Phaser.Sprite.call(this, game, posX, posY, type);
 	this.anchor.set(0.5);
@@ -22,7 +27,8 @@ Gem.prototype.constructor = Gem;
 Gem.prototype.update = function() {
 	
 	var gemHitPlayer = game.physics.arcade.collide(this, player);
-	// delete the bullet if it hits an enemy and damage the enemy
+	
+	// delete the bullet if it hits an enemy, then damage the enemy
 	if (gemHitPlayer == true){
 		gemfx.play();
 		
@@ -31,4 +37,5 @@ Gem.prototype.update = function() {
 		this.kill();
 		this.destroy();
 	}
+	
 }

@@ -1,4 +1,8 @@
-// boss class
+// ARTG/CMPM 120 Final Project
+// Tomb of the Ancients
+// Boss.js
+// Boss prefab
+
 var bossSpawned = false;
 function Boss(game, posX, posY, type, roomtoggle, sprite, frame){
 	Phaser.Sprite.call(this, game, posX, posY, sprite, frame);

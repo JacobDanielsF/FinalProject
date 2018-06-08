@@ -1,4 +1,8 @@
-//new BossProjectile(this.body.x + 8, this.body.y + 8, player.body.x, player.body.y, "default");
+// ARTG/CMPM 120 Final Project
+// Tomb of the Ancients
+// BossProjectile.js
+// Boss projectile prefab
+
 function BossProjectile(posX, posY, playerX, playerY, type, sprite, frame){
 	Phaser.Sprite.call(this, game, posX, posY, sprite, frame);
 	this.anchor.x=0.5;
