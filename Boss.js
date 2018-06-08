@@ -39,7 +39,7 @@ function Boss(game, posX, posY, type, roomtoggle, sprite, frame){
 	this.body.immovable = true;
 	this.health = 30;
 	this.gemcount = 20;
-	healthBoss = game.add.text(game.camera.width/2, 32, 'Bosses health: ' + (this.health+1), { fontSize: '20px', fill: '#ffffff' });
+	healthBoss = game.add.text(game.camera.width/2, 32, 'Boss health: ' + (this.health+1), { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 	healthBoss.anchor.x = 0.5;
 	healthBoss.anchor.y = 0.5;
 	healthBoss.bringToTop();
@@ -57,7 +57,7 @@ Boss.prototype.constructor = Boss;
 
 Boss.prototype.update = function() {
 	var time = (game.time.now)/1000;
-	healthBoss.setText('Health: ' + (this.health+1));
+	healthBoss.setText('Boss health: ' + (this.health+1));
 	
 	if (InRange(player.body.x, player.body.y, this.body.x, this.body.y, this.seekrange) == true) {
 						
@@ -130,7 +130,7 @@ Boss.prototype.update = function() {
 					enemybulletgroup.add(bullet[i]);
 					
 					this.animations.add('anim', Phaser.Animation.generateFrameNames('sprite', 1, 2), 8, true);
-				this.animations.play('anim');
+					this.animations.play('anim');
 				}
 				// rotation for bullets still needs to be adjusted here
 				this.nextfire = time + this.firecooldown; // this is the bullet rate of the weapon
@@ -234,7 +234,7 @@ Boss.prototype.update = function() {
 					healthBoss.setText("");
 					
 					bosscomplete = true;
-					SpawnGems(this.gemcount, this.body.x + 64, this.body.y + 75, 60);
+					SpawnGems(this.gemcount, this.body.x + 64, this.body.y + 75, 60, 90);
 					
 					this.kill();
 					this.destroy();
@@ -262,7 +262,7 @@ Boss.prototype.update = function() {
 						healthBoss.setText("");
 						
 						bosscomplete = true;
-						SpawnGems(this.gemcount, this.body.x, this.body.y, 60);
+						SpawnGems(this.gemcount, this.body.x, this.body.y, 60, 90);
 						
 						this.kill();
 						this.destroy();
@@ -278,7 +278,7 @@ Boss.prototype.update = function() {
 			healthBoss.setText("");
 			
 			bosscomplete = true;
-			SpawnGems(this.gemcount, this.body.x, this.body.y, 60);
+			SpawnGems(this.gemcount, this.body.x, this.body.y, 70, 110);
 			
 			this.kill();
 			this.destroy();

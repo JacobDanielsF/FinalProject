@@ -152,14 +152,14 @@ function SetWeaponSprite(){
 	weaponshadow.loadTexture(GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON));
 }
 
-function SpawnGems(num, x, y, range){
+function SpawnGems(num, x, y, lorange, hirange){
 	for (var i = 0; i < num; i++){
 		//var thisX = x + game.rnd.integerInRange(-50, 50)/2;
 		//var thisY = y + game.rnd.integerInRange(-50, 50)/2;
 		
 		var angle = (game.rnd.integerInRange(-100, 100)/100) * Math.PI;
 		
-		var thisrange = game.rnd.integerInRange(1, range);
+		var thisrange = game.rnd.integerInRange(lorange*10, hirange*10)/10;
 		var thisX = x + (Math.cos(angle) * thisrange);
 		var thisY = y + (Math.sin(angle) * thisrange);
 		
@@ -493,6 +493,8 @@ DungeonFloor.prototype = {
 		game.load.image('shader', 'assets/img/shader.png');
 		game.load.image('shadow', 'assets/img/shadow.png');
 		
+		game.load.image('stairs', 'assets/img/stairs.png');
+		
 		game.load.atlas('arrow', 'assets/img/arrow_bow_s.png', 'assets/img/2_frame.json');
 		game.load.atlas('bolt', 'assets/img/bolt_crossbow_s.png', 'assets/img/2_frame.json');
 		game.load.atlas('bullet', 'assets/img/bullet_gun_s.png', 'assets/img/3_frame.json');
@@ -590,7 +592,7 @@ DungeonFloor.prototype = {
 		roomText.anchor.y = 0.5;
 		roomText.fixedToCamera = true;
 		
-		scoreText = game.add.text(50, 550, 'Score: ' + PLAYER_PROPERTIES.POINTS, { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
+		scoreText = game.add.text(50, 550, 'Gems: ' + PLAYER_PROPERTIES.POINTS, { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		scoreText.anchor.x = 0;
 		scoreText.anchor.y = 0.5;
 		scoreText.fixedToCamera = true;
@@ -652,6 +654,7 @@ DungeonFloor.prototype = {
 		lastroombounds = null;
 		currentroom = null;
 		roomenemies = 0;
+		endfloor = false;
 		
 		completedrooms = [];
 		
@@ -686,7 +689,9 @@ DungeonFloor.prototype = {
 		weaponicon2.fixedToCamera = true;
 		game.physics.arcade.enable(weaponicon2);
 		
-		inbossroom = false
+		inbossroom = false;
+		
+		stairs = null;
 		
 		shader = game.add.sprite(posX, posY, 'shader');
 		//shader.scale.set(1.1);
@@ -696,7 +701,7 @@ DungeonFloor.prototype = {
 		shader.y = 0;
 		shader.fixedToCamera = true;
 		
-		bosscomplete = false
+		bosscomplete = false;
 		
 		weaponshadow = game.add.sprite(posX, posY + weaponoffset + 4, weaponsprite);
 		weaponshadow.anchor.set(0.5);
@@ -849,6 +854,15 @@ DungeonFloor.prototype = {
 			roomText.setText('End of dungeon. Press E to continue.');
 			bossmusic.stop();
 			mainmusic.resume();
+			
+			stairs_img = game.add.sprite(bossroom[0], bossroom[1], 'stairs');
+			stairs_img.anchor.set(0.5);
+			
+			stairs = game.add.sprite(bossroom[0], bossroom[1], 'blank');
+			stairs.anchor.set(0.5);
+			stairs.scale.set(1.5);
+			
+			game.physics.arcade.enable(stairs);
 		}
 		
 		
@@ -909,9 +923,27 @@ DungeonFloor.prototype = {
 			game.state.start('GameOver', true, true);
 		}
 		
+		/*
 		if (game.input.keyboard.isDown(Phaser.Keyboard.E)) {
 			if (PlayerInBoss(player.body.x, player.body.y) == true){
 				currentroom = null;
+				PLAYER_PROPERTIES.FLOOR += 1;
+				music.stop();
+				if (PLAYER_PROPERTIES.FLOOR != 4){
+					game.state.start('Transition', true, true);
+				} else {
+					game.state.start('End', true, true);
+				}
+			}
+		}
+		*/
+		
+		if (stairs != null){
+			var stairsTouch = game.physics.arcade.collide(player, stairs);
+			if (stairsTouch == true && endfloor == false){
+				endfloor = true;
+				currentroom = null;
+				
 				PLAYER_PROPERTIES.FLOOR += 1;
 				music.stop();
 				if (PLAYER_PROPERTIES.FLOOR != 4){
@@ -951,7 +983,7 @@ DungeonFloor.prototype = {
 											roomenemies--;
 										}
 										
-										SpawnGems(this.gemcount, this.body.x, this.body.y, 20);
+										SpawnGems(this.gemcount, this.body.x, this.body.y, 1, 20);
 										
 										this.kill();
 										this.destroy();
@@ -1042,7 +1074,7 @@ DungeonFloor.prototype = {
 												roomenemies--;
 											}
 											
-											SpawnGems(this.gemcount, this.body.x, this.body.y, 20);
+											SpawnGems(this.gemcount, this.body.x, this.body.y, 1, 20);
 											
 											this.kill();
 											this.destroy();
@@ -1149,6 +1181,12 @@ DungeonFloor.prototype = {
 		// invincibility frame counter
 		if (iframes > 0){
 			iframes--;
+			
+			if (iframes % 2 == 0){
+				player.alpha = 1;
+			} else {
+				player.alpha = 0;
+			}
 		} else {
 			iframes = 0;
 		}
@@ -1158,7 +1196,7 @@ DungeonFloor.prototype = {
 		if(difficulty<2){
 			map.pixel.bringToTop();
 		}
-		scoreText.setText('Score: ' + PLAYER_PROPERTIES.POINTS);
+		scoreText.setText('Gems: ' + PLAYER_PROPERTIES.POINTS);
 		healthText.setText('Health: ' + PLAYER_PROPERTIES.HEALTH);
 		weaponText.setText(PLAYER_PROPERTIES.CURRENT_WEAPON);
 		healthText.bringToTop();
@@ -1192,7 +1230,7 @@ NextFloor.prototype = {
 		//stateText = game.add.text(20, 20, 'NextFloor', { fontSize: '20px', fill: '#ffffff' });
 		
 		// input prompt
-		promptText = game.add.text(400, 300, 'Press SPACE to continue.', { fontSize: '20px', fill: '#ffffff' });
+		promptText = game.add.text(400, 300, 'Press SPACE to continue.', { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
 	},
@@ -1263,7 +1301,7 @@ End.prototype = {
 		promptText.anchor.y = 0.5;
 		
 		// input prompt
-		promptText = game.add.text(400, 300, 'Your score: ' + PLAYER_PROPERTIES.POINTS, { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
+		promptText = game.add.text(400, 300, 'You collected ' + PLAYER_PROPERTIES.POINTS + ' gems.', { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
 		
