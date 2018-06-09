@@ -28,7 +28,7 @@ Gem.prototype.update = function() {
 	
 	var gemHitPlayer = game.physics.arcade.collide(this, player);
 	
-	// delete the bullet if it hits an enemy, then damage the enemy
+	// gives the player a point when collected, and then the gem disappears.
 	if (gemHitPlayer == true){
 		gemfx.play();
 		

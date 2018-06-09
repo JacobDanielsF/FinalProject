@@ -11,7 +11,7 @@ function BossProjectile(posX, posY, playerX, playerY, type, sprite, frame){
 	this.scale.x = scales;
 	this.scale.y = scales;
 	
-	this.type = type;
+	this.type = type; // type of projectile to spawn
 	
 	game.physics.enable(this);
 	this.body.collideWorldBounds = false;
@@ -19,32 +19,23 @@ function BossProjectile(posX, posY, playerX, playerY, type, sprite, frame){
 	// check boss type
 	if (type == "default"){
 		this.speed = 200;
-		this.damage = 1;
-		//this.rotation = game.physics.arcade.angleToPointer(Boss) + (Math.PI/2);
-		
+		this.damage = 1;		
 		angle = game.math.angleBetween(posX, posY, playerX, playerY);
 		this.rotation = angle;
 	}
-	// check boss type
 	if (type == "triple"){
 		this.speed = 300;
 		this.damage = 1;
-		//this.rotation = game.physics.arcade.angleToPointer(Boss) + (Math.PI/2);
 		angle = game.math.angleBetween(posX, posY, playerX, playerY);
 		this.rotation = angle;
 	}
 	if (type == "rapid"){
 		this.speed = 200;
 		this.damage = 1;
-		//this.rotation = game.physics.arcade.angleToPointer(Boss) + (Math.PI/2);
 		Phaser.Sprite.call(this, game, posX, posY, sprite, frame);
 		angle = game.math.angleBetween(posX, posY, playerX, playerY);
 		this.rotation = angle;
 	}
-	
-	
-	
-	//game.physics.arcade.moveToPointer(this, this.speed);
 	game.add.existing(this);
 }
 
@@ -73,9 +64,9 @@ BossProjectile.prototype.update = function() {
 			} else {
 				PLAYER_PROPERTIES.HEALTH -= this.damage;
 			}
-			iframes = IFRAMES_MAX;
+			iframes = IFRAMES_MAX; 
 		}
-		
+		//plays a random sound effect each time
 		var rand = game.rnd.integerInRange(1, 5);
 		
 		if (rand == 1){

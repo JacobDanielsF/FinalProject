@@ -5,7 +5,7 @@
 
 function PlayerProjectile(posX, posY, type, angleoffset){
 	
-	// check enemy type
+	// checks weapon type
 	if (type == "Knife Dagger"){
 		Phaser.Sprite.call(this, game, posX, posY, 'knife_dagger');
 		this.anchor.set(0.5);
@@ -21,7 +21,7 @@ function PlayerProjectile(posX, posY, type, angleoffset){
 		this.speed = 550;
 		this.damage = 1;
 		this.rotation = game.physics.arcade.angleToPointer(player) + (Math.PI/4);
-		this.duration = 35;
+		this.duration = 35; // lifespan of projectile
 		
 	}
 	if (type == "Scorpion Dagger"){
@@ -221,14 +221,12 @@ function PlayerProjectile(posX, posY, type, angleoffset){
 		this.animations.play('anim');
 	}
 	
-	this.blink = 8;
-	//this.tick = 0;
+	this.blink = 8; // used for flying blades. 
 	
-	var angle = game.physics.arcade.angleToPointer(player) + angleoffset;
+	var angle = game.physics.arcade.angleToPointer(player) + angleoffset; // Changes angle from the target that this projectile will fly. Used for multiple projectiles.
 	var targetX = player.body.x+(Math.cos(angle)*70)+16;
 	var targetY = player.body.y+(Math.sin(angle)*70)+16;
 	game.physics.arcade.moveToXY(this, targetX, targetY, this.speed);
-	//game.physics.arcade.moveToPointer(this, this.speed);
 	
 	this.body.velocity.x += (player.body.velocity.x)/2;
 	this.body.velocity.y += (player.body.velocity.y)/2;
@@ -321,7 +319,7 @@ function PlayerSlash(posX, posY, type){
 	}
 	
 	this.hitboxes = hitboxes;
-	//game.add.existing(this);
+
 }
 
 PlayerSlash.prototype.constructor = PlayerSlash;

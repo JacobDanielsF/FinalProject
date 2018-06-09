@@ -28,15 +28,6 @@
 			if (roomtype == "start") { // save player coordinates.
 				playercoords = [x, y];
 			}
-			
-			/*
-			if (roomtype == "normal") { // chance of spawning an arbitrary enemy in the middle of a room.
-				var temp = game.rnd.integerInRange(0, 1);
-				if (temp == 0) {
-					enemies[enemies.length] = [x, y];
-				}
-			}
-			*/
 	
 			if (roomtype == "hall") { // chance of spawning an arbitrary enemy in a hallway segment.
 				enemies.push([x, y]);
@@ -50,16 +41,6 @@
 				bossroom = [x, y, width, height];
 			}
 			
-			/*
-			if (roomtype == "normal") { // chance of spawning teasure slightly off from the center of a room.
-				var temp = game.rnd.integerInRange(0, 4);
-				if (temp < 2) {
-					var randomX = game.rnd.integerInRange(0, 1);
-					var randomY = game.rnd.integerInRange(0, 1);
-					treasure[treasure.length] = [x + (randomX-0.5)*(WALL_SIZE*2), y + (randomY-0.5)*(WALL_SIZE*2)];
-				}
-			}
-			*/
 		}
 		
 		// MakePath()
@@ -276,7 +257,7 @@ SpawnDungeon.prototype.constructor = SpawnDungeon;
 
 
 
-function PlayerInBounds(x,y){
+		function PlayerInBounds(x,y){
 			for (var i = 0; i < mainrooms.length; i++) { // check the bounds of all rooms
 				var skip = false;
 				for (var j = 0; j < completedrooms.length; j++){

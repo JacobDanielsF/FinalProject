@@ -17,8 +17,7 @@ function EnemyProjectile(posX, posY, playerX, playerY, type){
 		this.scale.y = scale;
 		
 		game.physics.enable(this);
-		this.body.collideWorldBounds = false;
-		//this.model = enemyprojectiles.create(posX, posY, 'enemy_atlas', 'projectile1');
+		this.body.collideWorldBounds = false; // projectile persists offscreen.
 		
 		var angle = game.math.angleBetween(posX, posY, playerX, playerY);
 		this.rotation = angle;
@@ -39,7 +38,6 @@ function EnemyProjectile(posX, posY, playerX, playerY, type){
 		
 		game.physics.enable(this);
 		this.body.collideWorldBounds = false;
-		//this.model = enemyprojectiles.create(posX, posY, 'enemy_atlas', 'projectile1');
 		
 		var angle = game.math.angleBetween(posX, posY, playerX, playerY);
 		this.rotation = angle;
@@ -65,7 +63,7 @@ EnemyProjectile.prototype.update = function() {
 	}
 	
 	var slash = playerslash;
-			
+	// destroys a projectile if it comes into contact with a slash.	
 	if (slash != null){
 		for (var k = 0; k < slash.hitboxes.length; k++){
 			var box = slash.hitboxes[k];
@@ -93,7 +91,7 @@ EnemyProjectile.prototype.update = function() {
 			}
 			iframes = IFRAMES_MAX;
 		}
-		
+		//plays a random sound effect each time
 		var rand = game.rnd.integerInRange(1, 5);
 		
 		if (rand == 1){

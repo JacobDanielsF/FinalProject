@@ -14,7 +14,7 @@ function Enemy(game, posX, posY, type, roomtoggle){
 	this.anchor.set(0.5);
 	
 	this.type = type;
-	this.room = roomtoggle;
+	this.room = roomtoggle; // not used
 	
 	game.physics.enable(this);
 	this.body.collideWorldBounds = false;
@@ -25,9 +25,9 @@ function Enemy(game, posX, posY, type, roomtoggle){
 		this.nextfire = 4;
 		this.firecooldown = 1;
 		this.walkspeed = 100;
-		this.seekrange = 400;
+		this.seekrange = 400; // If the player is in range, then the scorpion will begin to attack and move towards them.
 		this.points = 10;
-		this.gemcount = 3;
+		this.gemcount = 3; // how many gems the scorpion gives.
 		
 		this.animations.add('walkright', Phaser.Animation.generateFrameNames('scorpionwalkright', 2, 3), 5, true);
 		this.animations.add('walkleft', Phaser.Animation.generateFrameNames('scorpionwalkleft', 2, 3), 5, true);
@@ -39,7 +39,7 @@ function Enemy(game, posX, posY, type, roomtoggle){
 		this.nextfire = 4;
 		this.firecooldown = 1.5;
 		this.walkspeed = 120;
-		this.seekrange = 400;
+		this.seekrange = 400; 
 		this.points = 20;
 		this.gemcount = 5;
 		
@@ -50,10 +50,11 @@ function Enemy(game, posX, posY, type, roomtoggle){
 	}
 	
 	this.direction = "right";
-	this.poison = false;
+	this.poison = false; // status effect from Scorpion Dagger
 	// first thing that came to mind for overriding the walk animations based on attacks. 
 	this.attacking = false;
 	this.attackTimer = 0;
+	
 	this.animations.play('idle');
 	game.add.existing(this);
 }
@@ -77,8 +78,8 @@ Enemy.prototype.update = function() {
 			iframes = 20;
 		}
 						
-		var dirX = game.math.clamp((player.body.x - this.body.x)/128, -1, 1);
-		var dirY = game.math.clamp((player.body.y - this.body.y)/128, -1, 1);
+		var dirX = game.math.clamp((player.body.x - this.body.x)/128, -1, 1); // left is -1, right is 1.
+		var dirY = game.math.clamp((player.body.y - this.body.y)/128, -1, 1); // down is -1, up is 1.
 						
 		// how does they enemy move? do they fire a projectile? if so, what kind?
 		// enemy type determines actions here.
@@ -109,7 +110,7 @@ Enemy.prototype.update = function() {
 		if (this.type == 'snake'){
 			this.body.velocity.x = dirX * this.walkspeed;
 			this.body.velocity.y = dirY * this.walkspeed;
-			if(time>(this.nextfire-0.29)){
+			if(time>(this.nextfire-0.29)){ // plays the animation before the projectile, since the snake charges it and then fires.
 				if (dirX>0){
 					this.animations.play('attackright');	
 				}
@@ -126,6 +127,7 @@ Enemy.prototype.update = function() {
 					enemybulletgroup.add(bullet);
 					this.nextfire = time + this.firecooldown; // this is the bullet rate of the weapon
 					
+					// offsets both snake projectiles.
 					var angleoffset = (i - 0.5)*0.3;
 					var angle = game.math.angleBetween(this.body.x + 16, this.body.y + 16, player.body.x, player.body.y) + angleoffset;
 					
@@ -139,7 +141,7 @@ Enemy.prototype.update = function() {
 		
 		if (this.type == 'scorpion'){
 			if (dirX > 0){
-				if(time>this.attackTimer){	
+				if(time>this.attackTimer){	// to prevent walk animation from overriding attack animation
 					this.animations.play('walkright');
 					this.direction = "right";
 				}
@@ -186,9 +188,9 @@ Enemy.prototype.update = function() {
 		this.body.velocity.x = 0;
 		this.body.velocity.y = 0;
 	}
-	
+	// poison effect.
 	if (this.poison == true){
-		this.health -= 0.1;
+		this.health -= 0.1; // damage over time
 		
 		if (this.health <= 0){
 			if (roomenemies > 0){

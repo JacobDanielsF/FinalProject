@@ -4,27 +4,21 @@
 // Loot prefab
 
 function Loot(posX, posY, type){
-	
+	// adds a shadow below a weapon to make it stand out more.
 	var shadow = game.add.sprite(posX, posY+2, type);
 	shadow.anchor.set(0.5);
 	shadow.tint = 0x000000;
 	shadow.alpha = 0.4;
 	this.shadow = shadow;
 	
+	// spawns the weapon itself
 	var item = game.add.sprite(posX, posY, type);
 	item.anchor.set(0.5);
 	this.item = item;
 	
 	this.centerX = posX;
 	this.centerY = posY;
-	
-	/*
-	Phaser.Sprite.call(this, game, posX, posY, type);
-	this.anchor.set(0.5);
-	var scale = 1;
-	this.scale.x = scale;
-	this.scale.y = scale;
-	*/
+	// all weapon names. Gives the loot a name based on the type.
 	if (type == "knife_dagger"){
 		this.name = "Knife Dagger";
 	}
@@ -64,48 +58,6 @@ function Loot(posX, posY, type){
 	if (type == "stone_sword"){
 		this.name = "Stone Sword";
 	}
-	
-	//game.add.existing(this);
 }
 
-//Loot.prototype = Object.create(Phaser.Sprite.prototype);
 Loot.prototype.constructor = Loot;
-
-/*
-Loot.prototype.update = function() {
-	
-	if (InRange(player.body.x, player.body.y, this.body.x, this.body.y, 70) == true) {
-		pickupText.setText('Press SPACE to pick up ' + this.name);
-		
-		if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){
-			
-			if (this.name == "Ornate Dagger"){
-				player.ornateuse = false;
-			}
-			
-			if (PLAYER_PROPERTIES.CURRENT_WEAPON == PLAYER_PROPERTIES.WEAPON_1) {
-				PLAYER_PROPERTIES.WEAPON_1 = this.name;
-			} else {
-				PLAYER_PROPERTIES.WEAPON_2 = this.name;
-			}
-			
-			PLAYER_PROPERTIES.CURRENT_WEAPON = this.name;
-			SetWeaponSprite();
-			SetFireRate();
-			weaponicon.loadTexture(GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON));
-			
-			nextFire = 0;
-			isslashing = false;
-			slashframe = 0;
-			
-			pickupText.setText('');
-			this.kill();
-			this.destroy();
-		}
-		
-	} else {
-		pickupText.setText('');
-	}
-	
-}
-*/
