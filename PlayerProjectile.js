@@ -270,15 +270,32 @@ function PlayerSlash(posX, posY, type){
 	if (type == "Bronze Sword"){
 		var angle = game.physics.arcade.angleToPointer(player);
 		
-		var hitboxDist = 75;
-		var slashDist = hitboxDist*0.8;
-		var slash = game.add.sprite(player.body.x+(Math.cos(angle)*(hitboxDist-10))+16, player.body.y+(Math.sin(angle)*(slashDist))+16 , 'slash');
+		var hitboxDist = 50;
+		var slashDist = hitboxDist*0.65;
+		var slashSpeed = 400;
+		this.duration = 10;
+		this.damage = 3;
+		
+		var slash = game.add.sprite(player.body.x+(Math.cos(angle)*(hitboxDist-10))+16, player.body.y+(Math.sin(angle)*(slashDist))+16 , 'slash', 'sprite1');
 		slash.anchor.x = 0.5;
 		slash.anchor.y = 0.5;
 		slash.scale.setTo(1.2, 1);
 		slash.rotation = game.physics.arcade.angleToPointer(player) + (Math.PI/2);
+		
+		game.physics.enable(slash);
+		slash.body.collideWorldBounds = false;
+		var targetX = player.body.x+(Math.cos(angle)*70)+16;
+		var targetY = player.body.y+(Math.sin(angle)*70)+16;
+		game.physics.arcade.moveToXY(slash, targetX, targetY, slashSpeed);
+		
+		slash.body.velocity.x += (player.body.velocity.x)/2;
+		slash.body.velocity.y += (player.body.velocity.y)/2;
+		
+		slash.animations.add('anim', Phaser.Animation.generateFrameNames('sprite', 1, 3), 14, false);
+		slash.animations.play('anim');
+		
 		this.mainslash = slash;
-
+		
 		var increment = 0.25;
 		for (var i = 0; i < 5; i++){
 			var newSlash = game.add.sprite(player.body.x+(Math.cos(angle+increment*(i-2))*hitboxDist)+16, player.body.y+(Math.sin(angle+increment*(i-2))*hitboxDist)+16, 'blank');
@@ -286,24 +303,47 @@ function PlayerSlash(posX, posY, type){
 			newSlash.anchor.x = 0.5;
 			newSlash.anchor.y = 0.5;
 			hitboxes.push(newSlash);
+			
+			game.physics.enable(newSlash);
+			newSlash.body.collideWorldBounds = false;
+			var targetX = player.body.x+(Math.cos(angle+increment*(i-2))*70)+16;
+			var targetY = player.body.y+(Math.sin(angle+increment*(i-2))*70)+16;
+			game.physics.arcade.moveToXY(newSlash, targetX, targetY, slashSpeed);
+			
+			newSlash.body.velocity.x += (player.body.velocity.x)/2;
+			newSlash.body.velocity.y += (player.body.velocity.y)/2;
 		}
-		
-		this.duration = 4;
-		this.damage = 3;
 		
 	}
 	if (type == "Stone Sword"){
 		var angle = game.physics.arcade.angleToPointer(player);
 		
-		var hitboxDist = 80;
-		var slashDist = hitboxDist*0.8;
-		var slash = game.add.sprite(player.body.x+(Math.cos(angle)*(hitboxDist-10))+16, player.body.y+(Math.sin(angle)*(slashDist))+16 , 'slash');
+		var hitboxDist = 50;
+		var slashDist = hitboxDist*0.65;
+		var slashSpeed = 500;
+		this.duration = 20;
+		this.damage = 5;
+		
+		var slash = game.add.sprite(player.body.x+(Math.cos(angle)*(hitboxDist-10))+16, player.body.y+(Math.sin(angle)*(slashDist))+16 , 'slash', 'sprite1');
 		slash.anchor.x = 0.5;
 		slash.anchor.y = 0.5;
 		slash.scale.setTo(1.2, 1);
 		slash.rotation = game.physics.arcade.angleToPointer(player) + (Math.PI/2);
+		
+		game.physics.enable(slash);
+		slash.body.collideWorldBounds = false;
+		var targetX = player.body.x+(Math.cos(angle)*70)+16;
+		var targetY = player.body.y+(Math.sin(angle)*70)+16;
+		game.physics.arcade.moveToXY(slash, targetX, targetY, slashSpeed);
+		
+		slash.body.velocity.x += (player.body.velocity.x)/2;
+		slash.body.velocity.y += (player.body.velocity.y)/2;
+		
+		slash.animations.add('anim', Phaser.Animation.generateFrameNames('sprite', 1, 3), 7, false);
+		slash.animations.play('anim');
+		
 		this.mainslash = slash;
-
+		
 		var increment = 0.25;
 		for (var i = 0; i < 5; i++){
 			var newSlash = game.add.sprite(player.body.x+(Math.cos(angle+increment*(i-2))*hitboxDist)+16, player.body.y+(Math.sin(angle+increment*(i-2))*hitboxDist)+16, 'blank');
@@ -311,11 +351,16 @@ function PlayerSlash(posX, posY, type){
 			newSlash.anchor.x = 0.5;
 			newSlash.anchor.y = 0.5;
 			hitboxes.push(newSlash);
+			
+			game.physics.enable(newSlash);
+			newSlash.body.collideWorldBounds = false;
+			var targetX = player.body.x+(Math.cos(angle+increment*(i-2))*70)+16;
+			var targetY = player.body.y+(Math.sin(angle+increment*(i-2))*70)+16;
+			game.physics.arcade.moveToXY(newSlash, targetX, targetY, slashSpeed);
+			
+			newSlash.body.velocity.x += (player.body.velocity.x)/2;
+			newSlash.body.velocity.y += (player.body.velocity.y)/2;
 		}
-		
-		this.duration = 6;
-		this.damage = 4;
-		
 	}
 	
 	this.hitboxes = hitboxes;

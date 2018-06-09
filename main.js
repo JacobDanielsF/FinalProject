@@ -322,20 +322,36 @@ Credits.prototype = {
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
-		newText = game.add.text(400, 250, 'Demo sprites (from opengameart.org) by:', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
+		newText = game.add.text(400, 225, 'Tile sprites (from opengameart.org) by: gtkampos and Andor Salga.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
-		newText = game.add.text(400, 275, 'gtkampos, Andor Salga, and MetaShinryu.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
+		newText = game.add.text(400, 275, 'Crosshair sprite by: Kenney.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
-		newText = game.add.text(400, 350, 'Music by: Purple Planet Music.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
+		newText = game.add.text(400, 325, 'Background music by: Purple Planet Music.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
+		newText.anchor.x = 0.5;
+		newText.anchor.y = 0.5;
+		
+		newText = game.add.text(400, 375, 'Various sounds (from freesound.org) by: Vosvoy, pyro13djt,', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
+		newText.anchor.x = 0.5;
+		newText.anchor.y = 0.5;
+		
+		newText = game.add.text(400, 400, 'deleted_user_6479820, Erdie, adcbicycle, Timbre, Hanbaal,', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
+		newText.anchor.x = 0.5;
+		newText.anchor.y = 0.5;
+		
+		newText = game.add.text(400, 425, 'high_festiva, LiamG_SFX, Seidhepriest, FreqMan, thanvannispen,', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
+		newText.anchor.x = 0.5;
+		newText.anchor.y = 0.5;
+		
+		newText = game.add.text(400, 450, 'qubodup, Groadr, tiptoe84, and Vehicle.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
 		// input prompt
-		promptText = game.add.text(400, 500, 'Press Q to go back.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
+		promptText = game.add.text(400, 525, 'Press Q to go back.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
 
@@ -436,7 +452,7 @@ Transition.prototype = {
             fadedOut = true;
             game.add.tween(promptText).to( { alpha: 0 }, 500, Phaser.Easing.Linear.None, true, 0, 0, false);
         }
-        if(tick > 200){
+        if(tick > 150){
             game.state.start('DungeonFloor');
         }
     }
@@ -460,7 +476,7 @@ DungeonFloor.prototype = {
 		game.load.atlas('tile_atlas', 'assets/img/tile_atlas.png', 'assets/img/tile_sprites.json');
 		game.load.atlas('tile_overlay', 'assets/img/tile_overlay.png', 'assets/img/overlay_glyphs.json');
 		game.load.image('blank', 'assets/img/blank.png');
-		game.load.image('slash', 'assets/img/slash_s.png');
+		game.load.atlas('slash', 'assets/img/slash_sword.png', 'assets/img/slash.json');
 		game.load.atlas('player', 'assets/img/player.png', 'assets/img/player.json');
 		game.load.atlas('boss', 'assets/img/boss.png', 'assets/img/boss.json');
 		
@@ -726,6 +742,7 @@ DungeonFloor.prototype = {
 		crossHair = game.add.image(game.input.mousePointer.x+game.camera.x,game.input.mousePointer.y+game.camera.y,'crosshair');
 		crossHair.scale.set(0.5);
 		crossHair.anchor.set(0.5);
+		crossHair.alpha = 0.9;
 
 		
 		// music/sound variables
@@ -1001,6 +1018,8 @@ DungeonFloor.prototype = {
 			var slash = playerslash;
 			
 				if (slash != null){
+					var hitbool = false;
+					
 					for (var k = 0; k < slash.hitboxes.length; k++){
 						var box = slash.hitboxes[k];
 						
@@ -1012,6 +1031,7 @@ DungeonFloor.prototype = {
 								// delete the bullet if it hits an enemy and damage the enemy
 								if (boxHitEnemy == true){
 									
+									hitbool = true;
 									enemyhitfx.play();
 									
 									// enemy is damaged, delete enemy if it dies
@@ -1030,9 +1050,20 @@ DungeonFloor.prototype = {
 										}
 									}
 									enemy.damage(slash.damage);
+									
 								}
 							}
 						}, this);
+					}
+					
+					if (hitbool == true){
+						for (var k = 0; k < slash.hitboxes.length; k++){
+							var box = slash.hitboxes[k];
+							box.kill();
+							box.destroy();
+						}
+						slash.mainslash.kill();
+						slash.mainslash.destroy();
 					}
 					
 					slash.duration = slash.duration - 1;

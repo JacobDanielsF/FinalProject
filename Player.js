@@ -141,9 +141,17 @@ Player.prototype.update = function() {
 	}	
 	var range = 32;
 	if (slashframe < 0 || PLAYER_PROPERTIES.CURRENT_WEAPON == "Knife Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Scorpion Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Iron Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Ornate Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Bone Dagger"){
-		weapon.body.x = player.body.x + (Math.cos(angle)*range);
-		weapon.body.y = weaponoffset + player.body.y + (Math.sin(angle)*range);
-		weapon.rotation = angle + (Math.PI/4);
+		if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Bronze Sword" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Stone Sword"){
+			var offset = -(Math.PI/4);
+			
+			weapon.body.x = player.body.x + (Math.cos(angle + offset)*range);
+			weapon.body.y = weaponoffset + player.body.y + (Math.sin(angle + offset)*range);
+			weapon.rotation = angle + offset + (Math.PI/4);
+		} else {
+			weapon.body.x = player.body.x + (Math.cos(angle)*range);
+			weapon.body.y = weaponoffset + player.body.y + (Math.sin(angle)*range);
+			weapon.rotation = angle + (Math.PI/4);
+		}
 		
 	} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Wooden Crossbow" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Short Bow" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Composite Bow" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Revolver Gun" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Energy Staff" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Serpentine Staff") {
 		range -= slashframe*50;
@@ -153,11 +161,11 @@ Player.prototype.update = function() {
 		slashframe = slashframe - 0.03;
 		
 	} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Bronze Sword" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Stone Sword") {
-		angle += -1 + (slashframe*10);
+		angle -= -1.15 + (slashframe*10);
 		weapon.body.x = player.body.x + (Math.cos(angle)*range);
 		weapon.body.y = weaponoffset + player.body.y + (Math.sin(angle)*range);
 		weapon.rotation = angle + (Math.PI/4);
-		slashframe = slashframe - 0.02;
+		slashframe = (slashframe * 1.2) - 0.05;
 	}
 	
 	function MakePlayerSlash(posX, posY, time, type){
