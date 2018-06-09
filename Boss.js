@@ -43,7 +43,7 @@ function Boss(game, posX, posY, type, roomtoggle, sprite, frame){
 	this.body.immovable = true;
 	this.health = 30;
 	this.gemcount = 20; // gems dropped from the boss
-	healthBoss = game.add.text(game.camera.width/2, 32, 'Boss health: ' + (this.health+1), { font: MAIN_FONT, fontStyle: 'bold', fontSize: '20px', fill: '#ffffff' });
+	healthBoss = game.add.text(game.camera.width/2, 32, 'Boss health: ' + (Math.floor(this.health)), { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
 	healthBoss.anchor.x = 0.5;
 	healthBoss.anchor.y = 0.5;
 	healthBoss.bringToTop();
@@ -61,7 +61,7 @@ Boss.prototype.constructor = Boss;
 
 Boss.prototype.update = function() {
 	var time = (game.time.now)/1000;
-	healthBoss.setText('Boss health: ' + (this.health+1));
+	healthBoss.setText('Boss health: ' + (Math.floor(this.health)));
 	
 	if (InRange(player.body.x, player.body.y, this.body.x, this.body.y, this.seekrange) == true) {
 						
@@ -216,8 +216,15 @@ Boss.prototype.update = function() {
 					this.poison = true;
 					this.walkspeed /= 2;
 				}
+				
+				if (bullet.type == "Wooden Crossbow" || bullet.type == "Short Bow" || bullet.type == "Composite Crossbow"){
+					rangedenemyhitfx.play();
+				} else {
+					enemyhitfx.play();
+				}
+				
 				bullet.kill();
-				bullet.destroy();		
+				bullet.destroy();
 				// boss is damaged, delete boss if it dies
 				this.health -= bullet.damage;
 				if (this.health < 0) {

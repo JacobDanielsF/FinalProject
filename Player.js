@@ -41,6 +41,9 @@ Player.prototype.update = function() {
 	weaponicon2.body.x = player.body.x + 360;
 	weaponicon2.body.y = player.body.y + 200;
 	
+	crossHair.x = game.input.mousePointer.x+game.camera.x;
+	crossHair.y = game.input.mousePointer.y+game.camera.y;
+	
 	var angle = game.physics.arcade.angleToPointer(player);
 
 
@@ -200,6 +203,8 @@ Player.prototype.update = function() {
 				for (var i = 0; i < 3; i++){
 					MakePlayerBullet(player.body.x + 16, player.body.y + 16, time, PLAYER_PROPERTIES.CURRENT_WEAPON, (i - 1)*0.2);
 				}
+				
+				magicfx.play();
 				
 			} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Revolver Gun"){
 				this.bulletfire = 4;

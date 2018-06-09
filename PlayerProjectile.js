@@ -113,7 +113,7 @@ function PlayerProjectile(posX, posY, type, angleoffset){
 		this.body.collideWorldBounds = false;
 		
 		this.speed = 600;
-		this.damage = 3;
+		this.damage = 2.5;
 		this.rotation = game.physics.arcade.angleToPointer(player) + (Math.PI/4);
 		this.duration = 40;
 		
@@ -173,7 +173,7 @@ function PlayerProjectile(posX, posY, type, angleoffset){
 		this.body.collideWorldBounds = false;
 		
 		this.speed = 1000;
-		this.damage = 2;
+		this.damage = 3;
 		this.rotation = game.physics.arcade.angleToPointer(player) + (Math.PI/4);
 		this.duration = 30;
 		
