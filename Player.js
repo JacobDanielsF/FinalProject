@@ -167,7 +167,17 @@ Player.prototype.update = function() {
 		weapon.rotation = angle + (Math.PI/4);
 		slashframe = (slashframe * 1.2) - 0.05;
 	}
-	
+	if(PLAYER_PROPERTIES.CURRENT_WEAPON == "Revolver Gun"){	
+		if(weapon.body.x<player.body.x){
+			weapon.scale.x=-1;
+			weaponshadow.scale.x=-1
+			weapon.rotation =  angle + (Math.PI/2) + (Math.PI/4);
+		}else{
+			weapon.scale.x=1;
+			weaponshadow.scale.x=1;
+
+		}
+	}
 	function MakePlayerSlash(posX, posY, time, type){
 		slash = new PlayerSlash(posX, posY + weaponoffset, type);
 		if (playerslash != null){
