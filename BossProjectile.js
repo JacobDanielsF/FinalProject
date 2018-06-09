@@ -7,9 +7,8 @@ function BossProjectile(posX, posY, playerX, playerY, type, sprite, frame){
 	Phaser.Sprite.call(this, game, posX, posY, sprite, frame);
 	this.anchor.x=0.5;
 	this.anchor.y=0.5;
-	var scales = 1.5;
-	this.scale.x = scales;
-	this.scale.y = scales;
+	
+	
 	
 	this.type = type; // type of projectile to spawn
 	
@@ -18,24 +17,31 @@ function BossProjectile(posX, posY, playerX, playerY, type, sprite, frame){
 	
 	// check boss type
 	if (type == "default"){
+		this.scale.x = 1;
+		this.scale.y = 1;
 		this.speed = 200;
 		this.damage = 1;		
 		angle = game.math.angleBetween(posX, posY, playerX, playerY);
 		this.rotation = angle;
 	}
 	if (type == "triple"){
-		this.speed = 300;
+		this.scale.x = 1;
+		this.scale.y = 1;
+		this.speed = 350;
 		this.damage = 1;
 		angle = game.math.angleBetween(posX, posY, playerX, playerY);
 		this.rotation = angle;
 	}
 	if (type == "rapid"){
+		this.scale.setTo(2,2);
 		this.speed = 200;
 		this.damage = 1;
 		Phaser.Sprite.call(this, game, posX, posY, sprite, frame);
 		angle = game.math.angleBetween(posX, posY, playerX, playerY);
 		this.rotation = angle;
 	}
+	this.animations.add('anim', Phaser.Animation.generateFrameNames('sprite', 1, 2), 8, true);
+	this.animations.play('anim');
 	game.add.existing(this);
 }
 

@@ -177,6 +177,9 @@ Player.prototype.update = function() {
 			weaponshadow.scale.x=1;
 
 		}
+	}else{
+		weapon.scale.x=1;
+		weaponshadow.scale.x=1;
 	}
 	function MakePlayerSlash(posX, posY, time, type){
 		slash = new PlayerSlash(posX, posY + weaponoffset, type);

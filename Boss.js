@@ -24,9 +24,9 @@ function Boss(game, posX, posY, type, roomtoggle, sprite, frame){
 		this.seekrange = 400; // If the player is in range, then the boss will begin to attack and move towards them.
 	}
 	if (type == "rapid"){
-		this.nextfire = 1;
-		this.firecooldown = 0.1;
-		this.walkspeed = 50;
+		this.nextfire = ((game.time.now)/1000)+0.1;
+		this.firecooldown = 0.2;
+		this.walkspeed = 0.5;
 		this.seekrange = 400;
 	}
 	if (type == "turret"){
@@ -101,14 +101,29 @@ Boss.prototype.update = function() {
 			this.body.velocity.x = dirX * this.walkspeed;
 			this.body.velocity.y = dirY * this.walkspeed;
 			if (time > this.nextfire){
-				var bullet = new BossProjectile(this.body.x + 8, this.body.y + 8, player.body.x, player.body.y, "rapid", 'enemyproj', 'sprite1');
-				enemybulletgroup.add(bullet);
-				this.nextfire = time + this.firecooldown; // this is the bullet rate of the weapon
-				bullet.body.velocity.x = dirX*bullet.speed;
-				bullet.body.velocity.y = dirY*bullet.speed;
-				
-				this.animations.add('anim', Phaser.Animation.generateFrameNames('sprite', 1, 2), 8, true);
-				this.animations.play('anim');
+				var numProjectiles = 6
+				// var angleRandom = (Math.floor(Math.random()*3))/4 // occasionally shifts angle
+				for (var i=0;i<numProjectiles;i++){
+					var bullet = new BossProjectile(this.body.x + 64, this.body.y + 75, player.body.x, player.body.y, "rapid",'enemyproj', 'sprite1');
+					bullet.scale.setTo(1.5,1.5);
+					enemybulletgroup.add(bullet);
+					this.nextfire = time + this.firecooldown; // this is the bullet rate of the weapon
+					var fixY = Math.abs(dirY*bullet.speed);	
+					var fixX = Math.abs(dirX*bullet.speed);
+					var fix 
+					if(fixX>fixY){
+						fix = fixX;
+					}else{
+						fix = fixY;
+					}
+					var angleRandom = (Math.floor(Math.random()*3))/4 // shoots everywhere
+					var angle = game.physics.arcade.angleToXY(bullet, player.x,player.y) + ((-2*(Math.PI/numProjectiles)*(numProjectiles/2)) +(2*(Math.PI/numProjectiles)*i))+angleRandom;
+					var targetX = bullet.body.x+(Math.cos(angle)*70);
+					var targetY = bullet.body.y+(Math.sin(angle)*70);
+					game.physics.arcade.moveToXY(bullet, targetX, targetY, fix);
+				}
+				// this.animations.add('anim', Phaser.Animation.generateFrameNames('sprite', 1, 2), 8, true);
+				// this.animations.play('anim');
 			}
 		}
 		// Functions to an extent. Lots of stuff to work out. 
