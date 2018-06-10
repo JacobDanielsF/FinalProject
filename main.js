@@ -449,19 +449,19 @@ Credits.prototype = {
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
-		newText = game.add.text(400, 375, 'Various sounds (from freesound.org) by: Vosvoy, pyro13djt,', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
+		newText = game.add.text(400, 375, 'Various sounds (from freesound.org) by: Vosvoy, pyro13djt, Erdie,', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
-		newText = game.add.text(400, 400, 'deleted_user_6479820, Erdie, adcbicycle, Timbre, Hanbaal,', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
+		newText = game.add.text(400, 400, 'deleted_user_6479820, adcbicycle, Timbre, Hanbaal, FreqMan,', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
-		newText = game.add.text(400, 425, 'high_festiva, LiamG_SFX, Seidhepriest, FreqMan, thanvannispen,', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
+		newText = game.add.text(400, 425, 'high_festiva, LiamG_SFX, Seidhepriest, thanvannispen, qubodup,', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
-		newText = game.add.text(400, 450, 'qubodup, Groadr, tiptoe84, and Vehicle.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
+		newText = game.add.text(400, 450, 'Groadr, tiptoe84, Vehicle, fastson, and benjaminharveydesign.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
