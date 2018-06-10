@@ -93,7 +93,7 @@ Enemy.prototype.update = function() {
 				enemybulletgroup.add(bullet);
 				this.nextfire = time + this.firecooldown; // this is the bullet rate of the weapon
 				if (dirX>0){
-					this.animations.play('attackright');	
+					this.animations.play('attackright');
 				}
 				if (dirX<0){
 					this.animations.play('attackleft');	

@@ -240,15 +240,14 @@ TitleScreen.prototype = {
 				titleTile.alpha = 0.5;
 			}
 		}
-		var logo = game.add.sprite(400, 250, 'logo');
-		logo.anchor.set(0.5);
-		var scale = 2;
-		logo.scale.x = scale;
-		logo.scale.y = scale;
-		
 		
 		let titleTile = game.add.image(0,0,'border');
 		titleTile.alpha = 0.5;
+		
+		var logo = game.add.sprite(400, 250, 'logo');
+		logo.anchor.set(0.5);
+		logo.scale.set(2);
+		
 		
 		// input prompt
 		promptText = game.add.text(400, 400, 'Press SPACE to begin.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
@@ -371,44 +370,239 @@ Tutorial.prototype = {
 	
 	preload: function() {
 		console.log('Tutorial: preload');
+		
+		game.load.image('border', 'assets/img/border.png');
+		game.load.atlas('tile_atlas', 'assets/img/tile_atlas.png', 'assets/img/tile_sprites.json');
+		
+		game.load.atlas('player', 'assets/img/player.png', 'assets/img/player.json');
+		game.load.atlas('scorpion', 'assets/img/scorpion.png', 'assets/img/scorpion.json');
+		game.load.atlas('snake', 'assets/img/snake.png', 'assets/img/snake.json');
+		
+		game.load.image('wooden_crossbow', 'assets/img/wooden_crossbow.png');
+		game.load.image('iron_dagger', 'assets/img/iron_dagger.png');
+		
+		game.load.image('stairs', 'assets/img/stairs.png');
+		game.load.image('crosshair', 'assets/img/crosshair.png');
+		game.load.image('weapon_ui', 'assets/img/weapon_ui.png');
+		
+		game.load.atlas('topaz', 'assets/img/topaz.png', 'assets/img/gem.json');
+		game.load.atlas('sapphire', 'assets/img/sapphire.png', 'assets/img/gem.json');
+		game.load.atlas('ruby', 'assets/img/ruby.png', 'assets/img/gem.json');
+		game.load.atlas('diamond', 'assets/img/diamond.png', 'assets/img/gem.json');
+		game.load.atlas('emerald', 'assets/img/emerald.png', 'assets/img/gem.json');
+		
 	},
 	
 	create: function() {
 		console.log('Tutorial: create');
 		
+		for (let i=64;i<config.width-64;i+=56){
+			for (let j=64;j<config.height-64;j+=59){
+				let titleTile = game.add.image(i,j,'tile_atlas','floor1');
+				titleTile.scale.x = 0.875;
+				titleTile.scale.y = 0.921875;
+				titleTile.alpha = 0.5;
+			}
+		}
 		
-		newText = game.add.text(400, 200, 'Use WASD to move.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
+		let titleTile = game.add.image(0,0,'border');
+		titleTile.alpha = 0.5;
+		
+		
+		newText = game.add.text(400, 100, 'HOW TO PLAY:', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
-		newText = game.add.text(400, 250, 'Left-click to use your weapon.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
+		
+		playerT = game.add.sprite(200, 200, 'player', 'idledown');
+		playerT.anchor.set(0.5);
+		
+		playerT.animations.add('walkup', Phaser.Animation.generateFrameNames('frameup', 1, 4), 8, true);
+		playerT.animations.add('walkright', Phaser.Animation.generateFrameNames('frameright', 1, 6), 12, true);
+		playerT.animations.add('walkleft', Phaser.Animation.generateFrameNames('frameleft', 1, 6), 12, true);
+		playerT.animations.add('walkdown', Phaser.Animation.generateFrameNames('framedown', 1, 4), 8, true);
+		
+		newText = game.add.text(200, 125, 'W', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '30px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
-		newText = game.add.text(400, 300, 'Press Q to switch weapons.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
+		newText = game.add.text(125, 200, 'A', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '30px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
-		newText = game.add.text(400, 350, 'Rack up points by defeating enemies and clearing rooms.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
+		newText = game.add.text(200, 275, 'S', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '30px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
-		newText = game.add.text(400, 400, 'Attempt to progress through 4 floors of the temple.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
+		newText = game.add.text(275, 200, 'D', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '30px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
+		
+		
+		crosshair = game.add.sprite(400, 170, 'crosshair');
+		crosshair.anchor.set(0.5);
+		
+		newText = game.add.text(575, 150, 'Aim your weapon with', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '15px', fill: '#ffffff' });
+		newText.anchor.x = 0.5;
+		newText.anchor.y = 0.5;
+		
+		newText = game.add.text(575, 170, 'your mouse and left-click', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '15px', fill: '#ffffff' });
+		newText.anchor.x = 0.5;
+		newText.anchor.y = 0.5;
+		
+		newText = game.add.text(575, 190, 'to use it.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '15px', fill: '#ffffff' });
+		newText.anchor.x = 0.5;
+		newText.anchor.y = 0.5;
+		
+		
+		weaponUI = game.add.sprite(650, 275, 'weapon_ui');
+		weaponUI.anchor.set(0.5);
+		weaponUI.scale.set(2);
+		
+		weapon1 = game.add.sprite(630, 222, 'wooden_crossbow');
+		weapon1.anchor.set(0.5);
+		weapon1.scale.set(1);
+		weapon1.alpha = 0.5;
+		game.physics.enable(weapon1);
+		
+		weapon2 = game.add.sprite(634, 291, 'iron_dagger');
+		weapon2.anchor.set(0.5);
+		weapon2.scale.set(1.25);
+		game.physics.enable(weapon2);
+		
+		weapon1.body.x = 630;
+		weapon1.body.y = 222;
+		weapon2.body.x = 634;
+		weapon2.body.y = 291;
+		
+		newText = game.add.text(450, 250, 'Press Q to switch weapons.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '15px', fill: '#ffffff' });
+		newText.anchor.x = 0.5;
+		newText.anchor.y = 0.5;
+		
+		newText = game.add.text(450, 290, 'Press SPACE to pick up any', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '15px', fill: '#ffffff' });
+		newText.anchor.x = 0.5;
+		newText.anchor.y = 0.5;
+		
+		newText = game.add.text(450, 310, 'new weapons you find.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '15px', fill: '#ffffff' });
+		newText.anchor.x = 0.5;
+		newText.anchor.y = 0.5;
+		
+		
+		
+		snakeT = game.add.sprite(120, 390, 'snake', 'snakeright1');
+		snakeT.anchor.set(0.5);
+		snakeT.scale.set(0.75);
+		snakeT.animations.add('walkright', Phaser.Animation.generateFrameNames('snakeright', 1, 2), 5, true);
+		snakeT.animations.play('walkright');
+		
+		scorpionT = game.add.sprite(160, 430, 'scorpion', 'scorpionidleright');
+		scorpionT.anchor.set(0.5);
+		scorpionT.scale.set(0.75);
+		scorpionT.animations.add('walkright', Phaser.Animation.generateFrameNames('scorpionwalkright', 2, 3), 5, true);
+		scorpionT.animations.play('walkright');
+		
+		
+		// literally just taken from SpawnGems()
+		for (var i = 0; i < 15; i++){
+			
+			var angle = (game.rnd.integerInRange(-100, 100)/100) * Math.PI;
+			
+			var thisrange = game.rnd.integerInRange(10, 400)/10;
+			var thisX = 650 + (Math.cos(angle) * thisrange);
+			var thisY = 410 + (Math.sin(angle) * thisrange);
+			
+			var gem;
+			var rand = game.rnd.integerInRange(1, 5); 
+			// Spawns a variety of random gems.
+			if (rand == 1){
+				gem = game.add.sprite(thisX, thisY, 'topaz');
+			} else if (rand == 2){
+				gem = game.add.sprite(thisX, thisY, 'ruby');
+			} else if (rand == 3){
+				gem = game.add.sprite(thisX, thisY, 'sapphire');
+			} else if (rand == 4){
+				gem = game.add.sprite(thisX, thisY, 'emerald');
+			} else {
+				gem = game.add.sprite(thisX, thisY, 'diamond');
+			}
+			
+			gem.scale.set(2);
+			gem.animations.add('sparkle', Phaser.Animation.generateFrameNames('sprite', 1, 4), 4, true);
+			gem.animations.play('sparkle');
+		}
+		
+		
+		
+		newText = game.add.text(400, 375, 'Enemies drop gems, which can be collected.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '15px', fill: '#ffffff' });
+		newText.anchor.x = 0.5;
+		newText.anchor.y = 0.5;
+		
+		newText = game.add.text(400, 425, 'Attempt to progress through 4 floors of the', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '15px', fill: '#ffffff' });
+		newText.anchor.x = 0.5;
+		newText.anchor.y = 0.5;
+		
+		newText = game.add.text(400, 450, 'temple, collecting as many gems as you can.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '15px', fill: '#ffffff' });
+		newText.anchor.x = 0.5;
+		newText.anchor.y = 0.5;
+		
 		
 		// input prompt
-		promptText = game.add.text(400, 450, 'Press SPACE to continue.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
+		promptText = game.add.text(400, 500, 'Press SPACE to continue.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
-
+		
+		animtick = 0;
 	},
 	
 	update: function() {
+		
 		// shift to main game state
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){ // or isPressed
 			music.stop();
 			game.state.start('Transition');
+		}
+		
+		if (animtick == 0){
+			playerT.animations.play('walkdown');
+			
+			weapon1.body.x = 630;
+			weapon1.body.y = 222;
+			weapon1.anchor.set(0.5);
+			weapon1.scale.set(1);
+			weapon1.alpha = 0.5;
+			
+			weapon2.body.x = 634;
+			weapon2.body.y = 291;
+			weapon2.anchor.set(0.5);
+			weapon2.scale.set(1.25);
+			weapon2.alpha = 1;
+		}
+		if (animtick == 25){
+			playerT.animations.play('walkleft');
+		}
+		if (animtick == 50){
+			playerT.animations.play('walkup');
+			
+			weapon2.body.x = 630;
+			weapon2.body.y = 222;
+			weapon2.anchor.set(0.5);
+			weapon2.scale.set(1);
+			weapon2.alpha = 0.5;
+			
+			weapon1.body.x = 634;
+			weapon1.body.y = 291;
+			weapon1.anchor.set(0.5);
+			weapon1.scale.set(1.25);
+			weapon1.alpha = 1;
+		}
+		if (animtick == 75){
+			playerT.animations.play('walkright');
+		}
+		
+		animtick++;
+		
+		if (animtick > 100){
+			animtick = 0;
 		}
 	}
 	
