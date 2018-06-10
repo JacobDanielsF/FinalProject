@@ -7,6 +7,7 @@ function Loot(posX, posY, type){
 	// adds a shadow below a weapon to make it stand out more.
 	var shadow = game.add.sprite(posX, posY+2, type);
 	shadow.anchor.set(0.5);
+	// making it look more like a shadow.
 	shadow.tint = 0x000000;
 	shadow.alpha = 0.4;
 	this.shadow = shadow;

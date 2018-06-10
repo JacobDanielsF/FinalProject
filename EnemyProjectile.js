@@ -4,8 +4,7 @@
 // Enemy projectile prefab
 
 function EnemyProjectile(posX, posY, playerX, playerY, type){
-	this.type = type;
-	
+	this.type = type; // type of enemy
 	if (type == "scorpion"){
 		this.speed = 200;
 		this.damage = 1;
@@ -19,7 +18,7 @@ function EnemyProjectile(posX, posY, playerX, playerY, type){
 		game.physics.enable(this);
 		this.body.collideWorldBounds = false; // projectile persists offscreen.
 		
-		var angle = game.math.angleBetween(posX, posY, playerX, playerY);
+		var angle = game.math.angleBetween(posX, posY, playerX, playerY); // angle between the player and the scorpion
 		this.rotation = angle;
 		
 		this.animations.add('anim', Phaser.Animation.generateFrameNames('sprite', 1, 2), 8, true);

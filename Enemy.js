@@ -4,6 +4,7 @@
 // Enemy prefab
 
 function Enemy(game, posX, posY, type, roomtoggle){
+	// gets the proper enemy sprite
 	if (type == 'scorpion'){
 		Phaser.Sprite.call(this, game, posX, posY, 'scorpion', 'scorpionidleright');
 	}
@@ -22,8 +23,8 @@ function Enemy(game, posX, posY, type, roomtoggle){
 	// check enemy type
 	if (type == "scorpion"){
 		this.health = 3;
-		this.nextfire = 4;
-		this.firecooldown = 1;
+		this.nextfire = 4; // when the scorpion can fire the first projectile.
+		this.firecooldown = 1; // how long until it can fire the next one.
 		this.walkspeed = 100;
 		this.seekrange = 400; // If the player is in range, then the scorpion will begin to attack and move towards them.
 		this.points = 10;
@@ -52,8 +53,8 @@ function Enemy(game, posX, posY, type, roomtoggle){
 	this.direction = "right";
 	this.poison = false; // status effect from Scorpion Dagger
 	// first thing that came to mind for overriding the walk animations based on attacks. 
-	this.attacking = false;
-	this.attackTimer = 0;
+	this.attacking = false; // is the attack animation playing?
+	this.attackTimer = 0; // will hold the time for when the attack animation can be overriden by the walking animation.
 	
 	this.animations.play('idle');
 	game.add.existing(this);
@@ -65,7 +66,7 @@ Enemy.prototype.constructor = Enemy;
 Enemy.prototype.update = function() {
 	var time = (game.time.now)/1000;
 	
-	if (InRange(player.body.x, player.body.y, this.body.x, this.body.y, this.seekrange) == true) {
+	if (InRange(player.body.x, player.body.y, this.body.x, this.body.y, this.seekrange) == true) { // if the player is in range
 						
 		// damage player if they hit an enemy and give them invincibility frames (iframes)
 		// do not damage the player if they have invincibility frames
@@ -138,14 +139,14 @@ Enemy.prototype.update = function() {
 				enemyspitfx.play();
 			}
 		}
-		
+		// 
 		if (this.type == 'scorpion'){
-			if (dirX > 0){
+			if (dirX > 0){ // is it facing to the right?
 				if(time>this.attackTimer){	// to prevent walk animation from overriding attack animation
 					this.animations.play('walkright');
 					this.direction = "right";
 				}
-			} else if (dirX < 0){
+			} else if (dirX < 0){ // is it facing to the left?
 				if(time>this.attackTimer){	
 					this.animations.play('walkleft');
 					this.direction = "left";
@@ -158,14 +159,13 @@ Enemy.prototype.update = function() {
 				}
 			}
 		}
-		
 		if (this.type == 'snake'){
-			if (dirX > 0){
+			if (dirX > 0){ // is it facing to the right?
 				if(time>this.attackTimer){	
 					this.animations.play('walkright');
 					this.direction = "right";
 				}
-			} else if (dirX < 0){
+			} else if (dirX < 0){ // is it facing to the left?
 				if(time>this.attackTimer){
 					this.animations.play('walkleft');
 					this.direction = "left";
@@ -198,7 +198,7 @@ Enemy.prototype.update = function() {
 			}
 			
 			this.kill();
-			this.destroy();
+			this.destroy(); // removes the enemy.
 		}
 	}
 }

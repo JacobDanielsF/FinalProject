@@ -195,7 +195,7 @@
 		// determines the general layout of the dungeon and spawns rooms and paths with SpawnRoom() and SpawnPath().
 		// room positions are determined by shuffling arrays of X and Y vertices using Shuffle()
 		// room information is stored in points[i], which can be referred to as the centerpoints of rooms or the
-		// -endpoints of paths. both are drawn out using the same set of points, with a bit of randomness varience.
+		// -endpoints of paths. both are drawn out using the same set of points, with a bit of randomness variance.
 		function SpawnDungeon(){
 			var pointnum = game.rnd.integerInRange(6, 8);
 			var groupx = [];
@@ -256,7 +256,7 @@ SpawnDungeon.prototype.constructor = SpawnDungeon;
 
 
 
-
+		// Checks if the player is inside of a room.
 		function PlayerInBounds(x,y){
 			for (var i = 0; i < mainrooms.length; i++) { // check the bounds of all rooms
 				var skip = false;
@@ -280,7 +280,7 @@ SpawnDungeon.prototype.constructor = SpawnDungeon;
 			}
 			return -1;
 		}
-		
+		// Checks if the player is inside of the boss room
 		function PlayerInBoss(x,y){
 			var boundX1 = bossroom[0] - (bossroom[2]/2);
 			var boundX2 = bossroom[0] + (bossroom[2]/2);
@@ -295,8 +295,7 @@ SpawnDungeon.prototype.constructor = SpawnDungeon;
 			return false;
 		}
 		
-		//console.log(player.body.x + ", " + player.body.y);
-		
+		// Creates a border around the current room.
 		function MakeBounds(num){
 			var roombounds = mainrooms[num];
 			var boundX1 = roombounds[0] - (roombounds[2]/2);
@@ -350,7 +349,7 @@ SpawnDungeon.prototype.constructor = SpawnDungeon;
 			}
 		}
 		
-		
+		// Makes a border around the bossroom.
 		function MakeBossBounds(){
 			var boundX1 = bossroom[0] - (bossroom[2]/2);
 			var boundX2 = bossroom[0] + (bossroom[2]/2);

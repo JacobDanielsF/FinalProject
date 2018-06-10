@@ -19,7 +19,7 @@ function Boss(game, posX, posY, type, roomtoggle, sprite, frame){
 	// checks boss type
 	if (type == "default"||type == "triple"){
 		this.nextfire = 4; // in seconds
-		this.firecooldown = 1;
+		this.firecooldown = 1; // time that must pass before the boss can shoot again
 		this.walkspeed = 100;
 		this.seekrange = 400; // If the player is in range, then the boss will begin to attack and move towards them.
 	}
@@ -27,7 +27,7 @@ function Boss(game, posX, posY, type, roomtoggle, sprite, frame){
 		this.nextfire = ((game.time.now)/1000)+0.1;
 		this.firecooldown = 0.2;
 		this.walkspeed = 0.5;
-		this.seekrange = 400;
+		this.seekrange = 400; 
 	}
 	if (type == "turret"){
 		this.nextfire = 1;
@@ -63,7 +63,7 @@ Boss.prototype.update = function() {
 	var time = (game.time.now)/1000;
 	healthBoss.setText('Boss health: ' + (Math.floor(this.health)));
 	
-	if (InRange(player.body.x, player.body.y, this.body.x, this.body.y, this.seekrange) == true) {
+	if (InRange(player.body.x, player.body.y, this.body.x, this.body.y, this.seekrange) == true) { // if the player is within range.
 						
 		// damage player if they hit an boss and give them invincibility frames (iframes)
 		// do not damage the player if they have invincibility frames
@@ -95,7 +95,7 @@ Boss.prototype.update = function() {
 				this.animations.play('anim');
 			}
 		}	
-		if (this.type == "rapid"){
+		if (this.type == "rapid"){ // this is also a turret.
 			var dirX = game.math.clamp((player.body.x - this.body.x)/128, -1, 1);
 			var dirY = game.math.clamp((player.body.y - this.body.y)/128, -1, 1);
 			this.body.velocity.x = dirX * this.walkspeed;
@@ -126,7 +126,7 @@ Boss.prototype.update = function() {
 				// this.animations.play('anim');
 			}
 		}
-		// Functions to an extent. Lots of stuff to work out. 
+		// Fires 3 projectiles towards the player
 		if (this.type == "triple"){
 			var dirX = [];
 			var dirY = [];
@@ -158,7 +158,7 @@ Boss.prototype.update = function() {
 		}
 		
 		
-		if (this.type == "turret"){
+		if (this.type == "turret"){ // does not move (much).
 			var dirX = game.math.clamp((player.body.x - (this.body.x+64))/128, -1, 1);
 			var dirY = game.math.clamp((player.body.y - (this.body.y+75))/128, -1, 1);
 			this.body.velocity.x = dirX * this.walkspeed;
@@ -214,7 +214,7 @@ Boss.prototype.update = function() {
 		}
 		
 						
-	} else {
+	} else { // if the player is not in range
 		// boss idle
 		this.body.velocity.x = 0;
 		this.body.velocity.y = 0;

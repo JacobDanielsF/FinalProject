@@ -17,7 +17,7 @@ function Gem(game, posX, posY, type){
 	
 	game.add.existing(this);
 	
-	gemgroup.add(this);
+	gemgroup.add(this); // adds this gem to the gemgroup.
 }
 
 Gem.prototype = Object.create(Phaser.Sprite.prototype);
@@ -30,9 +30,9 @@ Gem.prototype.update = function() {
 	
 	// gives the player a point when collected, and then the gem disappears.
 	if (gemHitPlayer == true){
-		gemfx.play();
+		gemfx.play(); // Pick up sound.
 		
-		PLAYER_PROPERTIES.POINTS += 1;
+		PLAYER_PROPERTIES.POINTS += 1; 
 		
 		this.kill();
 		this.destroy();

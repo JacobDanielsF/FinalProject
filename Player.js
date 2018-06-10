@@ -12,7 +12,7 @@ function Player(game, posX, posY, sprite, frame){
 	
 	game.physics.enable(this);
 	this.body.collideWorldBounds = false;
-	this.body.setSize(54, 74, 37, 33);
+	this.body.setSize(54, 74, 37, 33); // sets the bounding box.
 	
 		
 	// lock the camera to the player
@@ -41,6 +41,7 @@ Player.prototype.update = function() {
 	weaponicon2.body.x = player.body.x + 360;
 	weaponicon2.body.y = player.body.y + 200;
 	
+	// Cross hair follows mouse. Mouse cursor gets hidden elsewhere.
 	crossHair.x = game.input.mousePointer.x+game.camera.x;
 	crossHair.y = game.input.mousePointer.y+game.camera.y;
 	
@@ -181,7 +182,7 @@ Player.prototype.update = function() {
 		weapon.scale.x=1;
 		weaponshadow.scale.x=1;
 	}
-	function MakePlayerSlash(posX, posY, time, type){
+	function MakePlayerSlash(posX, posY, time, type){ // for melee weapons.
 		slash = new PlayerSlash(posX, posY + weaponoffset, type);
 		if (playerslash != null){
 			for (var k = 0; k < playerslash.hitboxes.length; k++){
@@ -196,7 +197,7 @@ Player.prototype.update = function() {
 		playerslash = slash;
 	}
 	
-	function MakePlayerBullet(posX, posY, time, type, angleoffset){
+	function MakePlayerBullet(posX, posY, time, type, angleoffset){ // for ranged weapons.
 		bullet = new PlayerProjectile(posX, posY + weaponoffset, type, angleoffset);
 		playerbulletgroup.add(bullet);
 	}

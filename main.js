@@ -14,7 +14,7 @@ var config = {
 window.onload = function() {
 	game = new Phaser.Game(config);
 	game.state.add('TitleScreen', TitleScreen);
-	game.state.add('DungeonFloor', DungeonFloor);
+	game.state.add('DungeonFloor', DungeonFloor); // Main game loop
 	game.state.add('NextFloor', NextFloor);
 	game.state.add('GameOver', GameOver);
 	game.state.add('Tutorial', Tutorial);
@@ -41,6 +41,7 @@ var IFRAMES_MAX = 20; // invincibility frames
 var MAIN_FONT = 'Verdana';
 var MAIN_STYLE = 'bold';
 
+// All player properties. 
 var PLAYER_PROPERTIES = {
 	VELOCITY: 80, // unused
 	HEALTH: 10,
@@ -55,7 +56,7 @@ var PLAYER_PROPERTIES = {
 
 
 
-// helper function
+// helper function. Detects if the 2 points are within range of each other
 function InRange(x1, y1, x2, y2, range){
 	var diff = game.math.distance(x1, y1, x2, y2);
 	if (diff < range){
@@ -63,7 +64,7 @@ function InRange(x1, y1, x2, y2, range){
 	}
 	return false;
 }
-
+// based on weapon name, sets the firerate.
 function SetFireRate(){
 	if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Wooden Crossbow"){
 		PLAYER_PROPERTIES.FIRE_RATE = 0.8;
@@ -155,7 +156,7 @@ function SetWeaponSprite(){
 	weapon.loadTexture(GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON));
 	weaponshadow.loadTexture(GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON));
 }
-
+// Spawns gems from enemies when they are defeated.
 function SpawnGems(num, x, y, lorange, hirange){
 	for (var i = 0; i < num; i++){
 		
@@ -184,8 +185,8 @@ function SpawnGems(num, x, y, lorange, hirange){
 
 // Pool of weapons available for a floor
 var FLOOR_WEAPONS = {
-	A: ["wooden_crossbow", "iron_dagger", "iron_dagger", "iron_dagger", "short_bow", "energy_staff", "bronze_sword", "bronze_sword"],
-	B: ["ornate_dagger", "bone_dagger", "serpentine_staff", "stone_sword", "revolver_gun", "composite_bow", "scorpion_dagger"],
+	A: ["wooden_crossbow", "iron_dagger", "iron_dagger", "iron_dagger", "short_bow", "energy_staff", "bronze_sword", "bronze_sword"], // 1st and 2nd floor weapon pool
+	B: ["ornate_dagger", "bone_dagger", "serpentine_staff", "stone_sword", "revolver_gun", "composite_bow", "scorpion_dagger"], // 3rd and 4th floor weapon pool
 }
 // Pool of enemy types available for a floor
 var ENEMY_TYPES = {
@@ -216,7 +217,7 @@ BeginMusic.prototype = {
 	
 }
 var difficulty=1; // controls difficulty, which controls what the map will be like.
-var difficultyText="Hard";
+var difficultyText="Hard"; // text displayed in the main menu
 var TitleScreen = function(game) {};
 TitleScreen.prototype = {
 	
@@ -240,7 +241,7 @@ TitleScreen.prototype = {
 				titleTile.alpha = 0.5;
 			}
 		}
-		
+		// border of wall tiles in the background
 		let titleTile = game.add.image(0,0,'border');
 		titleTile.alpha = 0.5;
 		
@@ -261,7 +262,7 @@ TitleScreen.prototype = {
 		diffText = game.add.text(400, 500, 'Press E to change difficulty: '+difficultyText, { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
 		diffText.anchor.x = 0.5;
 		diffText.anchor.y = 0.5;
-
+		// resetting player properties
 		PLAYER_PROPERTIES.POINTS = 0;
 		PLAYER_PROPERTIES.FLOOR = 0;
 		PLAYER_PROPERTIES.HEALTH = 10;
@@ -272,10 +273,9 @@ TitleScreen.prototype = {
 	},
 	
 	update: function() {
-		// shift to main game state
 		if(game.input.keyboard.justPressed(Phaser.Keyboard.E)){ // updates difficulty
 			difficulty += 1; 
-			if(difficulty>2){
+			if(difficulty>2){ // resets if back to 0 so it can cycle
 				difficulty=0;
 			}
 			if(difficulty==0){
@@ -287,8 +287,9 @@ TitleScreen.prototype = {
 			if(difficulty==2){
 				difficultyText="Pro"; // no map at all.
 			}
-			diffText.setText('Press E to change difficulty: '+difficultyText);
+			diffText.setText('Press E to change difficulty: '+difficultyText); 
 		}
+		// shift to main game state
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){ // or isPressed
 			game.state.start('Tutorial');
 		}
@@ -312,7 +313,7 @@ Credits.prototype = {
 		newText = game.add.text(400, 100, 'CREDITS', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '30px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
-		
+		// Those who worked on the game
 		newText = game.add.text(400, 150, 'Developed by: Jacob Daniels-Flechtner, Kameron Fincher,', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
@@ -320,7 +321,7 @@ Credits.prototype = {
 		newText = game.add.text(400, 175, 'Jeffrey Yao, Alexai Zachow and Eric Mitchell.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
-		
+		// Credits for assets not made by one of the people above.
 		newText = game.add.text(400, 225, 'Tile sprites (from opengameart.org) by: gtkampos and Andor Salga.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
@@ -395,7 +396,7 @@ Tutorial.prototype = {
 	
 	create: function() {
 		console.log('Tutorial: create');
-		
+		// handles the background tiles in the title screen.
 		for (let i=64;i<config.width-64;i+=56){
 			for (let j=64;j<config.height-64;j+=59){
 				let titleTile = game.add.image(i,j,'tile_atlas','floor1');
@@ -404,7 +405,7 @@ Tutorial.prototype = {
 				titleTile.alpha = 0.5;
 			}
 		}
-		
+		// border of wall tiles in the background
 		let titleTile = game.add.image(0,0,'border');
 		titleTile.alpha = 0.5;
 		
@@ -413,7 +414,7 @@ Tutorial.prototype = {
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
-		
+		// tutorial player sprite. Cycles through each direction.
 		playerT = game.add.sprite(200, 200, 'player', 'idledown');
 		playerT.anchor.set(0.5);
 		
@@ -454,7 +455,7 @@ Tutorial.prototype = {
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
-		
+		// UI behind weapon sprites in the player's inventory
 		weaponUI = game.add.sprite(650, 275, 'weapon_ui');
 		weaponUI.anchor.set(0.5);
 		weaponUI.scale.set(2);
@@ -488,13 +489,13 @@ Tutorial.prototype = {
 		newText.anchor.y = 0.5;
 		
 		
-		
+		// tutorial snake enemy
 		snakeT = game.add.sprite(120, 390, 'snake', 'snakeright1');
 		snakeT.anchor.set(0.5);
 		snakeT.scale.set(0.75);
 		snakeT.animations.add('walkright', Phaser.Animation.generateFrameNames('snakeright', 1, 2), 5, true);
 		snakeT.animations.play('walkright');
-		
+		// tutorial scorpion enemy
 		scorpionT = game.add.sprite(160, 430, 'scorpion', 'scorpionidleright');
 		scorpionT.anchor.set(0.5);
 		scorpionT.scale.set(0.75);
@@ -503,10 +504,10 @@ Tutorial.prototype = {
 		
 		
 		// literally just taken from SpawnGems()
+		// creates 15 gems in the bottom right corner of the tutorial screen
 		for (var i = 0; i < 15; i++){
-			
+			// Spawns them in random locations each time.
 			var angle = (game.rnd.integerInRange(-100, 100)/100) * Math.PI;
-			
 			var thisrange = game.rnd.integerInRange(10, 400)/10;
 			var thisX = 650 + (Math.cos(angle) * thisrange);
 			var thisY = 410 + (Math.sin(angle) * thisrange);
@@ -582,7 +583,7 @@ Tutorial.prototype = {
 		}
 		if (animtick == 50){
 			playerT.animations.play('walkup');
-			
+			// switches the locations of weapon1 and weapon2
 			weapon2.body.x = 630;
 			weapon2.body.y = 222;
 			weapon2.anchor.set(0.5);
@@ -640,11 +641,11 @@ Transition.prototype = {
         
         if(tick>0&&fadedIn==false){
             fadedIn = true;
-            game.add.tween(promptText).to( { alpha: 1 }, 500, Phaser.Easing.Linear.None, true, 0, 0, false);
+            game.add.tween(promptText).to( { alpha: 1 }, 500, Phaser.Easing.Linear.None, true, 0, 0, false); // fades text in
         } 
 		if(tick>100&&fadedOut==false){
             fadedOut = true;
-            game.add.tween(promptText).to( { alpha: 0 }, 500, Phaser.Easing.Linear.None, true, 0, 0, false);
+            game.add.tween(promptText).to( { alpha: 0 }, 500, Phaser.Easing.Linear.None, true, 0, 0, false); // fades text out
         }
         if(tick > 150){
             game.state.start('DungeonFloor');
@@ -664,16 +665,17 @@ DungeonFloor.prototype = {
 	// preload dungeon assets
 	preload: function() {
 		console.log('DungeonFloor: preload');
+		// enemies
 		game.load.atlas('scorpion', 'assets/img/scorpion.png', 'assets/img/scorpion.json');
 		game.load.atlas('snake', 'assets/img/snake.png', 'assets/img/snake.json');
-		
+		// misc
 		game.load.atlas('tile_atlas', 'assets/img/tile_atlas.png', 'assets/img/tile_sprites.json');
 		game.load.atlas('tile_overlay', 'assets/img/tile_overlay.png', 'assets/img/overlay_glyphs.json');
 		game.load.image('blank', 'assets/img/blank.png');
 		game.load.atlas('slash', 'assets/img/slash_sword.png', 'assets/img/slash.json');
 		game.load.atlas('player', 'assets/img/player.png', 'assets/img/player.json');
 		game.load.atlas('boss', 'assets/img/boss.png', 'assets/img/boss.json');
-		
+		// weapons
 		game.load.image('wooden_crossbow', 'assets/img/wooden_crossbow.png');
 		game.load.image('iron_dagger', 'assets/img/iron_dagger.png');
 		game.load.image('short_bow', 'assets/img/short_bow.png');
@@ -687,34 +689,34 @@ DungeonFloor.prototype = {
 		game.load.image('knife_dagger', 'assets/img/knife_dagger.png');
 		game.load.image('composite_bow', 'assets/img/composite_bow.png');
 		game.load.image('scorpion_dagger', 'assets/img/scorpion_dagger.png');
-		
+		// gems
 		game.load.atlas('topaz', 'assets/img/topaz.png', 'assets/img/gem.json');
 		game.load.atlas('sapphire', 'assets/img/sapphire.png', 'assets/img/gem.json');
 		game.load.atlas('ruby', 'assets/img/ruby.png', 'assets/img/gem.json');
 		game.load.atlas('diamond', 'assets/img/diamond.png', 'assets/img/gem.json');
 		game.load.atlas('emerald', 'assets/img/emerald.png', 'assets/img/gem.json');
-		
+		// vignette 
 		game.load.image('shader', 'assets/img/shader.png');
-		
+		// misc
 		game.load.image('stairs', 'assets/img/stairs.png');
 		game.load.image('crosshair', 'assets/img/crosshair.png');
 		game.load.image('weapon_ui', 'assets/img/weapon_ui.png');
-		
+		// projectiles
 		game.load.atlas('arrow', 'assets/img/arrow_bow_s.png', 'assets/img/2_frame.json');
 		game.load.atlas('bolt', 'assets/img/bolt_crossbow_s.png', 'assets/img/2_frame.json');
 		game.load.atlas('bullet', 'assets/img/bullet_gun_s.png', 'assets/img/3_frame.json');
 		game.load.atlas('orb', 'assets/img/missile_staff_s.png', 'assets/img/2_frame.json');
 		game.load.atlas('enemyproj', 'assets/img/enemy_proj_s.png', 'assets/img/3_frame.json');
-		
+		// map pixels
 		game.load.image('map1', 'assets/img/map1.png');
 		game.load.image('map2', 'assets/img/map2.png');
 		game.load.image('map3', 'assets/img/map3.png');
-		
+		// music
 		game.load.audio('Immuration', 'assets/audio/Immuration.mp3');
 		game.load.audio('In Pursuit', 'assets/audio/In Pursuit.mp3');
 		game.load.audio('Doomed Romance', 'assets/audio/Doomed Romance.mp3');
 		game.load.audio('Maelstrom', 'assets/audio/Maelstrom.mp3');
-		
+		// sound effects
 		game.load.audio('player_step', 'assets/audio/player_step.mp3');
 		game.load.audio('whoosh', 'assets/audio/whoosh.mp3');
 		game.load.audio('ranged_hit', 'assets/audio/ranged_hit.mp3');
@@ -722,13 +724,13 @@ DungeonFloor.prototype = {
 		game.load.audio('door_slam', 'assets/audio/door_slam.mp3');
 		game.load.audio('crossbow_shoot', 'assets/audio/crossbow_shoot.mp3');
 		game.load.audio('bow_shoot', 'assets/audio/bow_shoot.mp3');
-		
+		// sound effects that play when player is hit
 		game.load.audio('grunt1', 'assets/audio/grunt1.mp3');
 		game.load.audio('grunt2', 'assets/audio/grunt2.mp3');
 		game.load.audio('grunt3', 'assets/audio/grunt3.mp3');
 		game.load.audio('grunt4', 'assets/audio/grunt4.mp3');
 		game.load.audio('grunt5', 'assets/audio/grunt5.mp3');
-		
+		// misc
 		game.load.audio('gem', 'assets/audio/gem.mp3');
 		game.load.audio('enemy_hit', 'assets/audio/enemy_hit.mp3');
 		game.load.audio('stinger', 'assets/audio/new_stinger.mp3');
@@ -761,7 +763,7 @@ DungeonFloor.prototype = {
 		bosscoords = [];
 		treasure = [];
 		
-		SpawnDungeon(); // this all the work of dungeon generation.
+		SpawnDungeon(); // this does all the work of dungeon generation.
 		
 		// spawn the player, who has been given a spawn location by SpawnDungeon().
 		var posX = playercoords[0];
@@ -825,14 +827,14 @@ DungeonFloor.prototype = {
 			for (var i = 0; i < enemies.length; i++){
 				var rand = game.rnd.integerInRange(0, ENEMY_TYPES.A.length-1);
 				
-				enemy = new Enemy(game, enemies[i][0], enemies[i][1], ENEMY_TYPES.A[rand], false);
+				enemy = new Enemy(game, enemies[i][0], enemies[i][1], ENEMY_TYPES.A[rand], false); // Spawns enemies in from the 1st pool
 				enemygroup.add(enemy);
 			}
 		} else {
 			for (var i = 0; i < enemies.length; i++){
 				var rand = game.rnd.integerInRange(0, ENEMY_TYPES.B.length-1);
 				
-				enemy = new Enemy(game, enemies[i][0], enemies[i][1], ENEMY_TYPES.B[rand], false);
+				enemy = new Enemy(game, enemies[i][0], enemies[i][1], ENEMY_TYPES.B[rand], false); // Spawns enemies in from the 2nd pool
 				enemygroup.add(enemy);
 			}
 		}
@@ -853,7 +855,7 @@ DungeonFloor.prototype = {
 		currentwalls = game.add.group();
 		currentwalls.enableBody = true;
 		
-		weaponoffset = -3;
+		weaponoffset = -3; // spawns the weapon slightly above player
 		weapon = game.add.sprite(posX, posY + weaponoffset, GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON));
 		weapon.anchor.set(0.5);
 		game.physics.arcade.enable(weapon);
@@ -862,7 +864,7 @@ DungeonFloor.prototype = {
 		isslashing = false;
 		slashframe = 0;
 		
-		
+		// background UI for weapons in the player's inventory
 		weaponback = game.add.sprite(760, 520, "weapon_ui");
 		weaponback.anchor.set(0.5);
 		weaponback.scale.set(2.5);
@@ -876,7 +878,7 @@ DungeonFloor.prototype = {
 		weaponicon.scale.set(1.5);
 		weaponicon.fixedToCamera = true;
 		game.physics.arcade.enable(weaponicon);
-		
+		// gets the image name for the weapon that the player is not holding.
 		var weaponsprite2;
 		if (PLAYER_PROPERTIES.CURRENT_WEAPON == PLAYER_PROPERTIES.WEAPON_1){
 			weaponsprite2 = GetWeaponSprite(PLAYER_PROPERTIES.WEAPON_2);
@@ -892,16 +894,16 @@ DungeonFloor.prototype = {
 		game.physics.arcade.enable(weaponicon2);
 		
 		inbossroom = false;
-		stairs = null;
+		stairs = null; // this will be used for the stairs that spawn inside of the bossroom after the boss is defeated.
 		// the border of darkness around the player.
-		shader = game.add.sprite(posX, posY, 'shader');
+		shader = game.add.sprite(posX, posY, 'shader'); // this is the vignette
 		game.physics.arcade.enable(shader);
 		shader.x = 0;
 		shader.y = 0;
 		shader.fixedToCamera = true;
 		
 		bosscomplete = false;
-		
+		// shadow underneath the player's current weapon.
 		weaponshadow = game.add.sprite(posX, posY + weaponoffset + 4, weaponsprite);
 		weaponshadow.anchor.set(0.5);
 		weaponshadow.scale.set(1);
@@ -911,7 +913,7 @@ DungeonFloor.prototype = {
 		
 		SetWeaponSprite();
 		SetFireRate();
-		
+		// Mouse wheel switches the current weapon to the 2nd weapon
 		game.input.mouse.mouseWheelCallback = mouseWheel;
 		function mouseWheel(event) {
 			if (PLAYER_PROPERTIES.CURRENT_WEAPON == PLAYER_PROPERTIES.WEAPON_1) {
@@ -927,13 +929,13 @@ DungeonFloor.prototype = {
 			SetWeaponSprite();
 			SetFireRate();
 		}
-		if(difficulty<2){
+		if(difficulty<2){ // if the difficulty is not "Pro", then spawn the map in.
 			map = new Map();
 		}
 		
-		pickupcooldown = 0;
-		document.body.style.cursor = "none";
-		crossHair = game.add.image(game.input.mousePointer.x+game.camera.x,game.input.mousePointer.y+game.camera.y,'crosshair');
+		pickupcooldown = 0; 
+		document.body.style.cursor = "none"; // Removes the cursor image 
+		crossHair = game.add.image(game.input.mousePointer.x+game.camera.x,game.input.mousePointer.y+game.camera.y,'crosshair'); // spawns in crosshair.
 		crossHair.scale.set(0.5);
 		crossHair.anchor.set(0.5);
 		crossHair.alpha = 0.9;
@@ -951,7 +953,7 @@ DungeonFloor.prototype = {
 		bowfx = game.add.audio('bow_shoot', 1, false);
 		doorslamfx = game.add.audio('door_slam', 0.75, false);
 		lightdoorslamfx = game.add.audio('door_slam', 0.25, false);
-		
+		// varied grunts that play when the player is hit
 		var gruntvolume = 0.5;
 		gruntfx1 = game.add.audio('grunt1', gruntvolume, false);
 		gruntfx2 = game.add.audio('grunt2', gruntvolume, false);
@@ -999,18 +1001,18 @@ DungeonFloor.prototype = {
 		
 		
 		var bounds = PlayerInBounds(player.body.x, player.body.y); // returns the room number that the player is in.
-		if (bounds != -1 && currentroom == null) {
+		if (bounds != -1 && currentroom == null) { // if the player is in a room, and all other rooms are inactive (the doors are not closed).
 			currentroom = bounds;
 			MakeBounds(bounds); // creates a border around the room, acting like a door, normally.
-			completedrooms.push(bounds);
-			lastroombounds = mainrooms[bounds];
+			completedrooms.push(bounds); // This room has technically been completed.
+			lastroombounds = mainrooms[bounds]; // mainrooms contains the bounds for each room. 
 			
 			var temp = 0;
-			var enemyspawns = game.rnd.integerInRange(2, 3);
+			var enemyspawns = game.rnd.integerInRange(2, 3); // spawns enemies
 			roomenemies = enemyspawns;
 			for (var i = 0; i < enemyspawns; i++){ // spawns in enemies
 				var roombounds = mainrooms[bounds];
-				var wallpos = game.rnd.integerInRange(1, 4);
+				var wallpos = game.rnd.integerInRange(1, 4); // spawns them inside of one of the 4 surrounding walls. 
 				
 				if (wallpos == 1){ // left wall
 					posX = roombounds[0] - (roombounds[2]/2) - (WALL_SIZE/2);
@@ -1029,12 +1031,12 @@ DungeonFloor.prototype = {
 				if (PLAYER_PROPERTIES.FLOOR < 2){
 					var rand = game.rnd.integerInRange(0, ENEMY_TYPES.A.length-1);
 					
-					enemy = new Enemy(game, posX, posY, ENEMY_TYPES.A[rand], false);
+					enemy = new Enemy(game, posX, posY, ENEMY_TYPES.A[rand], false); // Spawns in enemies from the 1st pool.
 					enemygroup.add(enemy);
 				} else {
 					var rand = game.rnd.integerInRange(0, ENEMY_TYPES.B.length-1);
 					
-					enemy = new Enemy(game, posX, posY, ENEMY_TYPES.B[rand], false);
+					enemy = new Enemy(game, posX, posY, ENEMY_TYPES.B[rand], false); // Spawns in enemies from the 2nd pool.
 					enemygroup.add(enemy);
 				}
 				
@@ -1049,7 +1051,7 @@ DungeonFloor.prototype = {
 			if (inbossroom == false) {
 				inbossroom = true
 				MakeBossBounds();
-				boss = new Boss(game, bosscoords[0], bosscoords[1], "turret", false, 'boss', 'boss1');
+				boss = new Boss(game, bosscoords[0], bosscoords[1], "turret", false, 'boss', 'boss1'); // turret and rapid currently work.
 				
 				doorslamfx.play();
 				
@@ -1066,6 +1068,7 @@ DungeonFloor.prototype = {
 			mainmusic.resume();
 			bossaurafx.stop();
 			
+			// stairs that takes the player to the next floor.
 			stairs_img = game.add.sprite(bossroom[0], bossroom[1], 'stairs');
 			stairs_img.anchor.set(0.5);
 			
@@ -1082,26 +1085,26 @@ DungeonFloor.prototype = {
 				currentwalls.removeAll();
 				currentroom = null;
 				
-				var chance = game.rnd.integerInRange(1, 2);
-				if (PLAYER_PROPERTIES.FLOOR < 2 && chance != 0){ 
+				var chance = game.rnd.integerInRange(1, 2); // always a chance for loot
+				if (PLAYER_PROPERTIES.FLOOR < 2 && chance != 0){ // 1st pool of loot.
 					
 					var rand = game.rnd.integerInRange(0, FLOOR_WEAPONS.A.length-1);
 					var lootX = lastroombounds[0];
 					var lootY = lastroombounds[1];
 					
 					if (thisloot != null){
-						thisloot.item.kill();
-						thisloot.item.destroy();
+						thisloot.item.kill(); 
+						thisloot.item.destroy(); // removes the item from the floor when picked up
 						
 						thisloot.shadow.kill();
-						thisloot.shadow.destroy();
+						thisloot.shadow.destroy(); // removes the shadow from the item on the floor when picked up.
 						
 						thisloot = null;
 					}
 					
-					thisloot = new Loot(lootX, lootY, FLOOR_WEAPONS.A[rand]);
+					thisloot = new Loot(lootX, lootY, FLOOR_WEAPONS.A[rand]); // spawns the loot in
 					
-				} else if (chance != 0){
+				} else if (chance != 0){ // 2nd pool of loot.
 					
 					var rand = game.rnd.integerInRange(0, FLOOR_WEAPONS.B.length-1);
 					var lootX = lastroombounds[0];
@@ -1109,15 +1112,15 @@ DungeonFloor.prototype = {
 					
 					if (thisloot != null){
 						thisloot.item.kill();
-						thisloot.item.destroy();
+						thisloot.item.destroy(); // removes the item from the floor when picked up
 						
 						thisloot.shadow.kill();
-						thisloot.shadow.destroy();
+						thisloot.shadow.destroy(); // removes the shadow from the item on the floor when picked up.
 						
 						thisloot = null;
 					}
 					
-					thisloot = new Loot(lootX, lootY, FLOOR_WEAPONS.B[rand]);
+					thisloot = new Loot(lootX, lootY, FLOOR_WEAPONS.B[rand]); // spawns the loot in
 					
 				}
 				
@@ -1129,15 +1132,15 @@ DungeonFloor.prototype = {
 		
 		
 		// extremely basic state handling
-		if (PLAYER_PROPERTIES.HEALTH <= 0) {
+		if (PLAYER_PROPERTIES.HEALTH <= 0) { // if health reaches 0, then go to GameOver state.
 			//music.stop();
-			document.body.style.cursor = "default";
+			document.body.style.cursor = "default"; // brings the cursor back
 			game.state.start('GameOver', true, true);
 		}
 		
 		// advances player to next floor
 		if (stairs != null){
-			var stairsTouch = game.physics.arcade.collide(player, stairs);
+			var stairsTouch = game.physics.arcade.collide(player, stairs); 
 			if (stairsTouch == true && endfloor == false){
 				endfloor = true;
 				currentroom = null;
@@ -1145,10 +1148,10 @@ DungeonFloor.prototype = {
 				PLAYER_PROPERTIES.FLOOR += 1;
 				music.stop();
 				if (PLAYER_PROPERTIES.FLOOR != 4){
-					document.body.style.cursor = "default";
+					document.body.style.cursor = "default"; // brings the cursor back
 					game.state.start('Transition', true, true);
 				} else {
-					document.body.style.cursor = "default";
+					document.body.style.cursor = "default"; // brings the cursor back
 					game.state.start('End', true, true);
 				}
 			}
@@ -1166,7 +1169,7 @@ DungeonFloor.prototype = {
 							var bulletHitEnemy = game.physics.arcade.collide(bullet, enemy);
 							// delete the bullet if it hits an enemy and damage the enemy
 							if (bulletHitEnemy == true){
-								if (bullet.type == "Scorpion Dagger" && enemy.poison == false){
+								if (bullet.type == "Scorpion Dagger" && enemy.poison == false){ // poisons the enemy.
 									enemy.poison = true;
 									enemy.speed /= 2;
 								}
@@ -1198,9 +1201,9 @@ DungeonFloor.prototype = {
 							}
 						}
 					}, this);
-					
+					// Life span for bullets
 					bullet.duration = bullet.duration - 1;
-					if (bullet.duration < 1){
+					if (bullet.duration < 1){ // destroy the bullet when the duration is less than 1.
 						bullet.kill();
 						bullet.destroy();
 					}
@@ -1209,15 +1212,15 @@ DungeonFloor.prototype = {
 			
 			
 			
-			var slash = playerslash;
+			var slash = playerslash; // playerslash from Player.js
 			
-				if (slash != null){
+				if (slash != null){ 
 					var hitbool = false;
 					
-					for (var k = 0; k < slash.hitboxes.length; k++){
+					for (var k = 0; k < slash.hitboxes.length; k++){ // checks each hitbox that is apart of the slash.
 						var box = slash.hitboxes[k];
 						
-						enemygroup.forEach(function(enemy) {
+						enemygroup.forEach(function(enemy) { // compare that hitbox to every enemy.
 							
 							if (enemy != null){
 								// check for bullet-enemy collision
@@ -1251,24 +1254,24 @@ DungeonFloor.prototype = {
 					}
 					
 					if (hitbool == true){
-						for (var k = 0; k < slash.hitboxes.length; k++){
+						for (var k = 0; k < slash.hitboxes.length; k++){ // removes each hitbox
 							var box = slash.hitboxes[k];
 							box.kill();
 							box.destroy();
 						}
 						slash.mainslash.kill();
-						slash.mainslash.destroy();
+						slash.mainslash.destroy(); // removes the slash
 					}
 					
 					slash.duration = slash.duration - 1;
 					if (slash.duration < 1){
-						for (var k = 0; k < slash.hitboxes.length; k++){
+						for (var k = 0; k < slash.hitboxes.length; k++){ // removes each hitbox
 							var box = slash.hitboxes[k];
 							box.kill();
 							box.destroy();
 						}
 						slash.mainslash.kill();
-						slash.mainslash.destroy();
+						slash.mainslash.destroy(); // removes the slash
 					}
 				}
 			
@@ -1276,11 +1279,11 @@ DungeonFloor.prototype = {
 		
 		ProjectileCheck();
 		
-		// gives a cool down for weapon pick ups. Becomes very game breaking otherwise.
+		// gives a cool down for weapon pickups. Becomes very game breaking otherwise.
 		if (pickupcooldown <= 0){
-			if (thisloot != null && pickupcooldown <= 0){
+			if (thisloot != null && pickupcooldown <= 0){ // if there is loot on the ground, and the cooldown has expired.
 				
-				if (InRange(player.body.x, player.body.y, thisloot.centerX, thisloot.centerY, 70) == true) {
+				if (InRange(player.body.x, player.body.y, thisloot.centerX, thisloot.centerY, 70) == true) { // if the player is within range of the loot.
 					pickupText.setText('Press SPACE to pick up ' + thisloot.name);
 					
 					if (game.input.keyboard.justPressed(Phaser.Keyboard.SPACEBAR)){ // handles weapon pickups
@@ -1289,17 +1292,17 @@ DungeonFloor.prototype = {
 							player.ornateuse = false;
 						}
 						
-						if (PLAYER_PROPERTIES.CURRENT_WEAPON == PLAYER_PROPERTIES.WEAPON_1) {
+						if (PLAYER_PROPERTIES.CURRENT_WEAPON == PLAYER_PROPERTIES.WEAPON_1) { // puts the new item in the correct inventory slot.
 							PLAYER_PROPERTIES.WEAPON_1 = thisloot.name;
 						} else {
 							PLAYER_PROPERTIES.WEAPON_2 = thisloot.name;
 						}
 						
-						var lastweapon = GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON);
-						
+						var lastweapon = GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON); // for placing the player's old weapon back on the ground
+						// changing the current weapon over to the new weapon.
 						PLAYER_PROPERTIES.CURRENT_WEAPON = thisloot.name;
 						SetWeaponSprite();
-						SetFireRate();
+						SetFireRate(); 
 						weaponicon.loadTexture(GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON));
 						
 						nextFire = 0;
@@ -1308,15 +1311,15 @@ DungeonFloor.prototype = {
 						
 						pickupText.setText('');
 						
-						thisloot.item.kill();
-						thisloot.item.destroy();
+						thisloot.item.kill(); 
+						thisloot.item.destroy(); // removes the item when picked up.
 						
 						thisloot.shadow.kill();
-						thisloot.shadow.destroy();
+						thisloot.shadow.destroy(); // removes the item's shadow when the item is picked up.
 						
 						thisloot = new Loot(player.body.x, player.body.y, lastweapon);
 						
-						pickupcooldown = 10;
+						pickupcooldown = 10; // how long until the player can pick loot up.
 					}
 					
 				} else {
@@ -1331,7 +1334,7 @@ DungeonFloor.prototype = {
 		// invincibility frame counter
 		if (iframes > 0){
 			iframes--;
-			
+			// player flashes to indicate that they have taken damage.
 			if (iframes % 2 == 0){
 				player.alpha = 1;
 			} else {
@@ -1418,9 +1421,9 @@ GameOver.prototype = {
 	},
 	
 	update: function() {
-		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){ // or isPressed
+		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){ 
 			endsound.stop();
-			game.state.start('BeginMusic');
+			game.state.start('BeginMusic'); // jumps back to the title screen.
 		}
 	}
 	
@@ -1458,9 +1461,9 @@ End.prototype = {
 	},
 	
 	update: function() {
-		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){ // or isPressed
+		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){ 
 			endmusic.stop();
-			game.state.start('BeginMusic');
+			game.state.start('BeginMusic'); // jumps back to the title screen.
 		}
 	}
 	
