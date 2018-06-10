@@ -248,7 +248,7 @@
 			// draw the physical wall sprites.
 			MakeWalls();
 		}
-		
+	
 //SpawnDungeon.prototype = Object.create();
 SpawnDungeon.prototype.constructor = SpawnDungeon;
 
@@ -347,6 +347,62 @@ SpawnDungeon.prototype.constructor = SpawnDungeon;
 				tile.anchor.x = 0.5;
 				tile.anchor.y = 0.5;
 			}
+			
+			// These are here to prevent the player from walking through the doors as they close.
+			// top boundary
+			tileTemp = [];
+			var tileCount = 0;
+			for (var i =  ((boundX1+boundX2)/2) - (WALL_SIZE/2); i<=  ((boundX1+boundX2)/2)+ (WALL_SIZE/2); i +=WALL_SIZE){ // spawns 2 tiles in the entrance
+				var tileX =i;
+				var tileY = boundY1 - (WALL_SIZE/2);
+				tileTemp[tileCount] = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'ledge'); // spawn a wall
+				tileTemp[tileCount].body.immovable = true;
+				tileTemp[tileCount].scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
+				tileTemp[tileCount].anchor.x = 0.5;
+				tileTemp[tileCount].anchor.y = 0.5;
+				tileTemp[tileCount].alpha = 0;
+					
+				tileCount++;
+			}
+			// bottom boundary
+			for (var i =  ((boundX1+boundX2)/2) - (WALL_SIZE/2); i<=  ((boundX1+boundX2)/2)+ (WALL_SIZE/2); i +=WALL_SIZE){ // spawns 2 tiles in the entrance
+				var tileX = i;
+				var tileY = boundY2 + (WALL_SIZE/2);
+				tileTemp[tileCount] = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'wall');  // spawn a wall
+				tileTemp[tileCount].body.immovable = true;
+				tileTemp[tileCount].scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
+				tileTemp[tileCount].anchor.x = 0.5;
+				tileTemp[tileCount].anchor.y = 0.5;
+				tileTemp[tileCount].alpha = 0;
+				
+				tileCount++;
+			}
+			// left boundary
+			for (var i = ((boundY1+boundY2)/2) - (WALL_SIZE/2); i<=   ((boundY1+boundY2)/2) + (WALL_SIZE/2); i +=WALL_SIZE){ // spawns 2 tiles in the entrance
+				var tileX = boundX1 - (WALL_SIZE/2);
+				var tileY = i;
+				tileTemp[tileCount] = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'wall'); // spawn a wall
+				tileTemp[tileCount].body.immovable = true;
+				tileTemp[tileCount].scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
+				tileTemp[tileCount].anchor.x = 0.5;
+				tileTemp[tileCount].anchor.y = 0.5;
+				tileTemp[tileCount].alpha = 0;
+				
+				tileCount++;
+			}
+			// right boundary
+			for (var i = ((boundY1+boundY2)/2) - (WALL_SIZE/2); i<=   ((boundY1+boundY2)/2) + (WALL_SIZE/2); i +=WALL_SIZE){ // spawns 2 tiles in the entrance
+				var tileX =  boundX2 + (WALL_SIZE/2);
+				var tileY = i;
+				tileTemp[tileCount] = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'wall'); // spawn a wall
+				tileTemp[tileCount].body.immovable = true;
+				tileTemp[tileCount].scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
+				tileTemp[tileCount].anchor.x = 0.5;
+				tileTemp[tileCount].anchor.y = 0.5;
+				tileTemp[tileCount].alpha = 0;
+				
+				tileCount++;
+			}
 		}
 		
 		// Makes a border around the bossroom.
@@ -399,5 +455,59 @@ SpawnDungeon.prototype.constructor = SpawnDungeon;
 				tile.scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
 				tile.anchor.x = 0.5;
 				tile.anchor.y = 0.5;
+			}
+			// These are here to prevent the player from walking through the doors as they close.
+			// top boundary
+			tileTemp = [];
+			var tileCount = 0;
+			for (var i =  ((boundX1+boundX2)/2) - (WALL_SIZE/2); i<=  ((boundX1+boundX2)/2)+ (WALL_SIZE/2); i +=WALL_SIZE){ // spawns 2 tiles in the entrance
+				var tileX =i;
+				var tileY = boundY1 - (WALL_SIZE/2);
+				tileTemp[tileCount] = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'ledge'); // spawn a wall
+				tileTemp[tileCount].body.immovable = true;
+				tileTemp[tileCount].scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
+				tileTemp[tileCount].anchor.x = 0.5;
+				tileTemp[tileCount].anchor.y = 0.5;
+				tileTemp[tileCount].alpha = 0;
+					
+				tileCount++;
+			}
+			// bottom boundary
+			for (var i =  ((boundX1+boundX2)/2) - (WALL_SIZE/2); i<=  ((boundX1+boundX2)/2)+ (WALL_SIZE/2); i +=WALL_SIZE){ // spawns 2 tiles in the entrance
+				var tileX = i;
+				var tileY = boundY2 + (WALL_SIZE/2);
+				tileTemp[tileCount] = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'wall');  // spawn a wall
+				tileTemp[tileCount].body.immovable = true;
+				tileTemp[tileCount].scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
+				tileTemp[tileCount].anchor.x = 0.5;
+				tileTemp[tileCount].anchor.y = 0.5;
+				tileTemp[tileCount].alpha = 0;
+				
+				tileCount++;
+			}
+			// left boundary
+			for (var i = ((boundY1+boundY2)/2) - (WALL_SIZE/2); i<=   ((boundY1+boundY2)/2) + (WALL_SIZE/2); i +=WALL_SIZE){ // spawns 2 tiles in the entrance
+				var tileY = i;
+				tileTemp[tileCount] = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'wall'); // spawn a wall
+				tileTemp[tileCount].body.immovable = true;
+				tileTemp[tileCount].scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
+				tileTemp[tileCount].anchor.x = 0.5;
+				tileTemp[tileCount].anchor.y = 0.5;
+				tileTemp[tileCount].alpha = 0;
+				
+				tileCount++;
+			}
+			// right boundary
+			for (var i = ((boundY1+boundY2)/2) - (WALL_SIZE/2); i<=   ((boundY1+boundY2)/2) + (WALL_SIZE/2); i +=WALL_SIZE){ // spawns 2 tiles in the entrance
+				var tileX =  boundX2 + (WALL_SIZE/2);
+				var tileY = i;
+				tileTemp[tileCount] = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'wall'); // spawn a wall
+				tileTemp[tileCount].body.immovable = true;
+				tileTemp[tileCount].scale.setTo(WALL_SIZE/64, WALL_SIZE/64);
+				tileTemp[tileCount].anchor.x = 0.5;
+				tileTemp[tileCount].anchor.y = 0.5;
+				tileTemp[tileCount].alpha = 0;
+				
+				tileCount++;
 			}
 		}

@@ -1117,6 +1117,22 @@ DungeonFloor.prototype = {
 		// returns the room number that the player is in.
 		var bounds = PlayerInBounds(player.body.x, player.body.y);
 		
+		// pushes player into the room.
+		if(currentroom!=null||inbossroom==true){
+			if(game.physics.arcade.overlap(player, tileTemp[0])||game.physics.arcade.overlap(player, tileTemp[1]) ){ // from the top
+				player.y +=10 // pushes player down
+			}
+			if(game.physics.arcade.overlap(player, tileTemp[2])||game.physics.arcade.overlap(player, tileTemp[3]) ){ // from the bottom
+				player.y -=10 // pushes player up
+			}
+			if(game.physics.arcade.overlap(player, tileTemp[4])||game.physics.arcade.overlap(player, tileTemp[5]) ){ // from the left
+				player.x +=10 // pushes player to the right
+			}
+			if(game.physics.arcade.overlap(player, tileTemp[6])||game.physics.arcade.overlap(player, tileTemp[7]) ){ // from the right
+				player.x -=10 // pushes player to the left
+			}
+		}
+		
 		// if the player is in a room, and all other rooms are inactive (the doors are not closed).
 		if (bounds != -1 && currentroom == null) {
 			currentroom = bounds;
