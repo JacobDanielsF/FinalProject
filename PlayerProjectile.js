@@ -3,9 +3,11 @@
 // PlayerProjectile.js
 // Player projectile and slash prefabs
 
+// player projectile class
 function PlayerProjectile(posX, posY, type, angleoffset){
 	
 	// checks weapon type
+	// creates sprite and sets size, speed, damage, duration, etc.
 	if (type == "Knife Dagger"){
 		Phaser.Sprite.call(this, game, posX, posY, 'knife_dagger');
 		this.anchor.set(0.5);
@@ -221,9 +223,10 @@ function PlayerProjectile(posX, posY, type, angleoffset){
 		this.animations.play('anim');
 	}
 	
-	this.blink = 8; // used for flying blades. 
+	this.blink = 8; // used for flying blades (flashing effect) 
 	
-	var angle = game.physics.arcade.angleToPointer(player) + angleoffset; // Changes angle from the target that this projectile will fly. Used for multiple projectiles.
+	// Changes angle from the target that this projectile will fly. Used for every projectile.
+	var angle = game.physics.arcade.angleToPointer(player) + angleoffset;
 	var targetX = player.body.x+(Math.cos(angle)*70)+16;
 	var targetY = player.body.y+(Math.sin(angle)*70)+16;
 	game.physics.arcade.moveToXY(this, targetX, targetY, this.speed);
@@ -241,6 +244,7 @@ PlayerProjectile.prototype.update = function() {
 	
 	var bulletHitWall = game.physics.arcade.collide(this, walls);
 	var bulletHitCurrentWall = game.physics.arcade.collide(this, currentwalls);
+	
 	// delete the bullet if it hits a wall
 	if (bulletHitWall == true || bulletHitCurrentWall == true){
 		this.kill();
@@ -248,8 +252,12 @@ PlayerProjectile.prototype.update = function() {
 		if (this.type == "Knife Dagger" || this.type == "Iron Dagger" || this.type == "Scorpion Dagger" || this.type == "Ornate Dagger" || this.type == "Bone Dagger" || this.type == "Wooden Crossbow" || this.type == "Short Bow" || this.type == "Composite Bow" || this.type == "Revolver Gun"){
 			rangedhitfx.play();
 		}
+		if (this.type == "Revolver Gun"){
+			gunshothitfx.play();
+		}
 	}
 	
+	// knife flashing effect (knife also rotates)
 	if (this.type == "Knife Dagger" || this.type == "Iron Dagger" || this.type == "Ornate Dagger" || this.type == "Bone Dagger" || this.type == "Scorpion Dagger"){
 		this.rotation = this.rotation + 0.5;
 		this.blink--;
@@ -267,6 +275,8 @@ function PlayerSlash(posX, posY, type){
 	this.type = type;
 	var hitboxes = [];
 	
+	// checks weapon type
+	// creates slash sprite and 5 hitboxes in an arc. also sets speed, damage, duration, etc.
 	if (type == "Bronze Sword"){
 		var angle = game.physics.arcade.angleToPointer(player);
 		
@@ -274,7 +284,7 @@ function PlayerSlash(posX, posY, type){
 		var slashDist = hitboxDist*0.65;
 		var slashSpeed = 400;
 		this.duration = 10;
-		this.damage = 3;
+		this.damage = 1;
 		
 		var slash = game.add.sprite(player.body.x+(Math.cos(angle)*(hitboxDist-10))+16, player.body.y+(Math.sin(angle)*(slashDist))+16 , 'slash', 'sprite1');
 		slash.anchor.x = 0.5;
@@ -322,7 +332,7 @@ function PlayerSlash(posX, posY, type){
 		var slashDist = hitboxDist*0.65;
 		var slashSpeed = 500;
 		this.duration = 20;
-		this.damage = 5;
+		this.damage = 3;
 		
 		var slash = game.add.sprite(player.body.x+(Math.cos(angle)*(hitboxDist-10))+16, player.body.y+(Math.sin(angle)*(slashDist))+16 , 'slash', 'sprite1');
 		slash.anchor.x = 0.5;

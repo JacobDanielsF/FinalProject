@@ -36,10 +36,9 @@ var ROOM_MIN = 2.5*ROOM_SCALE;
 var START_ROOM = 2*ROOM_SCALE;
 var BOSS_ROOM = 4*ROOM_SCALE;
 var WALK_SPEED = 350; // default player speed
-var DEBUG_ENABLED = false; // debug toggle
 var IFRAMES_MAX = 20; // invincibility frames
-var MAIN_FONT = 'Verdana';
-var MAIN_STYLE = 'bold';
+var MAIN_FONT = 'Verdana'; // main font
+var MAIN_STYLE = 'bold'; // main font style
 
 // All player properties. 
 var PLAYER_PROPERTIES = {
@@ -55,8 +54,7 @@ var PLAYER_PROPERTIES = {
 
 
 
-
-// helper function. Detects if the 2 points are within range of each other
+// helper function. detects if the 2 points are within range of each other.
 function InRange(x1, y1, x2, y2, range){
 	var diff = game.math.distance(x1, y1, x2, y2);
 	if (diff < range){
@@ -201,15 +199,10 @@ var BeginMusic = function(game) {};
 BeginMusic.prototype = {
 	
 	preload: function() {
-		console.log('BeginMusic: preload');
-		
 		game.load.audio('In Pursuit', 'assets/audio/In Pursuit.mp3');
 	},
 	
 	create: function() {
-		console.log('BeginMusic: create');
-
-		
 		music = game.add.audio('In Pursuit', 1, true);
 		music.play();
 		game.state.start('TitleScreen');
@@ -222,7 +215,6 @@ var TitleScreen = function(game) {};
 TitleScreen.prototype = {
 	
 	preload: function() {
-		console.log('TitleScreen: preload');
 		game.load.image('logo', 'assets/img/logo.png');
 		game.load.image('border', 'assets/img/border.png');
 		game.load.atlas('tile_atlas', 'assets/img/tile_atlas.png', 'assets/img/tile_sprites.json');
@@ -230,8 +222,7 @@ TitleScreen.prototype = {
 	},
 	
 	create: function() {
-		console.log('TitleScreen: create');
-
+		
 		// handles the background tiles in the title screen.
 		for (let i=64;i<config.width-64;i+=56){
 			for (let j=64;j<config.height-64;j+=59){
@@ -245,7 +236,7 @@ TitleScreen.prototype = {
 		let titleTile = game.add.image(0,0,'border');
 		titleTile.alpha = 0.5;
 		
-		var logo = game.add.sprite(400, 250, 'logo');
+		var logo = game.add.sprite(400, 232, 'logo');
 		logo.anchor.set(0.5);
 		logo.scale.set(2);
 		
@@ -287,7 +278,7 @@ TitleScreen.prototype = {
 			if(difficulty==2){
 				difficultyText="Pro"; // no map at all.
 			}
-			diffText.setText('Press E to change difficulty: '+difficultyText); 
+			diffText.setText('Press E to change difficulty: ' + difficultyText); 
 		}
 		// shift to main game state
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){ // or isPressed
@@ -304,11 +295,10 @@ var Credits = function(game) {};
 Credits.prototype = {
 	
 	preload: function() {
-		console.log('Credits: preload');
+		// nothing
 	},
 	
 	create: function() {
-		console.log('Credits: create');
 		
 		newText = game.add.text(400, 100, 'CREDITS', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '30px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
@@ -370,7 +360,6 @@ var Tutorial = function(game) {};
 Tutorial.prototype = {
 	
 	preload: function() {
-		console.log('Tutorial: preload');
 		
 		game.load.image('border', 'assets/img/border.png');
 		game.load.atlas('tile_atlas', 'assets/img/tile_atlas.png', 'assets/img/tile_sprites.json');
@@ -379,7 +368,7 @@ Tutorial.prototype = {
 		game.load.atlas('scorpion', 'assets/img/scorpion.png', 'assets/img/scorpion.json');
 		game.load.atlas('snake', 'assets/img/snake.png', 'assets/img/snake.json');
 		
-		game.load.image('wooden_crossbow', 'assets/img/wooden_crossbow.png');
+		game.load.image('wooden_crossbow', 'assets/img/wooden_crossbow_loaded.png');
 		game.load.image('iron_dagger', 'assets/img/iron_dagger.png');
 		
 		game.load.image('stairs', 'assets/img/stairs.png');
@@ -395,7 +384,7 @@ Tutorial.prototype = {
 	},
 	
 	create: function() {
-		console.log('Tutorial: create');
+		
 		// handles the background tiles in the title screen.
 		for (let i=64;i<config.width-64;i+=56){
 			for (let j=64;j<config.height-64;j+=59){
@@ -455,26 +444,23 @@ Tutorial.prototype = {
 		newText.anchor.x = 0.5;
 		newText.anchor.y = 0.5;
 		
+		
 		// UI behind weapon sprites in the player's inventory
 		weaponUI = game.add.sprite(650, 275, 'weapon_ui');
 		weaponUI.anchor.set(0.5);
 		weaponUI.scale.set(2);
 		
-		weapon1 = game.add.sprite(630, 222, 'wooden_crossbow');
+		weapon1 = game.add.sprite(650, 241, 'wooden_crossbow');
 		weapon1.anchor.set(0.5);
 		weapon1.scale.set(1);
 		weapon1.alpha = 0.5;
 		game.physics.enable(weapon1);
 		
-		weapon2 = game.add.sprite(634, 291, 'iron_dagger');
+		weapon2 = game.add.sprite(650, 307, 'iron_dagger');
 		weapon2.anchor.set(0.5);
 		weapon2.scale.set(1.25);
 		game.physics.enable(weapon2);
 		
-		weapon1.body.x = 630;
-		weapon1.body.y = 222;
-		weapon2.body.x = 634;
-		weapon2.body.y = 291;
 		
 		newText = game.add.text(450, 250, 'Press Q to switch weapons.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '15px', fill: '#ffffff' });
 		newText.anchor.x = 0.5;
@@ -566,35 +552,17 @@ Tutorial.prototype = {
 		if (animtick == 0){
 			playerT.animations.play('walkdown');
 			
-			weapon1.body.x = 630;
-			weapon1.body.y = 222;
-			weapon1.anchor.set(0.5);
-			weapon1.scale.set(1);
-			weapon1.alpha = 0.5;
-			
-			weapon2.body.x = 634;
-			weapon2.body.y = 291;
-			weapon2.anchor.set(0.5);
-			weapon2.scale.set(1.25);
-			weapon2.alpha = 1;
+			weapon1.loadTexture('wooden_crossbow');
+			weapon2.loadTexture('iron_dagger');
 		}
 		if (animtick == 25){
 			playerT.animations.play('walkleft');
 		}
 		if (animtick == 50){
 			playerT.animations.play('walkup');
-			// switches the locations of weapon1 and weapon2
-			weapon2.body.x = 630;
-			weapon2.body.y = 222;
-			weapon2.anchor.set(0.5);
-			weapon2.scale.set(1);
-			weapon2.alpha = 0.5;
 			
-			weapon1.body.x = 634;
-			weapon1.body.y = 291;
-			weapon1.anchor.set(0.5);
-			weapon1.scale.set(1.25);
-			weapon1.alpha = 1;
+			weapon2.loadTexture('wooden_crossbow');
+			weapon1.loadTexture('iron_dagger');
 		}
 		if (animtick == 75){
 			playerT.animations.play('walkright');
@@ -613,15 +581,10 @@ var Transition = function(game) {};
 Transition.prototype = {
     
     preload: function() {
-        console.log('Transition: preload');
-        
         game.load.audio('floor_change', 'assets/audio/floor_change.mp3');
     },
     
     create: function() {
-        console.log('Transition: create');
-        
-        
         promptText = game.add.text(400, 300, 'FLOOR ' + (PLAYER_PROPERTIES.FLOOR + 1), { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '40px', fill: '#ffffff' });
         promptText.anchor.x = 0.5;
         promptText.anchor.y = 0.5;
@@ -632,13 +595,20 @@ Transition.prototype = {
         fadedOut = false;
         floorsound = game.add.audio('floor_change', 0.5, false);
         floorsound.play();
+		
+		if (difficulty == 0){
+			PLAYER_PROPERTIES.HEALTH += 2;
+			
+			if (PLAYER_PROPERTIES.HEALTH > 10){
+			PLAYER_PROPERTIES.HEALTH = 10;
+			}
+		}
     },
     
     update: function() {
         // shift to main game state
         tick++; // manually controlling how long transition time will be.
 		
-        
         if(tick>0&&fadedIn==false){
             fadedIn = true;
             game.add.tween(promptText).to( { alpha: 1 }, 500, Phaser.Easing.Linear.None, true, 0, 0, false); // fades text in
@@ -657,17 +627,18 @@ Transition.prototype = {
 
 
 
-// dungeon floor game state, aka the main game state.
+// dungeon floor game state, aka the main game state
 // spawns a random dungeon map which the player can walk in
 var DungeonFloor = function(game) {};
 DungeonFloor.prototype = {
 	
 	// preload dungeon assets
 	preload: function() {
-		console.log('DungeonFloor: preload');
+
 		// enemies
 		game.load.atlas('scorpion', 'assets/img/scorpion.png', 'assets/img/scorpion.json');
 		game.load.atlas('snake', 'assets/img/snake.png', 'assets/img/snake.json');
+		
 		// misc
 		game.load.atlas('tile_atlas', 'assets/img/tile_atlas.png', 'assets/img/tile_sprites.json');
 		game.load.atlas('tile_overlay', 'assets/img/tile_overlay.png', 'assets/img/overlay_glyphs.json');
@@ -675,10 +646,11 @@ DungeonFloor.prototype = {
 		game.load.atlas('slash', 'assets/img/slash_sword.png', 'assets/img/slash.json');
 		game.load.atlas('player', 'assets/img/player.png', 'assets/img/player.json');
 		game.load.atlas('boss', 'assets/img/boss.png', 'assets/img/boss.json');
+		
 		// weapons
-		game.load.image('wooden_crossbow', 'assets/img/wooden_crossbow.png');
+		game.load.image('wooden_crossbow', 'assets/img/wooden_crossbow_loaded.png');
 		game.load.image('iron_dagger', 'assets/img/iron_dagger.png');
-		game.load.image('short_bow', 'assets/img/short_bow.png');
+		game.load.image('short_bow', 'assets/img/short_bow_loaded.png');
 		game.load.image('revolver_gun', 'assets/img/revolver_gun.png');
 		game.load.image('energy_staff', 'assets/img/energy_staff.png');
 		game.load.image('bronze_sword', 'assets/img/bronze_sword.png');
@@ -687,35 +659,45 @@ DungeonFloor.prototype = {
 		game.load.image('serpentine_staff', 'assets/img/serpentine_staff.png');
 		game.load.image('stone_sword', 'assets/img/stone_sword.png');
 		game.load.image('knife_dagger', 'assets/img/knife_dagger.png');
-		game.load.image('composite_bow', 'assets/img/composite_bow.png');
+		game.load.image('composite_bow', 'assets/img/composite_bow_loaded.png');
 		game.load.image('scorpion_dagger', 'assets/img/scorpion_dagger.png');
+		game.load.image('wooden_crossbow_shot', 'assets/img/wooden_crossbow_shot.png');
+		game.load.image('short_bow_shot', 'assets/img/short_bow.png');
+		game.load.image('composite_bow_shot', 'assets/img/composite_bow.png');
+		
 		// gems
 		game.load.atlas('topaz', 'assets/img/topaz.png', 'assets/img/gem.json');
 		game.load.atlas('sapphire', 'assets/img/sapphire.png', 'assets/img/gem.json');
 		game.load.atlas('ruby', 'assets/img/ruby.png', 'assets/img/gem.json');
 		game.load.atlas('diamond', 'assets/img/diamond.png', 'assets/img/gem.json');
 		game.load.atlas('emerald', 'assets/img/emerald.png', 'assets/img/gem.json');
+		
 		// vignette 
 		game.load.image('shader', 'assets/img/shader.png');
+		
 		// misc
 		game.load.image('stairs', 'assets/img/stairs.png');
 		game.load.image('crosshair', 'assets/img/crosshair.png');
 		game.load.image('weapon_ui', 'assets/img/weapon_ui.png');
+		
 		// projectiles
 		game.load.atlas('arrow', 'assets/img/arrow_bow_s.png', 'assets/img/2_frame.json');
 		game.load.atlas('bolt', 'assets/img/bolt_crossbow_s.png', 'assets/img/2_frame.json');
 		game.load.atlas('bullet', 'assets/img/bullet_gun_s.png', 'assets/img/3_frame.json');
 		game.load.atlas('orb', 'assets/img/missile_staff_s.png', 'assets/img/2_frame.json');
 		game.load.atlas('enemyproj', 'assets/img/enemy_proj_s.png', 'assets/img/3_frame.json');
+		
 		// map pixels
 		game.load.image('map1', 'assets/img/map1.png');
 		game.load.image('map2', 'assets/img/map2.png');
 		game.load.image('map3', 'assets/img/map3.png');
+		
 		// music
 		game.load.audio('Immuration', 'assets/audio/Immuration.mp3');
 		game.load.audio('In Pursuit', 'assets/audio/In Pursuit.mp3');
 		game.load.audio('Doomed Romance', 'assets/audio/Doomed Romance.mp3');
 		game.load.audio('Maelstrom', 'assets/audio/Maelstrom.mp3');
+		
 		// sound effects
 		game.load.audio('player_step', 'assets/audio/player_step.mp3');
 		game.load.audio('whoosh', 'assets/audio/whoosh.mp3');
@@ -724,12 +706,16 @@ DungeonFloor.prototype = {
 		game.load.audio('door_slam', 'assets/audio/door_slam.mp3');
 		game.load.audio('crossbow_shoot', 'assets/audio/crossbow_shoot.mp3');
 		game.load.audio('bow_shoot', 'assets/audio/bow_shoot.mp3');
+		game.load.audio('gunshot', 'assets/audio/gunshot.mp3');
+		game.load.audio('gunshot_hit', 'assets/audio/gunshot_hit.mp3');
+		
 		// sound effects that play when player is hit
 		game.load.audio('grunt1', 'assets/audio/grunt1.mp3');
 		game.load.audio('grunt2', 'assets/audio/grunt2.mp3');
 		game.load.audio('grunt3', 'assets/audio/grunt3.mp3');
 		game.load.audio('grunt4', 'assets/audio/grunt4.mp3');
 		game.load.audio('grunt5', 'assets/audio/grunt5.mp3');
+		
 		// misc
 		game.load.audio('gem', 'assets/audio/gem.mp3');
 		game.load.audio('enemy_hit', 'assets/audio/enemy_hit.mp3');
@@ -742,7 +728,6 @@ DungeonFloor.prototype = {
 	
 	// generate the dungeon floor and spawn entities
 	create: function() {
-		console.log('DungeonFloor: create');
 		
 		game.world.setBounds(-FLOOR_SIZE/2, -FLOOR_SIZE/2, FLOOR_SIZE*2, FLOOR_SIZE*2);
 
@@ -763,7 +748,12 @@ DungeonFloor.prototype = {
 		bosscoords = [];
 		treasure = [];
 		
-		SpawnDungeon(); // this does all the work of dungeon generation.
+		// this does all the work of dungeon generation.
+		SpawnDungeon();
+		
+		// dagger cooldown variables required for the player
+		daggerreturn = false;
+		daggercooldown = -1;
 		
 		// spawn the player, who has been given a spawn location by SpawnDungeon().
 		var posX = playercoords[0];
@@ -776,6 +766,7 @@ DungeonFloor.prototype = {
 		// invincibility frames
 		iframes = 0;
 		
+		// various UI text
 		healthText = game.add.text(350, 560, 'Health: ' + PLAYER_PROPERTIES.HEALTH, { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
 		healthText.anchor.x = 0.5;
 		healthText.anchor.y = 0.5;
@@ -802,7 +793,7 @@ DungeonFloor.prototype = {
 		pickupText.fixedToCamera = true;
 		
 		
-		
+		// create group that stores enemies
 		enemygroup = game.add.group();
 		enemygroup.enableBody = true;
 		
@@ -816,6 +807,7 @@ DungeonFloor.prototype = {
 		gemgroup = game.add.group();
 		gemgroup.enableBody = true;
 		
+		// loot variable
 		thisloot = null;
 		
 		// weapon cooldown
@@ -827,20 +819,22 @@ DungeonFloor.prototype = {
 			for (var i = 0; i < enemies.length; i++){
 				var rand = game.rnd.integerInRange(0, ENEMY_TYPES.A.length-1);
 				
-				enemy = new Enemy(game, enemies[i][0], enemies[i][1], ENEMY_TYPES.A[rand], false); // Spawns enemies in from the 1st pool
+				// Spawns enemies in from the 1st pool
+				enemy = new Enemy(game, enemies[i][0], enemies[i][1], ENEMY_TYPES.A[rand], false);
 				enemygroup.add(enemy);
 			}
 		} else {
 			for (var i = 0; i < enemies.length; i++){
 				var rand = game.rnd.integerInRange(0, ENEMY_TYPES.B.length-1);
 				
-				enemy = new Enemy(game, enemies[i][0], enemies[i][1], ENEMY_TYPES.B[rand], false); // Spawns enemies in from the 2nd pool
+				// Spawns enemies in from the 2nd pool
+				enemy = new Enemy(game, enemies[i][0], enemies[i][1], ENEMY_TYPES.B[rand], false);
 				enemygroup.add(enemy);
 			}
 		}
 		
+		// numerous variables for boss, weapons, and room management.
 		boss = null;
-		
 		playerslash = null;
 		
 		weaponswitch = 0;
@@ -855,14 +849,15 @@ DungeonFloor.prototype = {
 		currentwalls = game.add.group();
 		currentwalls.enableBody = true;
 		
-		weaponoffset = -3; // spawns the weapon slightly above player
+		// spawns the weapon slightly above the player
+		weaponoffset = -3;
 		weapon = game.add.sprite(posX, posY + weaponoffset, GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON));
 		weapon.anchor.set(0.5);
 		game.physics.arcade.enable(weapon);
 		
 		// for melee weapons
 		isslashing = false;
-		slashframe = 0;
+		slashframe = -1;
 		
 		// background UI for weapons in the player's inventory
 		weaponback = game.add.sprite(760, 520, "weapon_ui");
@@ -878,6 +873,7 @@ DungeonFloor.prototype = {
 		weaponicon.scale.set(1.5);
 		weaponicon.fixedToCamera = true;
 		game.physics.arcade.enable(weaponicon);
+		
 		// gets the image name for the weapon that the player is not holding.
 		var weaponsprite2;
 		if (PLAYER_PROPERTIES.CURRENT_WEAPON == PLAYER_PROPERTIES.WEAPON_1){
@@ -886,6 +882,7 @@ DungeonFloor.prototype = {
 			weaponsprite2 = GetWeaponSprite(PLAYER_PROPERTIES.WEAPON_1);
 		}
 		
+		// 2nd icon is placed.
 		weaponicon2 = game.add.sprite(760, 480, weaponsprite2);
 		weaponicon2.anchor.set(0.5);
 		weaponicon2.scale.set(1.2);
@@ -893,8 +890,12 @@ DungeonFloor.prototype = {
 		weaponicon2.fixedToCamera = true;
 		game.physics.arcade.enable(weaponicon2);
 		
+		// more variables for boss room, end stairs, and weapon cooldown.
 		inbossroom = false;
-		stairs = null; // this will be used for the stairs that spawn inside of the bossroom after the boss is defeated.
+		stairs = null;
+		bosscomplete = false;
+		pickupcooldown = 0; 
+		
 		// the border of darkness around the player.
 		shader = game.add.sprite(posX, posY, 'shader'); // this is the vignette
 		game.physics.arcade.enable(shader);
@@ -902,7 +903,6 @@ DungeonFloor.prototype = {
 		shader.y = 0;
 		shader.fixedToCamera = true;
 		
-		bosscomplete = false;
 		// shadow underneath the player's current weapon.
 		weaponshadow = game.add.sprite(posX, posY + weaponoffset + 4, weaponsprite);
 		weaponshadow.anchor.set(0.5);
@@ -911,8 +911,10 @@ DungeonFloor.prototype = {
 		weaponshadow.alpha = 0.4;
 		game.physics.arcade.enable(weaponshadow);
 		
+		// load weapon sprite and fire rate
 		SetWeaponSprite();
 		SetFireRate();
+		
 		// Mouse wheel switches the current weapon to the 2nd weapon
 		game.input.mouse.mouseWheelCallback = mouseWheel;
 		function mouseWheel(event) {
@@ -929,17 +931,19 @@ DungeonFloor.prototype = {
 			SetWeaponSprite();
 			SetFireRate();
 		}
-		if(difficulty<2){ // if the difficulty is not "Pro", then spawn the map in.
+		
+		// if the difficulty is not "Pro", then spawn the map in.
+		if(difficulty<2){
 			map = new Map();
 		}
 		
-		pickupcooldown = 0; 
-		document.body.style.cursor = "none"; // Removes the cursor image 
+		// Removes the cursor image 
+		document.body.style.cursor = "none";
 		crossHair = game.add.image(game.input.mousePointer.x+game.camera.x,game.input.mousePointer.y+game.camera.y,'crosshair'); // spawns in crosshair.
 		crossHair.scale.set(0.5);
 		crossHair.anchor.set(0.5);
 		crossHair.alpha = 0.9;
-
+		
 		
 		// music/sound variables
 		roommusic = game.add.audio('Doomed Romance', 1, true);
@@ -953,6 +957,9 @@ DungeonFloor.prototype = {
 		bowfx = game.add.audio('bow_shoot', 1, false);
 		doorslamfx = game.add.audio('door_slam', 0.75, false);
 		lightdoorslamfx = game.add.audio('door_slam', 0.25, false);
+		gunshotfx = game.add.audio('gunshot', 0.75, false);
+		gunshothitfx = game.add.audio('gunshot_hit', 0.75, false);
+		
 		// varied grunts that play when the player is hit
 		var gruntvolume = 0.5;
 		gruntfx1 = game.add.audio('grunt1', gruntvolume, false);
@@ -976,43 +983,37 @@ DungeonFloor.prototype = {
 	
 	
 	
-	
-	
 	update: function() {
-		// easy-use debug function
-		// helper function
-		function Debug() {
-			game.debug.bodyInfo(player, 32, 32);
-			game.debug.body(player);
-		}
-		
-		// turn on debug options with P
-		if(game.input.keyboard.isDown(Phaser.Keyboard.P) || DEBUG_ENABLED == true){
-			DEBUG_ENABLED = true;
-			Debug();
-		}
-		
-		
-		
 		
 		// base player physics
 		var playerHitWall = game.physics.arcade.collide(player, walls);
 		var playerHitCurrentWall = game.physics.arcade.collide(player, currentwalls);
 		
+		// returns the room number that the player is in.
+		var bounds = PlayerInBounds(player.body.x, player.body.y);
 		
-		var bounds = PlayerInBounds(player.body.x, player.body.y); // returns the room number that the player is in.
-		if (bounds != -1 && currentroom == null) { // if the player is in a room, and all other rooms are inactive (the doors are not closed).
+		// if the player is in a room, and all other rooms are inactive (the doors are not closed).
+		if (bounds != -1 && currentroom == null) {
 			currentroom = bounds;
-			MakeBounds(bounds); // creates a border around the room, acting like a door, normally.
-			completedrooms.push(bounds); // This room has technically been completed.
-			lastroombounds = mainrooms[bounds]; // mainrooms contains the bounds for each room. 
+			
+			// creates a border around the room, acting like a door, normally.
+			MakeBounds(bounds);
+			
+			// the room has technically been completed.
+			completedrooms.push(bounds);
+			
+			// mainrooms contains the bounds for each room.
+			lastroombounds = mainrooms[bounds];
 			
 			var temp = 0;
-			var enemyspawns = game.rnd.integerInRange(2, 3); // spawns enemies
+			var enemyspawns = game.rnd.integerInRange(2, 3); // how many enemies?
 			roomenemies = enemyspawns;
-			for (var i = 0; i < enemyspawns; i++){ // spawns in enemies
+			
+			// spawns in enemies
+			for (var i = 0; i < enemyspawns; i++){
 				var roombounds = mainrooms[bounds];
-				var wallpos = game.rnd.integerInRange(1, 4); // spawns them inside of one of the 4 surrounding walls. 
+				// enemy is spawned in one of the four walls.
+				var wallpos = game.rnd.integerInRange(1, 4);
 				
 				if (wallpos == 1){ // left wall
 					posX = roombounds[0] - (roombounds[2]/2) - (WALL_SIZE/2);
@@ -1051,7 +1052,13 @@ DungeonFloor.prototype = {
 			if (inbossroom == false) {
 				inbossroom = true
 				MakeBossBounds();
-				boss = new Boss(game, bosscoords[0], bosscoords[1], "turret", false, 'boss', 'boss1'); // turret and rapid currently work.
+				
+				// bosses can be turret or rapid
+				if (PLAYER_PROPERTIES.FLOOR != 3){
+					boss = new Boss(game, bosscoords[0], bosscoords[1], "turret", false, 'boss', 'boss1');
+				} else {
+					boss = new Boss(game, bosscoords[0], bosscoords[1], "rapid", false, 'boss', 'boss1');
+				}
 				
 				doorslamfx.play();
 				
@@ -1080,29 +1087,34 @@ DungeonFloor.prototype = {
 		}
 		
 		
-		if (currentroom != null){ // handles loot and removes walls
+		// handles loot and removes walls
+		if (currentroom != null){
 			if (roomenemies == 0){
 				currentwalls.removeAll();
 				currentroom = null;
 				
-				var chance = game.rnd.integerInRange(1, 2); // always a chance for loot
+				// 2/3 chance to find loot (between 0 and 2)
+				var chance = game.rnd.integerInRange(1, 2);
+				
 				if (PLAYER_PROPERTIES.FLOOR < 2 && chance != 0){ // 1st pool of loot.
 					
 					var rand = game.rnd.integerInRange(0, FLOOR_WEAPONS.A.length-1);
 					var lootX = lastroombounds[0];
 					var lootY = lastroombounds[1];
 					
+					// removes the item from the floor when picked up
 					if (thisloot != null){
 						thisloot.item.kill(); 
-						thisloot.item.destroy(); // removes the item from the floor when picked up
+						thisloot.item.destroy();
 						
 						thisloot.shadow.kill();
-						thisloot.shadow.destroy(); // removes the shadow from the item on the floor when picked up.
+						thisloot.shadow.destroy();
 						
 						thisloot = null;
 					}
 					
-					thisloot = new Loot(lootX, lootY, FLOOR_WEAPONS.A[rand]); // spawns the loot in
+					// loot is spawned
+					thisloot = new Loot(lootX, lootY, FLOOR_WEAPONS.A[rand]);
 					
 				} else if (chance != 0){ // 2nd pool of loot.
 					
@@ -1110,17 +1122,19 @@ DungeonFloor.prototype = {
 					var lootX = lastroombounds[0];
 					var lootY = lastroombounds[1];
 					
+					// removes the item from the floor when picked up
 					if (thisloot != null){
 						thisloot.item.kill();
-						thisloot.item.destroy(); // removes the item from the floor when picked up
+						thisloot.item.destroy();
 						
 						thisloot.shadow.kill();
-						thisloot.shadow.destroy(); // removes the shadow from the item on the floor when picked up.
+						thisloot.shadow.destroy();
 						
 						thisloot = null;
 					}
 					
-					thisloot = new Loot(lootX, lootY, FLOOR_WEAPONS.B[rand]); // spawns the loot in
+					// loot is spawned
+					thisloot = new Loot(lootX, lootY, FLOOR_WEAPONS.B[rand]);
 					
 				}
 				
@@ -1132,8 +1146,8 @@ DungeonFloor.prototype = {
 		
 		
 		// extremely basic state handling
-		if (PLAYER_PROPERTIES.HEALTH <= 0) { // if health reaches 0, then go to GameOver state.
-			//music.stop();
+		// if health reaches 0, then go to GameOver state.
+		if (PLAYER_PROPERTIES.HEALTH <= 0) {
 			document.body.style.cursor = "default"; // brings the cursor back
 			game.state.start('GameOver', true, true);
 		}
@@ -1158,6 +1172,7 @@ DungeonFloor.prototype = {
 		}
 
 		
+		// collisions between player bullets/slashes and enemies are checked here
 		function ProjectileCheck(){
 			playerbulletgroup.forEach(function(bullet) {
 				if (bullet != null){
@@ -1201,6 +1216,7 @@ DungeonFloor.prototype = {
 							}
 						}
 					}, this);
+					
 					// Life span for bullets
 					bullet.duration = bullet.duration - 1;
 					if (bullet.duration < 1){ // destroy the bullet when the duration is less than 1.
@@ -1263,6 +1279,7 @@ DungeonFloor.prototype = {
 						slash.mainslash.destroy(); // removes the slash
 					}
 					
+					// Life span for slashes
 					slash.duration = slash.duration - 1;
 					if (slash.duration < 1){
 						for (var k = 0; k < slash.hitboxes.length; k++){ // removes each hitbox
@@ -1277,13 +1294,15 @@ DungeonFloor.prototype = {
 			
 		}
 		
-		ProjectileCheck();
+		ProjectileCheck(); // runs projectile check function
 		
 		// gives a cool down for weapon pickups. Becomes very game breaking otherwise.
 		if (pickupcooldown <= 0){
-			if (thisloot != null && pickupcooldown <= 0){ // if there is loot on the ground, and the cooldown has expired.
+			// checks if there is loot on the ground, and the cooldown has expired.
+			if (thisloot != null && pickupcooldown <= 0){
 				
-				if (InRange(player.body.x, player.body.y, thisloot.centerX, thisloot.centerY, 70) == true) { // if the player is within range of the loot.
+				// checks if the player is within range of the loot.
+				if (InRange(player.body.x, player.body.y, thisloot.centerX, thisloot.centerY, 70) == true) {
 					pickupText.setText('Press SPACE to pick up ' + thisloot.name);
 					
 					if (game.input.keyboard.justPressed(Phaser.Keyboard.SPACEBAR)){ // handles weapon pickups
@@ -1298,8 +1317,8 @@ DungeonFloor.prototype = {
 							PLAYER_PROPERTIES.WEAPON_2 = thisloot.name;
 						}
 						
-						var lastweapon = GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON); // for placing the player's old weapon back on the ground
-						// changing the current weapon over to the new weapon.
+						// current weapon is changed to the new weapon.
+						var lastweapon = GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON); // saves last weapon.
 						PLAYER_PROPERTIES.CURRENT_WEAPON = thisloot.name;
 						SetWeaponSprite();
 						SetFireRate(); 
@@ -1307,19 +1326,21 @@ DungeonFloor.prototype = {
 						
 						nextFire = 0;
 						isslashing = false;
-						slashframe = 0;
+						slashframe = -1;
 						
 						pickupText.setText('');
 						
+						// item is removed when picked up.
 						thisloot.item.kill(); 
-						thisloot.item.destroy(); // removes the item when picked up.
+						thisloot.item.destroy();
 						
 						thisloot.shadow.kill();
-						thisloot.shadow.destroy(); // removes the item's shadow when the item is picked up.
+						thisloot.shadow.destroy();
 						
+						// old weapon is placed back on the ground.
 						thisloot = new Loot(player.body.x, player.body.y, lastweapon);
 						
-						pickupcooldown = 10; // how long until the player can pick loot up.
+						pickupcooldown = 10; // how long until the player can pick up loot again.
 					}
 					
 				} else {
@@ -1344,7 +1365,8 @@ DungeonFloor.prototype = {
 			iframes = 0;
 		}
 		
-		// brings all of the text to the top of the screen in the right order.
+		
+		// sprite/text layering
 		shader.bringToTop();
 		crossHair.bringToTop();
 		
@@ -1374,12 +1396,10 @@ var NextFloor = function(game) {};
 NextFloor.prototype = {
 	
 	preload: function() {
-		console.log('NextFloor: preload');
+		// nothing
 	},
 	
 	create: function() {
-		console.log('NextFloor: create');
-
 		// input prompt
 		promptText = game.add.text(400, 300, 'Press SPACE to continue.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
@@ -1398,15 +1418,11 @@ var GameOver = function(game) {};
 GameOver.prototype = {
 	
 	preload: function() {
-		console.log('GameOver: preload');
-		
 		game.load.audio('death_sound', 'assets/audio/death_sound.mp3');
 	},
 	
 	create: function() {
-		console.log('GameOver: create');
-		
-
+		// lose text
 		promptText = game.add.text(400, 280, 'GAME OVER', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '40px', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
@@ -1433,26 +1449,22 @@ var End = function(game) {};
 End.prototype = {
 	
 	preload: function() {
-		console.log('End: preload');
-		
 		game.load.audio('Sierra Nevada', 'assets/audio/Sierra Nevada.mp3');
 	},
 	
 	create: function() {
-		console.log('End: create');
-
-		// input prompt
+		
+		// win text
 		promptText = game.add.text(400, 250, 'You made it through the tomb!', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '30px', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
 		
-		// input prompt
-		promptText = game.add.text(400, 300, 'You collected ' + PLAYER_PROPERTIES.POINTS + ' gems.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
+		promptText = game.add.text(400, 305, 'You collected ' + PLAYER_PROPERTIES.POINTS + ' gems.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
 		
 		// input prompt
-		promptText = game.add.text(400, 350, 'Press SPACE to continue.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
+		promptText = game.add.text(400, 355, 'Press SPACE to continue.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
 		
@@ -1468,6 +1480,4 @@ End.prototype = {
 	}
 	
 }
-
-
 

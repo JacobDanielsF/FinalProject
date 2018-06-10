@@ -4,6 +4,8 @@
 // Boss prefab
 
 var bossSpawned = false;
+
+// boss class
 function Boss(game, posX, posY, type, roomtoggle, sprite, frame){
 	Phaser.Sprite.call(this, game, posX, posY, sprite, frame);
 	var scale = 1;
@@ -225,7 +227,7 @@ Boss.prototype.update = function() {
 	playerbulletgroup.forEach(function(bullet) {	
 		if (bullet != null){
 			var bulletHitBoss = game.physics.arcade.collide(bullet, this);
-			// delete the bullet if it hits an boss and damage the boss
+			// delete the bullet if it hits an boss, damaging the boss
 			if (bulletHitBoss == true){
 				if (bullet.type == "Scorpion Dagger" && this.poison == false){
 					this.poison = true;
@@ -258,7 +260,8 @@ Boss.prototype.update = function() {
 
 	var slash = playerslash;			
 	if (slash != null){ 
-		for (var k = 0; k < slash.hitboxes.length; k++){ //checks to see if any slash from melee weapons has hit the boss.
+		// checks to see if any slash hitboxes from melee weapons have hit the boss.
+		for (var k = 0; k < slash.hitboxes.length; k++){
 			var box = slash.hitboxes[k];
 			// check for bullet-boss collision
 			var boxHitBoss = game.physics.arcade.collide(box, this);
@@ -279,9 +282,10 @@ Boss.prototype.update = function() {
 			}
 		}
 	}
-	// poison effect.
+	
+	// poison effect
 	if (this.poison == true){
-		this.health -= 0.1; //damage over time.
+		this.health -= 0.1; // damage over time
 		
 		if (this.health < 0){
 			healthBoss.setText("");
@@ -289,6 +293,7 @@ Boss.prototype.update = function() {
 			bosscomplete = true;
 			SpawnGems(this.gemcount, this.body.x, this.body.y, 70, 110);
 			
+			// removes the boss
 			this.kill();
 			this.destroy();
 		}

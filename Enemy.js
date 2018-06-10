@@ -3,6 +3,7 @@
 // Enemy.js
 // Enemy prefab
 
+// enemy class
 function Enemy(game, posX, posY, type, roomtoggle){
 	// gets the proper enemy sprite
 	if (type == 'scorpion'){
@@ -15,7 +16,7 @@ function Enemy(game, posX, posY, type, roomtoggle){
 	this.anchor.set(0.5);
 	
 	this.type = type;
-	this.room = roomtoggle; // not used
+	this.room = roomtoggle;
 	
 	game.physics.enable(this);
 	this.body.collideWorldBounds = false;
@@ -26,7 +27,7 @@ function Enemy(game, posX, posY, type, roomtoggle){
 		this.nextfire = 4; // when the scorpion can fire the first projectile.
 		this.firecooldown = 1; // how long until it can fire the next one.
 		this.walkspeed = 100;
-		this.seekrange = 400; // If the player is in range, then the scorpion will begin to attack and move towards them.
+		this.seekrange = 380; // If the player is in range, then the scorpion will begin to attack and move towards them.
 		this.points = 10;
 		this.gemcount = 3; // how many gems the scorpion gives.
 		
@@ -40,7 +41,7 @@ function Enemy(game, posX, posY, type, roomtoggle){
 		this.nextfire = 4;
 		this.firecooldown = 1.5;
 		this.walkspeed = 120;
-		this.seekrange = 400; 
+		this.seekrange = 380;
 		this.points = 20;
 		this.gemcount = 5;
 		
@@ -52,6 +53,7 @@ function Enemy(game, posX, posY, type, roomtoggle){
 	
 	this.direction = "right";
 	this.poison = false; // status effect from Scorpion Dagger
+	
 	// first thing that came to mind for overriding the walk animations based on attacks. 
 	this.attacking = false; // is the attack animation playing?
 	this.attackTimer = 0; // will hold the time for when the attack animation can be overriden by the walking animation.
@@ -90,9 +92,10 @@ Enemy.prototype.update = function() {
 			
 			if (time > this.nextfire){
 				var bullet = new EnemyProjectile(this.body.x + 8, this.body.y + 8, player.body.x, player.body.y, "scorpion");
-				//enemybullettable.push(bullet);
 				enemybulletgroup.add(bullet);
-				this.nextfire = time + this.firecooldown; // this is the bullet rate of the weapon
+				this.nextfire = time + this.firecooldown; // enemy bullet rate
+				
+				// play attack animation
 				if (dirX>0){
 					this.animations.play('attackright');
 				}
@@ -111,7 +114,9 @@ Enemy.prototype.update = function() {
 		if (this.type == 'snake'){
 			this.body.velocity.x = dirX * this.walkspeed;
 			this.body.velocity.y = dirY * this.walkspeed;
-			if(time>(this.nextfire-0.29)){ // plays the animation before the projectile, since the snake charges it and then fires.
+			
+			// plays the animation before the projectile, since the snake charges it and then fires.
+			if(time>(this.nextfire-0.29)){
 				if (dirX>0){
 					this.animations.play('attackright');	
 				}
@@ -124,9 +129,8 @@ Enemy.prototype.update = function() {
 			if (time > this.nextfire){
 				for (var i = 0; i < 2; i++){
 					var bullet = new EnemyProjectile(this.body.x + 16, this.body.y + 16, player.body.x, player.body.y, "snake");
-					//enemybullettable.push(bullet);
 					enemybulletgroup.add(bullet);
-					this.nextfire = time + this.firecooldown; // this is the bullet rate of the weapon
+					this.nextfire = time + this.firecooldown; // enemy bullet rate
 					
 					// offsets both snake projectiles.
 					var angleoffset = (i - 0.5)*0.3;
@@ -142,7 +146,7 @@ Enemy.prototype.update = function() {
 		// 
 		if (this.type == 'scorpion'){
 			if (dirX > 0){ // is it facing to the right?
-				if(time>this.attackTimer){	// to prevent walk animation from overriding attack animation
+				if(time>this.attackTimer){ // to prevent walk animation from overriding attack animation
 					this.animations.play('walkright');
 					this.direction = "right";
 				}
@@ -183,12 +187,13 @@ Enemy.prototype.update = function() {
 			// more types
 		}
 						
-	} else {
+	} else { // if the player is not in range
 		// enemy idle
 		this.body.velocity.x = 0;
 		this.body.velocity.y = 0;
 	}
-	// poison effect.
+	
+	// poison effect
 	if (this.poison == true){
 		this.health -= 0.1; // damage over time
 		
@@ -197,8 +202,9 @@ Enemy.prototype.update = function() {
 				roomenemies--;
 			}
 			
+			// removes the enemy
 			this.kill();
-			this.destroy(); // removes the enemy.
+			this.destroy();
 		}
 	}
 }

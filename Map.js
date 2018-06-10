@@ -5,6 +5,7 @@
 
 var mapHeight;
 var mapWidth;
+
 // returns a 2D array with the tile type of each tile in the dungeon.
 function MakeMap(){
 	// creating 2D array, because JS is weird.
@@ -82,7 +83,6 @@ Map.prototype.update = function() {
 		this.fixedToCamera = false;
 		this.x = (player.x/32)+game.camera.width-(mapWidth*2);
 		this.y = (player.y+32)/32;
-		// console.log("changed6");
 		this.fixedToCamera = true;
 	}
 	// Does the same as above, but also generates the map in based on where the player is

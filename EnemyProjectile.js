@@ -3,8 +3,12 @@
 // EnemyProjectile.js
 // Enemy projectile prefab
 
+// enemy projectile class
 function EnemyProjectile(posX, posY, playerX, playerY, type){
-	this.type = type; // type of enemy
+	// type of enemy
+	this.type = type;
+	
+	// checks enemy type and sets speed, damage, size, etc.
 	if (type == "scorpion"){
 		this.speed = 200;
 		this.damage = 1;
@@ -55,6 +59,7 @@ EnemyProjectile.prototype.update = function() {
 	
 	var bulletHitWall = game.physics.arcade.collide(this, walls);
 	var bulletHitCurrentWall = game.physics.arcade.collide(this, currentwalls);
+	
 	// delete the bullet if it hits a wall
 	if (bulletHitWall == true || bulletHitCurrentWall == true){
 		this.kill();
@@ -90,7 +95,8 @@ EnemyProjectile.prototype.update = function() {
 			}
 			iframes = IFRAMES_MAX;
 		}
-		//plays a random sound effect each time
+		
+		// plays a random sound effect each time
 		var rand = game.rnd.integerInRange(1, 5);
 		
 		if (rand == 1){

@@ -3,6 +3,7 @@
 // Player.js
 // Player prefab
 
+// player class
 function Player(game, posX, posY, sprite, frame){
 	Phaser.Sprite.call(this, game, posX, posY, sprite, frame);
 	this.anchor.set(0.5);
@@ -45,17 +46,18 @@ Player.prototype.update = function() {
 	crossHair.x = game.input.mousePointer.x+game.camera.x;
 	crossHair.y = game.input.mousePointer.y+game.camera.y;
 	
+	
 	var angle = game.physics.arcade.angleToPointer(player);
-
-
+	
 	this.body.velocity.x = 0;
 	this.body.velocity.y = 0;
 	
-
-	// toggle run speed
+	
+	// player movement handling
 	var velocity = this.walkspeed;
 	var pressed = false;
 	
+	// check for WASD inputs
 	if (game.input.keyboard.isDown(Phaser.Keyboard.A)) {
 		// Move left
 		player.body.velocity.x = -velocity;
@@ -94,6 +96,7 @@ Player.prototype.update = function() {
 	}
 	
 	
+	// player idle frames
 	if (pressed == false) {
 		if (player.direction == "down"){
 			player.frameName = 'idledown';
@@ -120,10 +123,11 @@ Player.prototype.update = function() {
 	}
 
 	
-	
+	// weapon switching
 	if (weaponswitch > 0) { weaponswitch--; }
 	if (game.input.keyboard.isDown(Phaser.Keyboard.Q) && weaponswitch < 1) {
 		
+		// switch icons
 		if (PLAYER_PROPERTIES.CURRENT_WEAPON == PLAYER_PROPERTIES.WEAPON_1) {
 			PLAYER_PROPERTIES.CURRENT_WEAPON = PLAYER_PROPERTIES.WEAPON_2;
 			weaponicon.loadTexture(GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON));
@@ -134,14 +138,18 @@ Player.prototype.update = function() {
 			weaponicon2.loadTexture(GetWeaponSprite(PLAYER_PROPERTIES.WEAPON_2));
 		}
 		
+		// retrieve weapon properties
 		SetWeaponSprite();
 		SetFireRate();
 		
 		weaponswitch = 10;
-		
-	}	
+	}
+	
+	
+	// weapon animations
 	var range = 32;
 	if (slashframe < 0 || PLAYER_PROPERTIES.CURRENT_WEAPON == "Knife Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Scorpion Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Iron Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Ornate Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Bone Dagger"){
+		// if the weapon is idle, it must follow the player's mouse
 		if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Bronze Sword" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Stone Sword"){
 			var offset = -(Math.PI/4);
 			
@@ -155,33 +163,51 @@ Player.prototype.update = function() {
 		}
 		
 	} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Wooden Crossbow" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Short Bow" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Composite Bow" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Revolver Gun" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Energy Staff" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Serpentine Staff") {
+		// ranged weapon shooting animation
 		range -= slashframe*50;
 		weapon.body.x = player.body.x + (Math.cos(angle)*range);
 		weapon.body.y = weaponoffset + player.body.y + (Math.sin(angle)*range);
 		weapon.rotation = angle + (Math.PI/4);
 		slashframe = slashframe - 0.03;
 		
+		if (slashframe < 0){
+			weapon.loadTexture(GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON));
+		}
 	} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Bronze Sword" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Stone Sword") {
+		// sword slash animation
 		angle -= -1.15 + (slashframe*10);
 		weapon.body.x = player.body.x + (Math.cos(angle)*range);
 		weapon.body.y = weaponoffset + player.body.y + (Math.sin(angle)*range);
 		weapon.rotation = angle + (Math.PI/4);
 		slashframe = (slashframe * 1.2) - 0.05;
 	}
-	if(PLAYER_PROPERTIES.CURRENT_WEAPON == "Revolver Gun"){	
+	
+	if (daggerreturn == false && daggercooldown < 0){
+		daggerreturn = true;
+		weapon.loadTexture(GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON));
+		weaponshadow.loadTexture(GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON));
+	}
+	
+	if (daggercooldown >= 0){
+		daggercooldown--;
+	}
+	
+	
+	// flip gun sprite so that it is not upside-down
+	if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Revolver Gun"){	
 		if(weapon.body.x<player.body.x){
 			weapon.scale.x=-1;
 			weaponshadow.scale.x=-1
 			weapon.rotation =  angle + (Math.PI/2) + (Math.PI/4);
-		}else{
+		} else {
 			weapon.scale.x=1;
 			weaponshadow.scale.x=1;
-
 		}
-	}else{
+	} else {
 		weapon.scale.x=1;
 		weaponshadow.scale.x=1;
 	}
+	
 	function MakePlayerSlash(posX, posY, time, type){ // for melee weapons.
 		slash = new PlayerSlash(posX, posY + weaponoffset, type);
 		if (playerslash != null){
@@ -206,22 +232,33 @@ Player.prototype.update = function() {
 	// fire weapon on left mouse click
 	if (game.input.activePointer.leftButton.isDown){
 		var time = (game.time.now)/1000;
+		
 		// check if you can fire the weapon (based on fire rate)
 		if (time > nextFire) {
+			
 			// check weapon type, play sfx, and makes the correct bullet for it
 			if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Knife Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Scorpion Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Ornate Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Bone Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Iron Dagger" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Wooden Crossbow" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Short Bow") {
 				if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Wooden Crossbow") {
+					weapon.loadTexture('wooden_crossbow_shot');
 					crossbowfx.play();
-				}
-				if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Short Bow" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Composite Bow") {
+				} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Short Bow") {
+					weapon.loadTexture('short_bow_shot');
 					bowfx.play();
+				} else {
+					daggerreturn = false;
+					daggercooldown = 10;
+					weapon.loadTexture('blank');
+					weaponshadow.loadTexture('blank');
 				}
 				
+				// special property for ornate daggers
 				if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Ornate Dagger") { ornateuse = true; }
 				
+				// shoot a single bullet
 				MakePlayerBullet(player.body.x + 16, player.body.y + 16, time, PLAYER_PROPERTIES.CURRENT_WEAPON, 0);
 				
 			} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Energy Staff" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Serpentine Staff"){
+				// shoot 3 bullets
 				for (var i = 0; i < 3; i++){
 					MakePlayerBullet(player.body.x + 16, player.body.y + 16, time, PLAYER_PROPERTIES.CURRENT_WEAPON, (i - 1)*0.2);
 				}
@@ -229,13 +266,19 @@ Player.prototype.update = function() {
 				magicfx.play();
 				
 			} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Revolver Gun"){
-				this.bulletfire = 4;
+				// sets up a timer for semi-automatic shots
+				this.bulletfire = 3;
 				
 			} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Composite Bow"){
+				weapon.loadTexture('composite_bow_shot');
+				bowfx.play();
+				
+				// shoot 2 arrows
 				MakePlayerBullet(player.body.x + 16, player.body.y + 16, time, PLAYER_PROPERTIES.CURRENT_WEAPON, -0.1);
 				MakePlayerBullet(player.body.x + 16, player.body.y + 16, time, PLAYER_PROPERTIES.CURRENT_WEAPON, 0.1);
 				
 			} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Bronze Sword" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Stone Sword") {
+				// make a slash
 				MakePlayerSlash(player.body.x + 8, player.body.y + 8, time, PLAYER_PROPERTIES.CURRENT_WEAPON);
 				whooshfx.play();
 			}
@@ -249,23 +292,26 @@ Player.prototype.update = function() {
 			isslashing = false;
 		}
 	}
-		
-		
+	
+	// for semi-auto bullets
 	if (this.bulletfire > 0){
-		
-		if ((this.bulletfire)%1 != 0.25 && (this.bulletfire)%1 != 0.5 && (this.bulletfire)%1 != 0.75){
+		if ((this.bulletfire)%1 == 0.75){
+			gunshotfx.play();
 			MakePlayerBullet(player.body.x + 16, player.body.y + 16, time, "Revolver Gun", 0);
 		}
 		this.bulletfire -= 0.25;
+		
 	} else {
 		this.bulletfire = 0;
 	}
 	
 	
+	// place shadow behind weapon and rotate it
 	weaponshadow.body.x = weapon.body.x;
 	weaponshadow.body.y = weapon.body.y+4;
 	weaponshadow.rotation = weapon.rotation;
-		
+	
+	// sprite layering
 	if (angle < 0){
 		weaponshadow.bringToTop();
 		weapon.bringToTop();

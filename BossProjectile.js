@@ -3,34 +3,35 @@
 // BossProjectile.js
 // Boss projectile prefab
 
+// boss projectile class
 function BossProjectile(posX, posY, playerX, playerY, type, sprite, frame){
 	Phaser.Sprite.call(this, game, posX, posY, sprite, frame);
-	this.anchor.x=0.5;
-	this.anchor.y=0.5;
-	this.type = type; // type of projectile to spawn
+	this.anchor.x = 0.5;
+	this.anchor.y = 0.5;
+	
+	// type of projectile to spawn
+	this.type = type;
 	
 	game.physics.enable(this);
 	this.body.collideWorldBounds = false;
 	
-	// check projectile type
+	// checks projectile type and sets speed, damage, size, etc.
 	if (type == "default"){ 
-		this.scale.x = 1;
-		this.scale.y = 1;
+		this.scale.set(1.5);
 		this.speed = 200;
 		this.damage = 1;		
 		angle = game.math.angleBetween(posX, posY, playerX, playerY);
 		this.rotation = angle;
 	}
 	if (type == "triple"){
-		this.scale.x = 1;
-		this.scale.y = 1;
+		this.scale.set(1);
 		this.speed = 350;
 		this.damage = 1;
 		angle = game.math.angleBetween(posX, posY, playerX, playerY);
 		this.rotation = angle;
 	}
 	if (type == "rapid"){
-		this.scale.setTo(2,2);
+		this.scale.set(2);
 		this.speed = 200;
 		this.damage = 1;
 		Phaser.Sprite.call(this, game, posX, posY, sprite, frame);
@@ -54,6 +55,21 @@ BossProjectile.prototype.update = function() {
 		this.kill();
 		this.destroy();
 	}
+	
+	var slash = playerslash;
+	// destroys a projectile if it comes into contact with a slash.	
+	if (slash != null){
+		for (var k = 0; k < slash.hitboxes.length; k++){
+			var box = slash.hitboxes[k];
+			
+			var bulletHitSlash = game.physics.arcade.collide(this, box);
+			if (bulletHitSlash == true){
+				this.kill();
+				this.destroy();
+			}
+		}
+	}
+	
 	var bulletHitPlayer = game.physics.arcade.collide(this, player);
 	// delete the bullet if it hits an enemy and damage the enemy
 	if (bulletHitPlayer == true){

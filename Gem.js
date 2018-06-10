@@ -3,6 +3,7 @@
 // Gem.js
 // Gem prefab
 
+// gem class
 function Gem(game, posX, posY, type){
 	Phaser.Sprite.call(this, game, posX, posY, type);
 	this.anchor.set(0.5);

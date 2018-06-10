@@ -3,16 +3,18 @@
 // Loot.js
 // Loot prefab
 
+// loot class
 function Loot(posX, posY, type){
 	// adds a shadow below a weapon to make it stand out more.
 	var shadow = game.add.sprite(posX, posY+2, type);
 	shadow.anchor.set(0.5);
-	// making it look more like a shadow.
+	
+	// this makes it look more like a shadow.
 	shadow.tint = 0x000000;
 	shadow.alpha = 0.4;
 	this.shadow = shadow;
 	
-	// spawns the weapon itself
+	// spawns the weapon itself.
 	var item = game.add.sprite(posX, posY, type);
 	item.anchor.set(0.5);
 	this.item = item;
