@@ -276,7 +276,7 @@ TitleScreen.prototype = {
 		promptText.anchor.x = 1;
 		promptText.anchor.y = 0.5;
 		
-		promptText = game.add.text(785, 580, 'Use arrow keys to navigate the menu.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '15px', fill: '#ffffff' });
+		promptText = game.add.text(785, 580, 'Use arrow keys or WASD to navigate the menu.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '15px', fill: '#ffffff' });
 		promptText.anchor.x = 1;
 		promptText.anchor.y = 0.5;
 		
@@ -334,8 +334,8 @@ TitleScreen.prototype = {
 				cooldown = 7;
 			}
 			
-			// cycle through options
-			if (cursors.up.isDown){
+			// cycle through options with arrow keys or WASD
+			if (cursors.up.isDown || game.input.keyboard.isDown(Phaser.Keyboard.W)){
 				menuselect--;
 				if (menuselect < 1){
 					menuselect = 3;
@@ -344,7 +344,7 @@ TitleScreen.prototype = {
 				cooldown = 7;
 			}
 			
-			if (cursors.down.isDown){
+			if (cursors.down.isDown || game.input.keyboard.isDown(Phaser.Keyboard.S)){
 				menuselect++;
 				if (menuselect > 3){
 					menuselect = 1;
@@ -353,8 +353,8 @@ TitleScreen.prototype = {
 				cooldown = 7;
 			}
 			
-			// arrow keys can be used change difficulty too
-			if (cursors.right.isDown){
+			// arrow keys and WASD can be used change difficulty
+			if (cursors.right.isDown || game.input.keyboard.isDown(Phaser.Keyboard.D)){
 				if (menuselect == 2){
 					if (difficulty == 0){
 						difficulty = 1;
@@ -379,7 +379,7 @@ TitleScreen.prototype = {
 				}
 			}
 			
-			if (cursors.left.isDown){
+			if (cursors.left.isDown || game.input.keyboard.isDown(Phaser.Keyboard.A)){
 				if (menuselect == 2){
 					if (difficulty == 2){
 						difficulty = 1;
