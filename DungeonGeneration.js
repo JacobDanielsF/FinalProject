@@ -487,6 +487,7 @@ SpawnDungeon.prototype.constructor = SpawnDungeon;
 			}
 			// left boundary
 			for (var i = ((boundY1+boundY2)/2) - (WALL_SIZE/2); i<=   ((boundY1+boundY2)/2) + (WALL_SIZE/2); i +=WALL_SIZE){ // spawns 2 tiles in the entrance
+				var tileX = boundX1 - (WALL_SIZE/2);
 				var tileY = i;
 				tileTemp[tileCount] = currentwalls.create(tileX - (tileX % WALL_SIZE) + (WALL_SIZE/2), tileY - (tileY % WALL_SIZE) + (WALL_SIZE/2), 'tile_atlas', 'wall'); // spawn a wall
 				tileTemp[tileCount].body.immovable = true;
