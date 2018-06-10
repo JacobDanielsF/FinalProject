@@ -6,7 +6,7 @@ Sprite work: Jeffrey Yao and Alexai Zachow
 Sound design: Eric Mitchell
 
 
-This repository contains a file called gen-inherit.zip. This is the zip
+This repository contains a file called final-game.zip. This is the zip
 of the entire game and all of its assets. The game's scripts also exist
 within the base level of the repository.
 
