@@ -230,6 +230,7 @@ TitleScreen.prototype = {
 		game.load.image('difficulty', 'assets/img/difficulty.png');
 		game.load.image('easy', 'assets/img/easy.png');
 		game.load.image('hard', 'assets/img/hard.png');
+		game.load.image('pro', 'assets/img/pro.png');
 		
 		game.load.image('logo', 'assets/img/logo.png');
 		game.load.image('border', 'assets/img/border.png');
@@ -262,6 +263,10 @@ TitleScreen.prototype = {
 		hardtext = game.add.sprite(0, 0, 'hard');
 		hardtext.scale.set(0.5);
 		hardtext.alpha = 0.5;
+		
+		protext = game.add.sprite(0, 0, 'pro');
+		protext.scale.set(0.5);
+		protext.alpha = 0;
 		
 		// menu selection variable
 		menuselect = 1;
@@ -306,11 +311,19 @@ TitleScreen.prototype = {
 						
 						easytext.alpha = 0;
 						hardtext.alpha = 0.5;
+						protext.alpha = 0;
 					} else if (difficulty == 1) {
+						difficulty = 2;
+						
+						easytext.alpha = 0;
+						hardtext.alpha = 0;
+						protext.alpha = 0.5;
+					} else if (difficulty == 2) {
 						difficulty = 0;
 						
 						easytext.alpha = 0.5;
 						hardtext.alpha = 0;
+						protext.alpha = 0;
 					}
 				}
 				
@@ -341,18 +354,51 @@ TitleScreen.prototype = {
 			}
 			
 			// arrow keys can be used change difficulty too
-			if (cursors.left.isDown || cursors.right.isDown){
+			if (cursors.right.isDown){
 				if (menuselect == 2){
 					if (difficulty == 0){
 						difficulty = 1;
 						
 						easytext.alpha = 0;
 						hardtext.alpha = 0.5;
+						protext.alpha = 0;
+					} else if (difficulty == 1) {
+						difficulty = 2;
+						
+						easytext.alpha = 0;
+						hardtext.alpha = 0;
+						protext.alpha = 0.5;
+					} else if (difficulty == 2) {
+						difficulty = 0;
+						
+						easytext.alpha = 0.5;
+						hardtext.alpha = 0;
+						protext.alpha = 0;
+					}
+					cooldown = 7;
+				}
+			}
+			
+			if (cursors.left.isDown){
+				if (menuselect == 2){
+					if (difficulty == 2){
+						difficulty = 1;
+						
+						easytext.alpha = 0;
+						hardtext.alpha = 0.5;
+						protext.alpha = 0;
+					} else if (difficulty == 0) {
+						difficulty = 2;
+						
+						easytext.alpha = 0;
+						hardtext.alpha = 0;
+						protext.alpha = 0.5;
 					} else if (difficulty == 1) {
 						difficulty = 0;
 						
 						easytext.alpha = 0.5;
 						hardtext.alpha = 0;
+						protext.alpha = 0;
 					}
 					cooldown = 7;
 				}
@@ -372,10 +418,17 @@ TitleScreen.prototype = {
 			if (difficulty == 0){
 				easytext.alpha = 0.5;
 				hardtext.alpha = 0;
+				protext.alpha = 0;
 				
 			} else if (difficulty == 1) {
 				easytext.alpha = 0;
 				hardtext.alpha = 0.5;
+				protext.alpha = 0;
+				
+			} else if (difficulty == 2) {
+				easytext.alpha = 0;
+				hardtext.alpha = 0;
+				protext.alpha = 0.5;
 				
 			}
 			
@@ -387,10 +440,17 @@ TitleScreen.prototype = {
 			if (difficulty == 0){
 				easytext.alpha = 1;
 				hardtext.alpha = 0;
+				protext.alpha = 0;
 				
 			} else if (difficulty == 1) {
 				easytext.alpha = 0;
 				hardtext.alpha = 1;
+				protext.alpha = 0;
+				
+			} else if (difficulty == 2) {
+				easytext.alpha = 0;
+				hardtext.alpha = 0;
+				protext.alpha = 1;
 				
 			}
 			
@@ -402,10 +462,17 @@ TitleScreen.prototype = {
 			if (difficulty == 0){
 				easytext.alpha = 0.5;
 				hardtext.alpha = 0;
+				protext.alpha = 0;
 				
 			} else if (difficulty == 1) {
 				easytext.alpha = 0;
 				hardtext.alpha = 0.5;
+				protext.alpha = 0;
+				
+			} else if (difficulty == 2) {
+				easytext.alpha = 0;
+				hardtext.alpha = 0;
+				protext.alpha = 0.5;
 				
 			}
 			
