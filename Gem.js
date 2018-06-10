@@ -13,7 +13,7 @@ function Gem(game, posX, posY, type){
 	
 	game.physics.enable(this);
 	
-	this.animations.add('sparkle', Phaser.Animation.generateFrameNames('sprite', 1, 4), 4, true);
+	this.animations.add('sparkle', Phaser.Animation.generateFrameNames('sprite', 1, 4), 6, true);
 	this.animations.play('sparkle');
 	
 	game.add.existing(this);

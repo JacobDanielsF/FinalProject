@@ -4,6 +4,8 @@
 // Main game loop and states
 
 var game;
+
+// game settings
 var config = {
     width: 800,
     height: 600,
@@ -11,8 +13,10 @@ var config = {
     antialias: false,
 }
 
+// initialize states
 window.onload = function() {
 	game = new Phaser.Game(config);
+	
 	game.state.add('TitleScreen', TitleScreen);
 	game.state.add('DungeonFloor', DungeonFloor); // Main game loop
 	game.state.add('NextFloor', NextFloor);
@@ -62,6 +66,7 @@ function InRange(x1, y1, x2, y2, range){
 	}
 	return false;
 }
+
 // based on weapon name, sets the firerate.
 function SetFireRate(){
 	if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Wooden Crossbow"){
@@ -107,6 +112,7 @@ function SetFireRate(){
 		PLAYER_PROPERTIES.FIRE_RATE = 0.6;
 	}
 }
+
 // returns the correct weapon sprite name based on the weapon name
 function GetWeaponSprite(index){
 	if (index == "Wooden Crossbow"){
@@ -149,15 +155,17 @@ function GetWeaponSprite(index){
 		return "scorpion_dagger";
 	}
 }
+
 // sets the weapon sprite
 function SetWeaponSprite(){
 	weapon.loadTexture(GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON));
 	weaponshadow.loadTexture(GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON));
 }
+
 // Spawns gems from enemies when they are defeated.
 function SpawnGems(num, x, y, lorange, hirange){
 	for (var i = 0; i < num; i++){
-		
+		// randomized angle and position of gems
 		var angle = (game.rnd.integerInRange(-100, 100)/100) * Math.PI;
 		
 		var thisrange = game.rnd.integerInRange(lorange*10, hirange*10)/10;
@@ -166,6 +174,7 @@ function SpawnGems(num, x, y, lorange, hirange){
 		
 		var gem;
 		var rand = game.rnd.integerInRange(1, 5); 
+		
 		// Spawns a variety of random gems.
 		if (rand == 1){
 			gem = new Gem(game, thisX, thisY, 'topaz');
@@ -180,6 +189,7 @@ function SpawnGems(num, x, y, lorange, hirange){
 		}
 	}
 }
+
 
 // Pool of weapons available for a floor
 var FLOOR_WEAPONS = {
@@ -209,12 +219,18 @@ BeginMusic.prototype = {
 	}
 	
 }
-var difficulty=1; // controls difficulty, which controls what the map will be like.
-var difficultyText="Hard"; // text displayed in the main menu
+var difficulty = 1; // controls difficulty, which controls what the map will be like.
 var TitleScreen = function(game) {};
 TitleScreen.prototype = {
 	
 	preload: function() {
+		game.load.image('menu', 'assets/img/menu.png');
+		game.load.image('play', 'assets/img/play.png');
+		game.load.image('credits', 'assets/img/credits.png');
+		game.load.image('difficulty', 'assets/img/difficulty.png');
+		game.load.image('easy', 'assets/img/easy.png');
+		game.load.image('hard', 'assets/img/hard.png');
+		
 		game.load.image('logo', 'assets/img/logo.png');
 		game.load.image('border', 'assets/img/border.png');
 		game.load.atlas('tile_atlas', 'assets/img/tile_atlas.png', 'assets/img/tile_sprites.json');
@@ -223,36 +239,48 @@ TitleScreen.prototype = {
 	
 	create: function() {
 		
-		// handles the background tiles in the title screen.
-		for (let i=64;i<config.width-64;i+=56){
-			for (let j=64;j<config.height-64;j+=59){
-				let titleTile = game.add.image(i,j,'tile_atlas','floor1');
-				titleTile.scale.x = 0.875;
-				titleTile.scale.y = 0.921875;
-				titleTile.alpha = 0.5;
-			}
-		}
-		// border of wall tiles in the background
-		let titleTile = game.add.image(0,0,'border');
-		titleTile.alpha = 0.5;
+		// all of the menu graphics
+		menu = game.add.sprite(0, 0, 'menu');
+		menu.scale.set(0.5);
 		
-		var logo = game.add.sprite(400, 232, 'logo');
-		logo.anchor.set(0.5);
-		logo.scale.set(2);
+		playtext = game.add.sprite(0, 0, 'play');
+		playtext.scale.set(0.5);
+		playtext.alpha = 1;
 		
+		creditstext = game.add.sprite(0, 0, 'credits');
+		creditstext.scale.set(0.5);
+		creditstext.alpha = 0.5;
 		
-		// input prompt
-		promptText = game.add.text(400, 400, 'Press SPACE to begin.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
-		promptText.anchor.x = 0.5;
+		difficultytext = game.add.sprite(0, 0, 'difficulty');
+		difficultytext.scale.set(0.5);
+		difficultytext.alpha = 0.5;
+		
+		easytext = game.add.sprite(0, 0, 'easy');
+		easytext.scale.set(0.5);
+		easytext.alpha = 0;
+		
+		hardtext = game.add.sprite(0, 0, 'hard');
+		hardtext.scale.set(0.5);
+		hardtext.alpha = 0.5;
+		
+		// menu selection variable
+		menuselect = 1;
+		
+		// prompt that appears in the corner of the screen
+		promptText = game.add.text(785, 560, 'Press SPACE to select an option.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '15px', fill: '#ffffff' });
+		promptText.anchor.x = 1;
 		promptText.anchor.y = 0.5;
 		
-		promptText = game.add.text(400, 450, 'Press Q to view credits.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
-		promptText.anchor.x = 0.5;
+		promptText = game.add.text(785, 580, 'Use arrow keys to navigate the menu.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '15px', fill: '#ffffff' });
+		promptText.anchor.x = 1;
 		promptText.anchor.y = 0.5;
 		
-		diffText = game.add.text(400, 500, 'Press E to change difficulty: '+difficultyText, { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
-		diffText.anchor.x = 0.5;
-		diffText.anchor.y = 0.5;
+		// button cooldown
+		cooldown = 0;
+		
+		// arrow key inputs
+		cursors = game.input.keyboard.createCursorKeys();
+		
 		// resetting player properties
 		PLAYER_PROPERTIES.POINTS = 0;
 		PLAYER_PROPERTIES.FLOOR = 0;
@@ -264,32 +292,129 @@ TitleScreen.prototype = {
 	},
 	
 	update: function() {
-		if(game.input.keyboard.justPressed(Phaser.Keyboard.E)){ // updates difficulty
-			difficulty += 1; 
-			if(difficulty>2){ // resets if back to 0 so it can cycle
-				difficulty=0;
+		
+		if (cooldown < 1){
+			// do the selected option
+			if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){
+				if (menuselect == 1){
+					game.state.start('Tutorial');
+				}
+				
+				if (menuselect == 2){
+					if (difficulty == 0){
+						difficulty = 1;
+						
+						easytext.alpha = 0;
+						hardtext.alpha = 0.5;
+					} else if (difficulty == 1) {
+						difficulty = 0;
+						
+						easytext.alpha = 0.5;
+						hardtext.alpha = 0;
+					}
+				}
+				
+				if (menuselect == 3){
+					game.state.start('Credits');
+				}
+				
+				cooldown = 7;
 			}
-			if(difficulty==0){
-				difficultyText="Easy"; // map completely spawned in.
+			
+			// cycle through options
+			if (cursors.up.isDown){
+				menuselect--;
+				if (menuselect < 1){
+					menuselect = 3;
+				}
+				
+				cooldown = 7;
 			}
-			if(difficulty==1){
-				difficultyText="Hard"; // map generates in as player moves around.
+			
+			if (cursors.down.isDown){
+				menuselect++;
+				if (menuselect > 3){
+					menuselect = 1;
+				}
+				
+				cooldown = 7;
 			}
-			if(difficulty==2){
-				difficultyText="Pro"; // no map at all.
+			
+			// arrow keys can be used change difficulty too
+			if (cursors.left.isDown || cursors.right.isDown){
+				if (menuselect == 2){
+					if (difficulty == 0){
+						difficulty = 1;
+						
+						easytext.alpha = 0;
+						hardtext.alpha = 0.5;
+					} else if (difficulty == 1) {
+						difficulty = 0;
+						
+						easytext.alpha = 0.5;
+						hardtext.alpha = 0;
+					}
+					cooldown = 7;
+				}
 			}
-			diffText.setText('Press E to change difficulty: ' + difficultyText); 
+			
+		} else {
+			cooldown--;
 		}
-		// shift to main game state
-		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){ // or isPressed
-			game.state.start('Tutorial');
+		
+		
+		// display text based on which menu option is selected
+		if (menuselect == 1){
+			playtext.alpha = 1;
+			difficultytext.alpha = 0.5;
+			creditstext.alpha = 0.5;
+			
+			if (difficulty == 0){
+				easytext.alpha = 0.5;
+				hardtext.alpha = 0;
+				
+			} else if (difficulty == 1) {
+				easytext.alpha = 0;
+				hardtext.alpha = 0.5;
+				
+			}
+			
+		} else if (menuselect == 2){
+			playtext.alpha = 0.5;
+			difficultytext.alpha = 1;
+			creditstext.alpha = 0.5;
+			
+			if (difficulty == 0){
+				easytext.alpha = 1;
+				hardtext.alpha = 0;
+				
+			} else if (difficulty == 1) {
+				easytext.alpha = 0;
+				hardtext.alpha = 1;
+				
+			}
+			
+		} else if (menuselect == 3){
+			playtext.alpha = 0.5;
+			difficultytext.alpha = 0.5;
+			creditstext.alpha = 1;
+			
+			if (difficulty == 0){
+				easytext.alpha = 0.5;
+				hardtext.alpha = 0;
+				
+			} else if (difficulty == 1) {
+				easytext.alpha = 0;
+				hardtext.alpha = 0.5;
+				
+			}
+			
 		}
-		if(game.input.keyboard.isDown(Phaser.Keyboard.Q)){
-			game.state.start('Credits');
-		}
+		
 	}
 	
 }
+
 
 var Credits = function(game) {};
 Credits.prototype = {
@@ -341,7 +466,7 @@ Credits.prototype = {
 		newText.anchor.y = 0.5;
 		
 		// input prompt
-		promptText = game.add.text(400, 525, 'Press Q to go back.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
+		promptText = game.add.text(400, 525, 'Press SPACE to go back.', { font: MAIN_FONT, fontStyle: MAIN_STYLE, fontSize: '20px', fill: '#ffffff' });
 		promptText.anchor.x = 0.5;
 		promptText.anchor.y = 0.5;
 
@@ -349,12 +474,13 @@ Credits.prototype = {
 	
 	update: function() {
 		// shift to main game state
-		if(game.input.keyboard.isDown(Phaser.Keyboard.Q)){ // or isPressed
+		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){ // or isPressed
 			game.state.start('TitleScreen');
 		}
 	}
 	
 }
+
 
 var Tutorial = function(game) {};
 Tutorial.prototype = {
@@ -514,7 +640,7 @@ Tutorial.prototype = {
 			}
 			
 			gem.scale.set(2);
-			gem.animations.add('sparkle', Phaser.Animation.generateFrameNames('sprite', 1, 4), 4, true);
+			gem.animations.add('sparkle', Phaser.Animation.generateFrameNames('sprite', 1, 4), 6, true);
 			gem.animations.play('sparkle');
 		}
 		
@@ -623,7 +749,6 @@ Transition.prototype = {
     }
     
 }
-
 
 
 
@@ -1231,65 +1356,55 @@ DungeonFloor.prototype = {
 			var slash = playerslash; // playerslash from Player.js
 			
 				if (slash != null){ 
-					var hitbool = false;
-					
-					for (var k = 0; k < slash.hitboxes.length; k++){ // checks each hitbox that is apart of the slash.
-						var box = slash.hitboxes[k];
-						
-						enemygroup.forEach(function(enemy) { // compare that hitbox to every enemy.
+					if (slash.duration > slash.maxduration - 4){
+						for (var k = 0; k < slash.hitboxes.length; k++){ // checks each hitbox that is apart of the slash.
+							var box = slash.hitboxes[k];
 							
-							if (enemy != null){
-								// check for bullet-enemy collision
-								var boxHitEnemy = game.physics.arcade.collide(box, enemy);
-								// delete the bullet if it hits an enemy and damage the enemy
-								if (boxHitEnemy == true){
-									
-									hitbool = true;
-									enemyhitfx.play();
-									
-									// enemy is damaged, delete enemy if it dies
-									enemy.damage = function(dmg) {
-										this.health -= slash.damage;
-										if (this.health < 0) {
-											if (roomenemies > 0){
-												roomenemies--;
+							enemygroup.forEach(function(enemy) { // compare that hitbox to every enemy.
+								
+								if (enemy != null){
+									// check for bullet-enemy collision
+									var boxHitEnemy = game.physics.arcade.collide(box, enemy);
+									// delete the bullet if it hits an enemy and damage the enemy
+									if (boxHitEnemy == true){
+										enemyhitfx.play();
+										
+										// enemy is damaged, delete enemy if it dies
+										enemy.damage = function(dmg) {
+											this.health -= slash.damage;
+											if (this.health < 0) {
+												if (roomenemies > 0){
+													roomenemies--;
+												}
+												
+												SpawnGems(this.gemcount, this.body.x, this.body.y, 1, 20);
+												
+												this.kill();
+												this.destroy();
+												
 											}
-											
-											SpawnGems(this.gemcount, this.body.x, this.body.y, 1, 20);
-											
-											this.kill();
-											this.destroy();
-											
 										}
+										enemy.damage(slash.damage);
+										
 									}
-									enemy.damage(slash.damage);
-									
 								}
-							}
-						}, this);
-					}
-					
-					if (hitbool == true){
+							}, this);
+						}
+					} else {
+						// Life span for hitboxes
 						for (var k = 0; k < slash.hitboxes.length; k++){ // removes each hitbox
 							var box = slash.hitboxes[k];
 							box.kill();
 							box.destroy();
 						}
-						slash.mainslash.kill();
-						slash.mainslash.destroy(); // removes the slash
 					}
 					
-					// Life span for slashes
-					slash.duration = slash.duration - 1;
+					// Life span for slash graphic
 					if (slash.duration < 1){
-						for (var k = 0; k < slash.hitboxes.length; k++){ // removes each hitbox
-							var box = slash.hitboxes[k];
-							box.kill();
-							box.destroy();
-						}
 						slash.mainslash.kill();
 						slash.mainslash.destroy(); // removes the slash
 					}
+					slash.duration = slash.duration - 1;
 				}
 			
 		}

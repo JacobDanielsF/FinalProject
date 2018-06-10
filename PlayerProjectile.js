@@ -280,8 +280,8 @@ function PlayerSlash(posX, posY, type){
 	if (type == "Bronze Sword"){
 		var angle = game.physics.arcade.angleToPointer(player);
 		
-		var hitboxDist = 50;
-		var slashDist = hitboxDist*0.65;
+		var hitboxDist = 40;
+		var slashDist = hitboxDist*0.75;
 		var slashSpeed = 400;
 		this.duration = 10;
 		this.damage = 1;
@@ -328,10 +328,10 @@ function PlayerSlash(posX, posY, type){
 	if (type == "Stone Sword"){
 		var angle = game.physics.arcade.angleToPointer(player);
 		
-		var hitboxDist = 50;
-		var slashDist = hitboxDist*0.65;
+		var hitboxDist = 40;
+		var slashDist = hitboxDist*0.75;
 		var slashSpeed = 500;
-		this.duration = 20;
+		this.duration = 10;
 		this.damage = 3;
 		
 		var slash = game.add.sprite(player.body.x+(Math.cos(angle)*(hitboxDist-10))+16, player.body.y+(Math.sin(angle)*(slashDist))+16 , 'slash', 'sprite1');
@@ -349,7 +349,7 @@ function PlayerSlash(posX, posY, type){
 		slash.body.velocity.x += (player.body.velocity.x)/2;
 		slash.body.velocity.y += (player.body.velocity.y)/2;
 		
-		slash.animations.add('anim', Phaser.Animation.generateFrameNames('sprite', 1, 3), 7, false);
+		slash.animations.add('anim', Phaser.Animation.generateFrameNames('sprite', 1, 3), 14, false);
 		slash.animations.play('anim');
 		
 		this.mainslash = slash;
@@ -374,7 +374,8 @@ function PlayerSlash(posX, posY, type){
 	}
 	
 	this.hitboxes = hitboxes;
-
+	this.maxduration = this.duration;
+	
 }
 
 PlayerSlash.prototype.constructor = PlayerSlash;

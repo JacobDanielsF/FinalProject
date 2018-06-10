@@ -174,13 +174,22 @@ Player.prototype.update = function() {
 			weapon.loadTexture(GetWeaponSprite(PLAYER_PROPERTIES.CURRENT_WEAPON));
 		}
 	} else if (PLAYER_PROPERTIES.CURRENT_WEAPON == "Bronze Sword" || PLAYER_PROPERTIES.CURRENT_WEAPON == "Stone Sword") {
-		// sword slash animation
-		angle -= -1.15 + (slashframe*10);
-		weapon.body.x = player.body.x + (Math.cos(angle)*range);
-		weapon.body.y = weaponoffset + player.body.y + (Math.sin(angle)*range);
-		weapon.rotation = angle + (Math.PI/4);
-		slashframe = (slashframe * 1.2) - 0.05;
+		if (slashframe > 0.2){
+			angle = angle + (Math.PI/4);
+			weapon.body.x = player.body.x + (Math.cos(angle)*range);
+			weapon.body.y = weaponoffset + player.body.y + (Math.sin(angle)*range);
+			weapon.rotation = angle + (Math.PI/4);
+			slashframe = slashframe - 0.02;
+		} else {
+			// sword slash animation
+			angle += -1 + (slashframe*10);
+			weapon.body.x = player.body.x + (Math.cos(angle)*range);
+			weapon.body.y = weaponoffset + player.body.y + (Math.sin(angle)*range);
+			weapon.rotation = angle + (Math.PI/4);
+			slashframe = slashframe - 0.02;
+		}
 	}
+	
 	
 	if (daggerreturn == false && daggercooldown < 0){
 		daggerreturn = true;
@@ -287,7 +296,7 @@ Player.prototype.update = function() {
 			nextFire = time + PLAYER_PROPERTIES.FIRE_RATE;
 			
 			isslashing = true;
-			slashframe = 0.2;
+			slashframe = 0.4;
 		} else {
 			isslashing = false;
 		}
